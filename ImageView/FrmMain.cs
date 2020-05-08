@@ -84,14 +84,23 @@ namespace ImageView
 
         private void toolStripComboBoxZoom_SelectedIndexChanged(object sender, EventArgs e)
         {
+
+            //Prevent reset of user settings in case calculated zoom is one of the presets
+            ToolStripComboBox cb = (ToolStripComboBox)sender;
+            if (!cb.Focused)
+                return;
+
             int zoom = 100;
-            if(int.TryParse(toolStripComboBoxZoom.Text.Trim(' ','%'), out zoom))
+            if (int.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
             {
                 config.Display.SizeMode = ImageSizeMode.Zoom;
                 config.Display.Zoom = zoom;
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine("Resize from toolStripComboBoxZoom_SelectedIndexChanged");
+#endif
                 resizePictureBox();
             }
-            
+
         }
 
         private void resizePictureBox()
@@ -102,7 +111,7 @@ namespace ImageView
         {
 
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine("Resize");
+            System.Diagnostics.Debug.WriteLine("Resize " + currentFile.Name);
 #endif
 
             //if not argument is provided attempt to get it from the picture box
@@ -110,6 +119,7 @@ namespace ImageView
             {
                 i = pictureBox.Image;
             }
+
 
             if (i == null) return;
 
@@ -152,13 +162,11 @@ namespace ImageView
                 else
                 {
                     pictureBox.Location = Point.Empty;
-                    pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                    
                     pictureBox.Width = panelMain.Width;
                     pictureBox.Height = panelMain.Height;
-                    
+                    pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
 
-
-                    
                     float aspec = (float)i.Width / (float)i.Height;
                     float windowAspec = (float)panelMain.Width / (float)panelMain.Height;
                     if (aspec > windowAspec)
