@@ -76,10 +76,6 @@ namespace ImageView
             config.Display.SizeMode = ImageSizeMode.Normal;
             resizePictureBox();
         }
-        private void toolStripComboBoxZoom_TextChanged(object sender, EventArgs e)
-        {
-           
-        }
 
 
         /// <summary>
@@ -317,9 +313,9 @@ namespace ImageView
 
 
                 // fixed visual infos
-                toolStripComboBoxNavigation.Text = currentFile.FullName;
                 toolStripComboBoxNavigation.Items.Remove(currentFile.FullName);
                 toolStripComboBoxNavigation.Items.Insert(0, currentFile.FullName);
+                toolStripComboBoxNavigation.Text = currentFile.FullName;
 
                 toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} x {2} BPP", i.Width, i.Height, Image.GetPixelFormatSize(i.PixelFormat));
                 toolStripStatusLabelImageInfo.Visible = true;
