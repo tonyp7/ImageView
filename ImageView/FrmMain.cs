@@ -82,14 +82,26 @@ namespace ImageView
         }
 
 
+        /// <summary>
+        /// In case the calculated zoom level matches exactly a zoom preset (like 50%), the event SelectedIndexChanged is fired.
+        /// In order to programmatically change the combo box without firing the event, we:
+        ///     - Unbind the SelectedIndexChanged
+        ///     - Update the text
+        ///     - Rebind the SelectedIndexChanged event
+        /// An alternative is to check for the control focus on the SelectedIndexChanged event. as in:
+        ///     ToolStripComboBox cb = (ToolStripComboBox)sender;
+        ///     if (!cb.Focused) return;
+        /// Both methods have merits, but it is preferred here not to mess with focuses
+        /// </summary>
+        /// <param name="value">New value to assign the combo box .Text property</param>
+        private void toolStripComboBoxZoom_UpdateText(string value)
+        {
+            toolStripComboBoxZoom.SelectedIndexChanged -= toolStripComboBoxZoom_SelectedIndexChanged;
+            toolStripComboBoxZoom.Text = value;
+            toolStripComboBoxZoom.SelectedIndexChanged += toolStripComboBoxZoom_SelectedIndexChanged;
+        }
         private void toolStripComboBoxZoom_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-            //Prevent reset of user settings in case calculated zoom is one of the presets
-            ToolStripComboBox cb = (ToolStripComboBox)sender;
-            if (!cb.Focused)
-                return;
-
             int zoom = 100;
             if (int.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
             {
@@ -182,7 +194,8 @@ namespace ImageView
 
                 toolStripStatusLabelZoom.Visible = true;
                 toolStripStatusLabelZoom.Text = String.Format("{0} %", zoom);
-                toolStripComboBoxZoom.Text = String.Format("{0}%", zoom);
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", zoom));
+ 
 
             }
             else if (config.Display.SizeMode == ImageSizeMode.Zoom || config.Display.SizeMode == ImageSizeMode.Normal)
@@ -226,7 +239,7 @@ namespace ImageView
                 int zoom = config.Display.SizeMode == ImageSizeMode.Normal ? 100 : config.Display.Zoom;
                 toolStripStatusLabelZoom.Visible = true;
                 toolStripStatusLabelZoom.Text = String.Format("{0} %", zoom);
-                toolStripComboBoxZoom.Text = String.Format("{0}%", zoom);
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", zoom));
             }
         }
 
