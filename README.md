@@ -4,4 +4,10 @@ ImageView is a free and open-source image viewer for Microsoft Windows. It focus
 
 ImageView is portable and self-contained within its executable. Installation is not required. Settings are saved individually for each user.
 
-ImageView is safe and completely private. It runs offline with no connection to the Internet.
+ImageView is safe and respects your privacy. It runs offline with no connection to the Internet.
+
+# Download
+
+# Screenshots
+
+
