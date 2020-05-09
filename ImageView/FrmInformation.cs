@@ -1,0 +1,94 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace ImageView
+{
+    public partial class FrmInformation : Form
+    {
+        private WorkingData workingData;
+        public FrmInformation(WorkingData workingData)
+        {
+            InitializeComponent();
+            this.workingData = workingData;
+        }
+
+        private void FrmInformation_Load(object sender, EventArgs e)
+        {
+            //file
+            dgvFile.Rows.Add("Name", workingData.fileInfo.Name);
+            dgvFile.Rows.Add("Dimensions", String.Format("{0} x {1}", workingData.image.Width, workingData.image.Height));
+            dgvFile.Rows.Add("Size (bytes)", workingData.fileInfo.Length);
+            dgvFile.Rows.Add("Created", workingData.fileInfo.CreationTime);
+            dgvFile.Rows.Add("Last Written", workingData.fileInfo.LastWriteTime);
+            dgvFile.Rows.Add("Path", workingData.fileInfo.DirectoryName);
+            dgvFile.Rows.Add("File Attributes", workingData.fileInfo.Attributes);
+
+            //exif
+            foreach (PropertyItem property in workingData.image.PropertyItems)
+            {
+                object propValue;
+                switch ((PropertyTagType)property.Type)
+                {
+                    case PropertyTagType.ASCII:
+                        ASCIIEncoding encoding = new ASCIIEncoding();
+                        propValue = encoding.GetString(property.Value, 0, property.Len - 1);
+                        break;
+                    case PropertyTagType.Int16:
+                        propValue = BitConverter.ToUInt16(property.Value, 0);
+                        break;
+                    case PropertyTagType.SLONG:
+                        propValue = BitConverter.ToInt32(property.Value, 0);
+                        break;
+                    case PropertyTagType.Int32:
+                        propValue = BitConverter.ToUInt32(property.Value, 0);
+                        break;
+                    case PropertyTagType.SRational:
+                        int sdividend = BitConverter.ToInt32(property.Value, 0);
+                        int sdivisor = BitConverter.ToInt32(property.Value, 4);
+                        if (sdivisor == 0)
+                        {
+                            propValue = double.NaN;
+                        }
+                        else
+                        {
+                            propValue = ((decimal)sdividend / (decimal)sdivisor);
+                        }
+                        break;
+                    case PropertyTagType.Rational:
+                        uint dividend = BitConverter.ToUInt32(property.Value, 0);
+                        uint divisor = BitConverter.ToUInt32(property.Value, 4);
+                        if(divisor == 0)
+                        {
+                            propValue = double.NaN;
+                        }
+                        else
+                        {
+                            propValue = ((decimal)dividend / (decimal)divisor);
+                        }
+                        break;
+                    case PropertyTagType.Undefined:
+                    default:
+                        propValue = String.Empty;
+                        break;
+                }
+
+                dgvExif.Rows.Add((PropertyTagId)property.Id, propValue);
+            }
+
+
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+    }
+}
