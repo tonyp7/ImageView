@@ -17,6 +17,7 @@ namespace ImageView
         public ConfigHistory History;
         public ConfigDisplay Display;
         public ConfigWindow Window;
+        public ConfigSlideshow Slideshow;
 
         public readonly string[] ExtensionFilter = new string[]{ ".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif", ".gif" };
 
@@ -34,6 +35,7 @@ namespace ImageView
             c.History = (ConfigHistory)this.History.Clone();
             c.Display = (ConfigDisplay)this.Display.Clone();
             c.Window = (ConfigWindow)this.Window.Clone();
+            c.Slideshow = (ConfigSlideshow)this.Slideshow.Clone();
 
             return c;
         }
@@ -87,6 +89,7 @@ namespace ImageView
                 History = new ConfigHistory();
                 Display = new ConfigDisplay();
                 Window = new ConfigWindow();
+                Slideshow = new ConfigSlideshow();
 
 
                 //restore previous config
@@ -161,9 +164,15 @@ namespace ImageView
 
     public class ConfigHistory : ICloneable
     {
+        public static readonly int MAXIMUM_HISTORY_SIZE = 99;
+        public static readonly int DEFAULT_HISTORY_SIZE = 20;
+
         private List<string> history;
-        public int MaxSize = 20;
+        public int Size = DEFAULT_HISTORY_SIZE;
         public bool SaveOnExit = true;
+
+        
+
 
         public ConfigHistory()
         {
@@ -175,10 +184,10 @@ namespace ImageView
             history.Remove(file); //attemp to delete from history
             history.Insert(0, file); //reinsert as index 0 == last viewed
             
-            if(history.Count > MaxSize)
+            if(history.Count > Size)
             {
                 //delete everything after max size
-                history.RemoveRange(MaxSize-1, history.Count - MaxSize);
+                history.RemoveRange(Size-1, history.Count - Size);
             }
         }
 
@@ -190,7 +199,7 @@ namespace ImageView
 
         public void Save(XmlDocument doc)
         {
-            Config.SafeNodeSelect(doc, "/Settings/History/MaxSize", MaxSize.ToString());
+            Config.SafeNodeSelect(doc, "/Settings/History/MaxSize", Size.ToString());
             Config.SafeNodeSelect(doc, "/Settings/History/SaveOnExit", SaveOnExit.ToString());
 
             XmlNode n = Config.SafeNodeSelect(doc, "/Settings/History/Files");
@@ -212,7 +221,7 @@ namespace ImageView
         {
             ConfigHistory ch = new ConfigHistory();
             ch.history.AddRange(this.history);
-            ch.MaxSize = this.MaxSize;
+            ch.Size = this.Size;
             ch.SaveOnExit = this.SaveOnExit;
 
             return ch;
@@ -253,6 +262,33 @@ namespace ImageView
             Config.SafeNodeSelect(doc, "/Settings/Window/Width", Width.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Window/Height", Height.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Window/State", State.ToString());
+        }
+    }
+
+    public class ConfigSlideshow : ICloneable
+    {
+        public static readonly int MAXIMUM_SLIDESHOW_TIMER = 999999;
+        public static readonly int DEFAULT_SLIDESHOW_TIMER = 5000;
+
+
+        public int Timer { get; set; }
+
+
+        public ConfigSlideshow()
+        {
+            Timer = DEFAULT_SLIDESHOW_TIMER;
+        }
+
+        public void Save(XmlDocument doc)
+        {
+            Config.SafeNodeSelect(doc, "/Settings/Slideshow/Zoom", Timer.ToString());
+        }
+
+        public object Clone()
+        {
+            ConfigSlideshow c = new ConfigSlideshow();
+            c.Timer = this.Timer;
+            return c;
         }
     }
 
