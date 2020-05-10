@@ -290,61 +290,7 @@ namespace ImageView
         }
 
 
-        /// <summary>
-        /// Deletes the file currently being viewed. 
-        /// TODO: add a switch based on the configuration to move to recycle bin by default instead of deleting.
-        /// TODO: In case of AunauthorizedAccessException prompt user to restart the app in admin mode
-        /// </summary>
-        private void delete()
-        {
-            if(workingData.fileInfo != null)
-            {
-                if(MessageBox.Show(  String.Format("The file {0} will be permanently deleted.\nAre you sure you want to continue?", workingData.fileInfo.Name), "Delete file?", MessageBoxButtons.YesNo, MessageBoxIcon.Question ) == DialogResult.Yes)
-                {
-                    //before deleting, try to get access to the previous image, which will be automatically loaded upon file deletion.
-                    //if there was only one image in the current working folder, then the app will close all
-
-                    
-                    string nextFileToLoad = String.Empty;
-                    if(workingData.directoryFiles.Length > 1)
-                    {
-                        //will try to move to the file
-                        int moveToIndex = workingData.directoryIndex;
-                        moveToIndex--;
-                        if (moveToIndex < 0) moveToIndex = workingData.directoryFiles.Length - 1; //auto loop to the end
-                        nextFileToLoad = workingData.directoryFiles[moveToIndex];
-                    }
-
-
-                    try
-                    {
-                        File.Delete(workingData.fileInfo.FullName);
-                    }
-                    catch (UnauthorizedAccessException uaex)
-                    {
-                        MessageBox.Show("Error wile deleting file\n.Insufficient user privilege.\nPlease restart the app as an administrator.\n\n" + uaex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                    catch(Exception e)
-                    {
-                        MessageBox.Show("Error wile deleting file\n\n" + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    if(nextFileToLoad == String.Empty)
-                    {
-                        //only a single file in the folder -- close
-                    }
-                    else
-                    {
-                        //load the next image and force a refresh of the folder structure
-                        loadPicture(nextFileToLoad, true);
-                    }
-
-
-                }
-            }
-        }
+ 
 
         private void openFile()
         {
@@ -525,23 +471,18 @@ namespace ImageView
             copy();
         }
 
+        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
 
-        //public class CustomComboBox : ToolStripComboBox
-        //{
-        //    private const int WM_SIZE = 0x0005;
+        }
 
-        //    protected override void WndProc(ref Message m)
-        //    {
-        //        base.WndProc(ref m);
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            delete();
+        }
 
-        //        // A fix for ComboBoxStyle.DropDown mode.
-        //        if (DropDownStyle == ComboBoxStyle.DropDown
-        //            && (m.Msg & WM_SIZE) == WM_SIZE)
-        //        {
-        //            Select(0, 0);
-        //        }
-        //    }
-        //}
+
+
 
 
     }
