@@ -316,11 +316,99 @@ namespace ImageView
             loadPicture(filename, true);
         }
 
+        private void copy()
+        {
+            if(workingData.image != null)
+            {
+                Clipboard.SetImage(workingData.image);
+            }
+        }
 
         private void showInformation()
         {
             FrmInformation f = new FrmInformation(workingData);
             f.ShowDialog();
+        }
+
+
+
+        private void exitFullScreen()
+        {
+
+            WinTaskbar.Show();
+            toolStrip.Visible = true;
+            statusStrip.Visible = true;
+            menuStrip.Visible = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.TopMost = false;
+            panelMain.BorderStyle = BorderStyle.Fixed3D;
+
+            //restore window state
+            this.WindowState = fullScreenSaveState.WindowState;
+            this.Location = fullScreenSaveState.Location;
+            this.Size = fullScreenSaveState.Size;
+
+
+            fullscreen = false;
+        }
+        private void enterFullScreen()
+        {
+
+
+            //save window state before entering full screen so that it can be restored when exiting
+            fullScreenSaveState.WindowState = this.WindowState;
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                fullScreenSaveState.Location = this.RestoreBounds.Location;
+                fullScreenSaveState.Size = this.RestoreBounds.Size;
+            }
+            else
+            {
+                fullScreenSaveState.Location = this.Location;
+                fullScreenSaveState.Size = this.Size;
+            }
+
+
+            WinTaskbar.Hide();
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            panelMain.BorderStyle = BorderStyle.None;
+            this.TopMost = true;
+
+            this.WindowState = FormWindowState.Normal;
+            this.Location = new Point(0, 0);
+            this.Size = new Size(Screen.PrimaryScreen.Bounds.Size.Width, Screen.PrimaryScreen.Bounds.Size.Height);
+
+            toolStrip.Visible = false;
+            statusStrip.Visible = false;
+            menuStrip.Visible = false;
+
+
+
+            fullscreen = true;
+        }
+        private void toggleFullScreen()
+        {
+            if (fullscreen)
+            {
+                exitFullScreen();
+            }
+            else
+            {
+                enterFullScreen();
+            }
+        }
+
+
+        private void exitSlideshow()
+        {
+            exitFullScreen();
+            timerSlideShow.Stop();
+        }
+        private void enterSlideshow()
+        {
+            enterFullScreen();
+            timerSlideShow.Interval = config.Slideshow.Timer;
+            timerSlideShow.Start();
         }
     }
 }

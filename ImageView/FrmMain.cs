@@ -14,26 +14,55 @@ namespace ImageView
     public partial class FrmMain : Form
     {
 
+        class FullScreenSaveState
+        {
+            public FormWindowState WindowState;
+            public Point Location;
+            public Size Size;
+
+            public FullScreenSaveState()
+            {
+                WindowState = FormWindowState.Normal;
+                Location = new Point();
+                Size = new Size();
+            }
+        }
+
         private Config config;
-        private DirectoryInfo currentWorkingDir;
-        private FileInfo currentFile;
-        private string[] currentWorkingDirFiles;
-        private int currentWorkingDirIndex;
+
+
 
 
         private bool fullscreen = false;
 
-        private Point mousePosition = new Point(); 
+        private Point mousePosition = new Point();
 
-        private FormWindowState windowStateBeforeEnteringFullscreen = FormWindowState.Normal;
-
+        private FullScreenSaveState fullScreenSaveState = new FullScreenSaveState();
+        //private FormWindowState windowStateBeforeEnteringFullscreen = FormWindowState.Normal;
+        //private Point window
 
         public FrmMain()
         {
             InitializeComponent();
             this.MouseWheel += FrmMain_MouseWheel;
-            close();
+            workingData = new WorkingData();
             config = new Config();
+            config.Load();
+
+            close();
+
+
+            //restore window size
+            if (config.Window.Width != 0 && config.Window.Height != 0)
+            {
+                this.panelMain.Resize -= panelMain_Resize;
+                this.Location = new Point(config.Window.X, config.Window.Y);
+                this.Width = config.Window.Width;
+                this.Height = config.Window.Height;
+                this.WindowState = config.Window.State;
+                this.panelMain.Resize += panelMain_Resize;
+            }
+
         }
 
 
@@ -56,6 +85,8 @@ namespace ImageView
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
+
+
             resizeNavigationBar();
             string[] args = Environment.GetCommandLineArgs();
 
@@ -77,6 +108,31 @@ namespace ImageView
             resizePictureBox();
         }
 
+
+
+
+        /// <summary>
+        /// Prevents a useless picture reload if the image is already in history. See also: toolStripComboBoxZoom_UpdateText
+        /// </summary>
+        /// <param name="value"></param>
+        private void toolStripComboBoxNavigation_UpdateText(string value)
+        {
+            toolStripComboBoxNavigation.SelectedIndexChanged -= toolStripComboBoxNavigation_SelectedIndexChanged;
+            toolStripComboBoxNavigation.Text = value;
+            toolStripComboBoxNavigation.SelectedIndexChanged += toolStripComboBoxNavigation_SelectedIndexChanged;
+        }
+        private void toolStripComboBoxNavigation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string value = (string)toolStripComboBoxNavigation.SelectedItem;
+            this.ActiveControl = null;
+            loadPicture(value);
+
+            //This fixes a weird refresh issue where the button to expand the dropdown stays focused after the selection change
+            toolStripComboBoxNavigation.Select(0, 0);
+            toolStripComboBoxNavigation.Invalidate();
+            toolStripComboBoxNavigation.Select(0, 0);
+
+        }
 
         /// <summary>
         /// In case the calculated zoom level matches exactly a zoom preset (like 50%), the event SelectedIndexChanged is fired.
@@ -107,268 +163,28 @@ namespace ImageView
                 System.Diagnostics.Debug.WriteLine("Resize from toolStripComboBoxZoom_SelectedIndexChanged");
 #endif
                 resizePictureBox();
+
+                //remove focus from the textbox so that user can navigate with arrow keys etc.
+                this.ActiveControl = null;
             }
 
         }
 
-        private void resizePictureBox()
-        {
-            resizePictureBox(null);
-        }
-        private void resizePictureBox(Image i)
-        {
-
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("Resize " + currentFile.Name);
-#endif
-
-            //if not argument is provided attempt to get it from the picture box
-            if (i == null)
-            {
-                i = pictureBox.Image;
-            }
-
-
-            if (i == null) return;
-
-
-            if (config.Display.SizeMode == ImageSizeMode.Autosize)
-            {
-
-                panelMain.AutoScroll = false;
-
-                //zoom calculated for the autosize. default 100 then re-adjusted if the image cant fit
-                int zoom = 100;
-
-                if (panelMain.Width >= i.Width && panelMain.Height >= i.Height)
-                {
-                    //image can fit entirely on the screen so the display is actually normal
-                    pictureBox.SizeMode = PictureBoxSizeMode.Normal;
-                    pictureBox.Width = i.Width;
-                    pictureBox.Height = i.Height;
-
-
-                    //center image on screen
-                    Point xy = new Point(0, 0);
-                    if (i != null)
-                    {
-                        if (panelMain.Width > i.Width)
-                        {
-                            xy.X = (int)((panelMain.Width - i.Width) / 2.0f);
-                        }
-                        if (panelMain.Height > i.Height)
-                        {
-                            xy.Y = (int)((panelMain.Height - i.Height) / 2.0f);
-                        }
-                    }
-                    if (!xy.Equals(pictureBox.Location))
-                        pictureBox.Location = xy;
-
-
-
-                }
-                else
-                {
-                    pictureBox.Location = Point.Empty;
-                    
-                    pictureBox.Width = panelMain.Width;
-                    pictureBox.Height = panelMain.Height;
-                    pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-
-                    float aspec = (float)i.Width / (float)i.Height;
-                    float windowAspec = (float)panelMain.Width / (float)panelMain.Height;
-                    if (aspec > windowAspec)
-                    {
-                        zoom = (int)((float)panelMain.Width / (float)i.Width * 100.0f);
-                    }
-                    else
-                    {
-                        zoom = (int)((float)panelMain.Height / (float)i.Height * 100.0f);
-                    }
-                    
-                }
-
-                toolStripStatusLabelZoom.Visible = true;
-                toolStripStatusLabelZoom.Text = String.Format("{0} %", zoom);
-                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", zoom));
- 
-
-            }
-            else if (config.Display.SizeMode == ImageSizeMode.Zoom || config.Display.SizeMode == ImageSizeMode.Normal)
-            {
-
-                int newWidth = i.Width;
-                int newHeight = i.Height;
-
-                //for zoom we calculate new height and width but the code is otherwise the same than drawing the regular picture
-                if(config.Display.SizeMode == ImageSizeMode.Zoom)
-                {
-                    float zoomf = config.Display.Zoom / 100.0f;
-                    newWidth = (int)Math.Round(((float)i.Width * zoomf));
-                    newHeight = (int)Math.Round(((float)i.Height * zoomf));
-                    pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                }
-                else
-                {
-                    pictureBox.SizeMode = PictureBoxSizeMode.Normal;
-                }
-                
-                pictureBox.Width = newWidth;
-                pictureBox.Height = newHeight;
-
-                //center image if needed
-                panelMain.AutoScroll = false;
-                //pictureBox.Location = Point.Empty;
-                Point xy = new Point(0, 0);
-                if (panelMain.Width > newWidth)
-                {
-                    xy.X = (int)((panelMain.Width - newWidth) / 2.0f);
-                }
-                if (panelMain.Height > newHeight)
-                {
-                    xy.Y = (int)((panelMain.Height - newHeight) / 2.0f);
-                }
-                pictureBox.Location = xy;
-                panelMain.AutoScroll = true;
-
-                //zoom state
-                int zoom = config.Display.SizeMode == ImageSizeMode.Normal ? 100 : config.Display.Zoom;
-                toolStripStatusLabelZoom.Visible = true;
-                toolStripStatusLabelZoom.Text = String.Format("{0} %", zoom);
-                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", zoom));
-            }
-        }
-
-
-        private void next()
-        {
-            if(currentWorkingDirIndex != -1)
-            {
-                currentWorkingDirIndex++;
-
-                //loop
-                if(currentWorkingDirIndex >= currentWorkingDirFiles.Length)
-                {
-                    currentWorkingDirIndex = 0;
-                    
-                }
-                loadPicture(currentWorkingDirFiles[currentWorkingDirIndex], false);
-            }
-        }
-        private void previous()
-        {
-            if (currentWorkingDirIndex != -1)
-            {
-                currentWorkingDirIndex--;
-
-                //loop
-                if (currentWorkingDirIndex < 0)
-                {
-                    currentWorkingDirIndex = currentWorkingDirFiles.Length - 1;
-                }
-                loadPicture(currentWorkingDirFiles[currentWorkingDirIndex], false);
-            }
-
-        }
-
-
-        private static string NiceFileSize(FileInfo fi)
-        {
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            double len = fi.Length;
-            int order = 0;
-            while (len >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                len = len / 1024;
-            }
-
-            // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
-            // show a single decimal place, and no space.
-            string result = String.Format("{0:0.##} {1}", len, sizes[order]);
-
-            return result;
-        }
-
-
-        /// <summary>
-        /// Todo: add a check if the file exists. If it doesn't and there's currently a working dir then refresh folder structure.
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="loadFolderStructure"></param>
-        private void loadPicture(string filename, bool loadFolderStructure)
-        {
-            try
-            {
-                //Image related 
-                currentFile = new FileInfo(filename);
-                Image i = Image.FromFile(currentFile.FullName);
-                
-                //Add loaded file to history
-                config.History.AddFile(currentFile.FullName);
-
-                //Assign image to picture box then refresh sizing
-                pictureBox.Image = i;
-                resizePictureBox();
-
-
-                // fixed visual infos
-                toolStripComboBoxNavigation.Items.Remove(currentFile.FullName);
-                toolStripComboBoxNavigation.Items.Insert(0, currentFile.FullName);
-                toolStripComboBoxNavigation.Text = currentFile.FullName;
-
-                toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} x {2} BPP", i.Width, i.Height, Image.GetPixelFormatSize(i.PixelFormat));
-                toolStripStatusLabelImageInfo.Visible = true;
-                toolStripStatusLabelFileSize.Text = NiceFileSize(currentFile);
-                toolStripStatusLabelFileSize.Visible = true;
-                this.Text = String.Format("{0} - {1}", filename, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
-
-
-            }
-            catch (OutOfMemoryException)
-            {
-                // Image.FromFile(String) 
-                //The file does not have a valid image format. -or - GDI + does not support the pixel format of the file.
-            }
-            catch (Exception)
-            {
-
-            }
-
-
-
-            // Check if we are in the current working dir and pic position
-            // This whole check can be completely ignored. This avoids useless computations in case a user click on next/previous image
-            // By default it is set to true
-            if (loadFolderStructure)
-            {
-                string path = Path.GetDirectoryName(filename);
-                DirectoryInfo di = new DirectoryInfo(path);
-                if (currentWorkingDir == null || di.FullName != currentWorkingDir.FullName)
-                {
-                    currentWorkingDir = di;
-                    currentWorkingDirFiles = Directory.EnumerateFiles(di.FullName, "*.*", SearchOption.TopDirectoryOnly).Where(file => config.ExtensionFilter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
-                    currentWorkingDirIndex = Array.FindIndex(currentWorkingDirFiles, x => x.Contains(filename));
-                }
-            }
-
-
-            toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", currentWorkingDirIndex + 1, currentWorkingDirFiles.Length);
-            toolStripStatusLabelImagePosition.Visible = true;
-        }
-        private void loadPicture(string filename)
-        {
-            loadPicture(filename, true);
-        }
+        
 
         private void panelMain_Resize(object sender, EventArgs e)
         {
+
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("panelMain_Resize");
+#endif
             resizePictureBox();
         }
 
         private void FrmMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             //Attempt to save config
+            config.Save();
         }
 
 
@@ -440,6 +256,12 @@ namespace ImageView
                 case Keys.Right:
                     next();
                     break;
+                case Keys.P:
+                    showSettings();
+                    break;
+                case Keys.I:
+                    showInformation();
+                    break;
                 case Keys.F:
                     toggleFullScreen();
                     break;
@@ -466,27 +288,7 @@ namespace ImageView
         {
             close();
         }
-        /// <summary>
-        /// Restore the app to default conditions
-        /// </summary>
-        private void close()
-        {
-            pictureBox.Image = null;
-            currentWorkingDir = null;
-            currentWorkingDirFiles = null;
-            currentWorkingDirIndex = -1;
-            currentFile = null;
-            toolStripStatusLabelImageInfo.Text = "Welcome! Open an image file to begin browsing.";
-            this.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            toolStripComboBoxNavigation.Text = "";
 
-            toolStripStatusLabelImagePosition.Visible = false;
-            toolStripStatusLabelImagePosition.Text = "";
-            toolStripStatusLabelZoom.Visible = false;
-            toolStripStatusLabelZoom.Text = "";
-            toolStripStatusLabelFileSize.Visible = false;
-            toolStripStatusLabelFileSize.Text = "";
-        }
 
         /// <summary>
         /// Deletes the file currently being viewed. 
@@ -495,28 +297,28 @@ namespace ImageView
         /// </summary>
         private void delete()
         {
-            if(currentFile != null)
+            if(workingData.fileInfo != null)
             {
-                if(MessageBox.Show(  String.Format("The file {0} will be permanently deleted.\nAre you sure you want to continue?", currentFile.Name), "Delete file?", MessageBoxButtons.YesNo, MessageBoxIcon.Question ) == DialogResult.Yes)
+                if(MessageBox.Show(  String.Format("The file {0} will be permanently deleted.\nAre you sure you want to continue?", workingData.fileInfo.Name), "Delete file?", MessageBoxButtons.YesNo, MessageBoxIcon.Question ) == DialogResult.Yes)
                 {
                     //before deleting, try to get access to the previous image, which will be automatically loaded upon file deletion.
                     //if there was only one image in the current working folder, then the app will close all
 
                     
                     string nextFileToLoad = String.Empty;
-                    if(currentWorkingDirFiles.Length > 1)
+                    if(workingData.directoryFiles.Length > 1)
                     {
                         //will try to move to the file
-                        int moveToIndex = currentWorkingDirIndex;
+                        int moveToIndex = workingData.directoryIndex;
                         moveToIndex--;
-                        if (moveToIndex < 0) moveToIndex = currentWorkingDirFiles.Length - 1; //auto loop to the end
-                        nextFileToLoad = currentWorkingDirFiles[moveToIndex];
+                        if (moveToIndex < 0) moveToIndex = workingData.directoryFiles.Length - 1; //auto loop to the end
+                        nextFileToLoad = workingData.directoryFiles[moveToIndex];
                     }
 
 
                     try
                     {
-                        File.Delete(currentFile.FullName);
+                        File.Delete(workingData.fileInfo.FullName);
                     }
                     catch (UnauthorizedAccessException uaex)
                     {
@@ -564,46 +366,7 @@ namespace ImageView
  
 
 
-        private void exitFullScreen()
-        {
-
-            toolStrip.Visible = true;
-            statusStrip.Visible = true;
-            menuStrip.Visible = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
-            panelMain.BorderStyle = BorderStyle.Fixed3D;
-            this.WindowState = windowStateBeforeEnteringFullscreen; //restore window state
-
-            fullscreen = false;
-        }
-        private void enterFullScreen()
-        {
-
-
-            windowStateBeforeEnteringFullscreen = this.WindowState; //save window state before entering full screen so that it can be restored when exiting
-
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            panelMain.BorderStyle = BorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
-            toolStrip.Visible = false;
-            statusStrip.Visible = false;
-            menuStrip.Visible = false;
-
-
-
-            fullscreen = true;
-        }
-        private void toggleFullScreen()
-        {
-            if (fullscreen)
-            {
-                exitFullScreen();
-            }
-            else
-            {
-                enterFullScreen();
-            }
-        }
+ 
 
 
         private void fullscreenToolStripMenuItem_Click(object sender, EventArgs e)
@@ -632,16 +395,7 @@ namespace ImageView
             next();
         }
 
-        private void exitSlideshow()
-        {
-            exitFullScreen();
-            timerSlideShow.Stop();
-        }
-        private void enterSlideshow()
-        {
-            enterFullScreen();
-            timerSlideShow.Start();
-        }
+
         private void slideshowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             enterSlideshow();
@@ -735,7 +489,61 @@ namespace ImageView
 
         }
 
- 
+        private void toolStripButtonSettings_Click(object sender, EventArgs e)
+        {
+            showSettings();
+        }
+
+        private void showSettings()
+        {
+            FrmSettings f = new FrmSettings(config);
+            f.ShowDialog();
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showSettings();
+        }
+
+        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //Save last window size and position
+            config.Window.X = this.Location.X;
+            config.Window.Y = this.Location.Y;
+            config.Window.Width = this.Width;
+            config.Window.Height = this.Height;
+            config.Window.State = this.WindowState;
+        }
+
+        private void informationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showInformation();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            copy();
+        }
+
+
+        //public class CustomComboBox : ToolStripComboBox
+        //{
+        //    private const int WM_SIZE = 0x0005;
+
+        //    protected override void WndProc(ref Message m)
+        //    {
+        //        base.WndProc(ref m);
+
+        //        // A fix for ComboBoxStyle.DropDown mode.
+        //        if (DropDownStyle == ComboBoxStyle.DropDown
+        //            && (m.Msg & WM_SIZE) == WM_SIZE)
+        //        {
+        //            Select(0, 0);
+        //        }
+        //    }
+        //}
+
+
     }
 
 
