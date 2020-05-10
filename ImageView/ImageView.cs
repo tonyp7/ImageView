@@ -194,6 +194,9 @@ namespace ImageView
         }
 
 
+        /// <summary>
+        /// TODO: find the next existing file. If a file doesnt exist force a reload of the folder structure. apply the same to previous
+        /// </summary>
         private void next()
         {
             if (workingData.directoryIndex != -1)
@@ -206,7 +209,9 @@ namespace ImageView
                     workingData.directoryIndex = 0;
 
                 }
-                loadPicture(workingData.directoryFiles[workingData.directoryIndex], false);
+
+                string file = workingData.directoryFiles[workingData.directoryIndex];
+                loadPicture(file, false);
             }
         }
         private void previous()
@@ -220,7 +225,9 @@ namespace ImageView
                 {
                     workingData.directoryIndex = workingData.directoryFiles.Length - 1;
                 }
-                loadPicture(workingData.directoryFiles[workingData.directoryIndex], false);
+
+                string file = workingData.directoryFiles[workingData.directoryIndex];
+                loadPicture(file, false);
             }
 
         }
@@ -250,33 +257,67 @@ namespace ImageView
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="loadFolderStructure"></param>
-        private void loadPicture(string filename, bool loadFolderStructure)
+        private void loadPicture(string filename, bool loadFolderStructure = true)
         {
             try
             {
-                //Image related 
+                //FileInfo
                 workingData.fileInfo = new FileInfo(filename);
-                workingData.image = Image.FromFile(workingData.fileInfo.FullName);
 
-                //Add loaded file to history
-                config.History.AddFile(workingData.fileInfo.FullName);
+                if (workingData.fileInfo.Exists)
+                {
 
-                //Assign image to picture box then refresh sizing
-                pictureBox.Image = workingData.image;
-                resizePictureBox();
+                    //Image is loaded from stream instead of FromFile because Image.FromFile locks the file
+                    using (FileStream fs = new FileStream(workingData.fileInfo.FullName, FileMode.Open, FileAccess.Read))
+                    {
+                        workingData.image = Image.FromStream(fs);
+                    }
+                    
+                    //Add loaded file to history
+                    config.History.AddFile(workingData.fileInfo.FullName);
+
+                    //Assign image to picture box then refresh sizing
+                    pictureBox.Image = workingData.image;
+                    resizePictureBox();
 
 
-                // fixed visual infos
-                toolStripComboBoxNavigation.Items.Remove(workingData.fileInfo.FullName);
-                toolStripComboBoxNavigation.Items.Insert(0, workingData.fileInfo.FullName);
-                toolStripComboBoxNavigation_UpdateText(workingData.fileInfo.FullName);
+                    // fixed visual infos
+                    toolStripComboBoxNavigation.Items.Remove(workingData.fileInfo.FullName);
+                    toolStripComboBoxNavigation.Items.Insert(0, workingData.fileInfo.FullName);
+                    toolStripComboBoxNavigation_UpdateText(workingData.fileInfo.FullName);
+                    toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} x {2} BPP", workingData.image.Width, workingData.image.Height, Image.GetPixelFormatSize(workingData.image.PixelFormat));
+                    toolStripStatusLabelImageInfo.Visible = true;
+                    toolStripStatusLabelFileSize.Text = NiceFileSize(workingData.fileInfo);
+                    toolStripStatusLabelFileSize.Visible = true;
+                    this.Text = String.Format("{0} - {1}", filename, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
 
 
-                toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} x {2} BPP", workingData.image.Width, workingData.image.Height, Image.GetPixelFormatSize(workingData.image.PixelFormat));
-                toolStripStatusLabelImageInfo.Visible = true;
-                toolStripStatusLabelFileSize.Text = NiceFileSize(workingData.fileInfo);
-                toolStripStatusLabelFileSize.Visible = true;
-                this.Text = String.Format("{0} - {1}", filename, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
+                    // Check if we are in the current working dir and pic position
+                    // This whole check can be completely ignored. This avoids useless computations in case a user click on next/previous image
+                    // By default it is set to true
+                    if (loadFolderStructure)
+                    {
+                        string path = Path.GetDirectoryName(filename);
+                        DirectoryInfo di = new DirectoryInfo(path);
+                        //if (workingData.directoryInfo == null || di.FullName != workingData.directoryInfo.FullName)
+                        //{
+                            workingData.directoryInfo = di;
+                            workingData.directoryFiles = Directory.EnumerateFiles(di.FullName, "*.*", SearchOption.TopDirectoryOnly).Where(file => config.ExtensionFilter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
+                            workingData.directoryIndex = Array.FindIndex(workingData.directoryFiles, x => x.Contains(filename));
+                        //}
+                    }
+
+
+                    toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", workingData.directoryIndex + 1, workingData.directoryFiles.Length);
+                    toolStripStatusLabelImagePosition.Visible = true;
+                }
+                else
+                {
+                    //there is an edge case here where the user was browsing a folder and then an image of said folder was moved/deleted
+                    MessageBox.Show("File " + filename + " does not exist", "Unable to load file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    close();
+                }
+
 
 
             }
@@ -292,29 +333,9 @@ namespace ImageView
 
 
 
-            // Check if we are in the current working dir and pic position
-            // This whole check can be completely ignored. This avoids useless computations in case a user click on next/previous image
-            // By default it is set to true
-            if (loadFolderStructure)
-            {
-                string path = Path.GetDirectoryName(filename);
-                DirectoryInfo di = new DirectoryInfo(path);
-                if (workingData.directoryInfo == null || di.FullName != workingData.directoryInfo.FullName)
-                {
-                    workingData.directoryInfo = di;
-                    workingData.directoryFiles = Directory.EnumerateFiles(di.FullName, "*.*", SearchOption.TopDirectoryOnly).Where(file => config.ExtensionFilter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
-                    workingData.directoryIndex = Array.FindIndex(workingData.directoryFiles, x => x.Contains(filename));
-                }
-            }
 
+        }
 
-            toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", workingData.directoryIndex + 1, workingData.directoryFiles.Length);
-            toolStripStatusLabelImagePosition.Visible = true;
-        }
-        private void loadPicture(string filename)
-        {
-            loadPicture(filename, true);
-        }
 
         private void copy()
         {
@@ -409,6 +430,64 @@ namespace ImageView
             enterFullScreen();
             timerSlideShow.Interval = config.Slideshow.Timer;
             timerSlideShow.Start();
+        }
+
+
+
+        /// <summary>
+        /// Deletes the file currently being viewed. 
+        /// TODO: add a switch based on the configuration to move to recycle bin by default instead of deleting.
+        /// TODO: In case of AunauthorizedAccessException prompt user to restart the app in admin mode
+        /// </summary>
+        private void delete()
+        {
+            if (workingData.fileInfo != null)
+            {
+                if (MessageBox.Show(String.Format("The file {0} will be permanently deleted.\nAre you sure you want to continue?", workingData.fileInfo.Name), "Delete file?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    //before deleting, try to get access to the previous image, which will be automatically loaded upon file deletion.
+                    //if there was only one image in the current working folder, then the app will close all
+
+                    string nextFileToLoad = String.Empty;
+                    if (workingData.directoryFiles.Length > 1)
+                    {
+                        //will try to move to the file
+                        int moveToIndex = workingData.directoryIndex;
+                        moveToIndex--;
+                        if (moveToIndex < 0) moveToIndex = workingData.directoryFiles.Length - 1; //auto loop to the end
+                        nextFileToLoad = workingData.directoryFiles[moveToIndex];
+                    }
+
+
+                    try
+                    {
+                        workingData.fileInfo.Delete();
+                    }
+                    catch (UnauthorizedAccessException uaex)
+                    {
+                        MessageBox.Show("Error wile deleting file\n.Insufficient user privilege.\nPlease restart the app as an administrator.\n\n" + uaex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show("Error wile deleting file\n\n" + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (nextFileToLoad == String.Empty)
+                    {
+                        //only a single file in the folder -- close
+                        close();
+                    }
+                    else
+                    {
+                        //load the next image and force a refresh of the folder structure
+                        loadPicture(nextFileToLoad);
+                    }
+
+
+                }
+            }
         }
     }
 }
