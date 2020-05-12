@@ -28,23 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmInformation));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageFile = new System.Windows.Forms.TabPage();
             this.dgvFile = new System.Windows.Forms.DataGridView();
             this.colProperty = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.btnOK = new System.Windows.Forms.Button();
             this.tabPageEXIF = new System.Windows.Forms.TabPage();
             this.dgvExif = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btnOK = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPageFile.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvFile)).BeginInit();
-            this.panel1.SuspendLayout();
             this.tabPageEXIF.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvExif)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -100,29 +101,6 @@
             this.colValue.Name = "colValue";
             this.colValue.ReadOnly = true;
             // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.btnOK);
-            this.panel1.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 378);
-            this.panel1.Name = "panel1";
-            this.panel1.Padding = new System.Windows.Forms.Padding(5);
-            this.panel1.Size = new System.Drawing.Size(464, 63);
-            this.panel1.TabIndex = 5;
-            // 
-            // btnOK
-            // 
-            this.btnOK.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.btnOK.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnOK.Location = new System.Drawing.Point(339, 5);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(120, 53);
-            this.btnOK.TabIndex = 6;
-            this.btnOK.Text = "OK";
-            this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-            // 
             // tabPageEXIF
             // 
             this.tabPageEXIF.BackColor = System.Drawing.SystemColors.Control;
@@ -166,6 +144,29 @@
             this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             this.dataGridViewTextBoxColumn2.ReadOnly = true;
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.btnOK);
+            this.panel1.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 378);
+            this.panel1.Name = "panel1";
+            this.panel1.Padding = new System.Windows.Forms.Padding(5);
+            this.panel1.Size = new System.Drawing.Size(464, 63);
+            this.panel1.TabIndex = 5;
+            // 
+            // btnOK
+            // 
+            this.btnOK.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.btnOK.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnOK.Location = new System.Drawing.Point(339, 5);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(120, 53);
+            this.btnOK.TabIndex = 6;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            // 
             // FrmInformation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -173,6 +174,7 @@
             this.ClientSize = new System.Drawing.Size(464, 441);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.panel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmInformation";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FrmInformation";
@@ -180,9 +182,9 @@
             this.tabControl.ResumeLayout(false);
             this.tabPageFile.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvFile)).EndInit();
-            this.panel1.ResumeLayout(false);
             this.tabPageEXIF.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvExif)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
