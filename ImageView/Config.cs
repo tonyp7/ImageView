@@ -322,6 +322,8 @@ namespace ImageView
         public System.Windows.Forms.FormWindowState State { get; set; }
 
 
+        public static readonly System.Windows.Forms.FormWindowState DEFAULT_WINDOW_STATE = System.Windows.Forms.FormWindowState.Normal;
+
         public object Clone()
         {
             ConfigWindow cw = new ConfigWindow();
@@ -329,6 +331,7 @@ namespace ImageView
             cw.Y = this.Y;
             cw.Width = this.Width;
             cw.Height = this.Height;
+            cw.State = this.State;
 
             return cw;
         }
@@ -340,6 +343,58 @@ namespace ImageView
 
         public void Load(XmlDocument doc)
         {
+            int ivalue;
+            XmlNode n;
+
+            n = doc.SelectSingleNode("/Settings/Window/X");
+            if (n != null && int.TryParse(n.InnerText, out ivalue) && ivalue >= 0)
+            {
+                X = ivalue;
+            }
+
+            n = doc.SelectSingleNode("/Settings/Window/Y");
+            if (n != null && int.TryParse(n.InnerText, out ivalue) && ivalue >= 0)
+            {
+                Y = ivalue;
+            }
+
+            n = doc.SelectSingleNode("/Settings/Window/Width");
+            if (n != null && int.TryParse(n.InnerText, out ivalue) && ivalue >= 0)
+            {
+                Width = ivalue;
+            }
+
+            n = doc.SelectSingleNode("/Settings/Window/Height");
+            if (n != null && int.TryParse(n.InnerText, out ivalue) && ivalue >= 0)
+            {
+                Height = ivalue;
+            }
+
+
+            n = doc.SelectSingleNode("/Settings/Window/State");
+            if (n != null)
+            {
+                switch (n.InnerText)
+                {
+                    case "Maximized":
+                        State = System.Windows.Forms.FormWindowState.Maximized;
+                        break;
+                    case "Minimized":
+                        State = System.Windows.Forms.FormWindowState.Minimized;
+                        break;
+                    case "Normal":
+                        State = System.Windows.Forms.FormWindowState.Normal;
+                        break;
+                    default:
+                        State = DEFAULT_WINDOW_STATE;
+                        break;
+
+                }
+            }
+            else
+            {
+                State = DEFAULT_WINDOW_STATE;
+            }
 
         }
 
