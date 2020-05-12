@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.VisualBasic;
+using System.Windows.Forms;
 
 namespace ImageView
 {
@@ -321,8 +322,21 @@ namespace ImageView
         public int Height { get; set; }
         public System.Windows.Forms.FormWindowState State { get; set; }
 
+        private static readonly int DEFAULT_WINDOW_WIDTH = 1024;
+        private static readonly int DEFAULT_WINDOW_HEIGHT = 768;
+        private static readonly int DEFAULT_WINDOW_X = (Screen.PrimaryScreen.Bounds.Width - DEFAULT_WINDOW_WIDTH) >> 1;
+        private static readonly int DEFAULT_WINDOW_Y = (Screen.PrimaryScreen.Bounds.Height - DEFAULT_WINDOW_HEIGHT) >> 1;
+        private static readonly System.Windows.Forms.FormWindowState DEFAULT_WINDOW_STATE = System.Windows.Forms.FormWindowState.Normal;
 
-        public static readonly System.Windows.Forms.FormWindowState DEFAULT_WINDOW_STATE = System.Windows.Forms.FormWindowState.Normal;
+
+        public ConfigWindow()
+        {
+            X = DEFAULT_WINDOW_X;
+            Y = DEFAULT_WINDOW_Y;
+            State = DEFAULT_WINDOW_STATE;
+            Width = DEFAULT_WINDOW_WIDTH;
+            Height = DEFAULT_WINDOW_HEIGHT;
+        }
 
         public object Clone()
         {
