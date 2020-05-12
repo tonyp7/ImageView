@@ -25,11 +25,13 @@ namespace ImageView
             //file
             dgvFile.Rows.Add("Name", workingData.fileInfo.Name);
             dgvFile.Rows.Add("Dimensions", String.Format("{0} x {1}", workingData.image.Width, workingData.image.Height));
+            dgvFile.Rows.Add("Pixel Format", Program.HumanReadablePixelFormat(workingData.image.PixelFormat));
             dgvFile.Rows.Add("Size (bytes)", workingData.fileInfo.Length);
             dgvFile.Rows.Add("Created", workingData.fileInfo.CreationTime);
             dgvFile.Rows.Add("Last Written", workingData.fileInfo.LastWriteTime);
             dgvFile.Rows.Add("Path", workingData.fileInfo.DirectoryName);
             dgvFile.Rows.Add("File Attributes", workingData.fileInfo.Attributes);
+
 
             //exif
             foreach (PropertyItem property in workingData.image.PropertyItems)

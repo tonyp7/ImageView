@@ -23,8 +23,8 @@ namespace ImageView
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            FrmMain f = new FrmMain();
-            Application.Run(f);
+            //FrmMain f = new FrmMain();
+            Application.Run(new FrmMain());
         }
 
         public static void LaunchURL(string url)
@@ -48,6 +48,24 @@ namespace ImageView
         public static int Clamp(int value, int min, int max)
         {
             return value < min ? min : (value > max ? max : value);
+        }
+
+        public static string HumanReadablePixelFormat(System.Drawing.Imaging.PixelFormat pixfmt)
+        {
+            int bpp = System.Drawing.Image.GetPixelFormatSize(pixfmt);
+
+            bool indexed = false;
+            switch (pixfmt)
+            {
+                case System.Drawing.Imaging.PixelFormat.Format1bppIndexed:
+                case System.Drawing.Imaging.PixelFormat.Format4bppIndexed:
+                case System.Drawing.Imaging.PixelFormat.Format8bppIndexed:
+                    indexed = true;
+                    break;
+            }
+
+            return String.Format("{0} BPP{1} ({2})", bpp, indexed ? ", indexed" :"", pixfmt);
+        
         }
     }
 }

@@ -33,7 +33,7 @@
             this.tabPageGeneral = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtHistoryMaxSize = new System.Windows.Forms.TextBox();
+            this.txtHistorySize = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.chkHistorySaveOnExit = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -41,14 +41,15 @@
             this.txtSlideshowTimer = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnMakeDefault = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnCancel = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
-            this.btnOK = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.btnOK = new System.Windows.Forms.Button();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tabControl.SuspendLayout();
             this.tabPageGeneral.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -82,7 +83,7 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.txtHistoryMaxSize);
+            this.groupBox3.Controls.Add(this.txtHistorySize);
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Controls.Add(this.chkHistorySaveOnExit);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -102,16 +103,16 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "A value of 0 will disable history. The maximum value is 99.";
             // 
-            // txtHistoryMaxSize
+            // txtHistorySize
             // 
-            this.txtHistoryMaxSize.Location = new System.Drawing.Point(181, 54);
-            this.txtHistoryMaxSize.MaxLength = 3;
-            this.txtHistoryMaxSize.Name = "txtHistoryMaxSize";
-            this.txtHistoryMaxSize.Size = new System.Drawing.Size(45, 20);
-            this.txtHistoryMaxSize.TabIndex = 5;
-            this.toolTip.SetToolTip(this.txtHistoryMaxSize, "Values are in milliseconds. The default of 5000 means 5 seconds.");
-            this.txtHistoryMaxSize.TextChanged += new System.EventHandler(this.txtHistoryMaxSize_TextChanged);
-            this.txtHistoryMaxSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNumeric_KeyPress);
+            this.txtHistorySize.Location = new System.Drawing.Point(181, 54);
+            this.txtHistorySize.MaxLength = 3;
+            this.txtHistorySize.Name = "txtHistorySize";
+            this.txtHistorySize.Size = new System.Drawing.Size(45, 20);
+            this.txtHistorySize.TabIndex = 5;
+            this.toolTip.SetToolTip(this.txtHistorySize, "Values are in milliseconds. The default of 5000 means 5 seconds.");
+            this.txtHistorySize.TextChanged += new System.EventHandler(this.txtHistoryMaxSize_TextChanged);
+            this.txtHistorySize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNumeric_KeyPress);
             // 
             // label5
             // 
@@ -176,6 +177,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.btnMakeDefault);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -185,6 +187,15 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Default Application";
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(6, 59);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(598, 15);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "If you are using the portable version of ImageView, you need to run it with admin" +
+    "istrator privilege for this functionality to work.";
             // 
             // label2
             // 
@@ -197,11 +208,11 @@
             // 
             // btnMakeDefault
             // 
-            this.btnMakeDefault.Location = new System.Drawing.Point(202, 77);
+            this.btnMakeDefault.Location = new System.Drawing.Point(202, 89);
             this.btnMakeDefault.Name = "btnMakeDefault";
             this.btnMakeDefault.Size = new System.Drawing.Size(200, 40);
             this.btnMakeDefault.TabIndex = 1;
-            this.btnMakeDefault.Text = "Make Default Viewer";
+            this.btnMakeDefault.Text = "Choose Default Apps";
             this.btnMakeDefault.UseVisualStyleBackColor = true;
             this.btnMakeDefault.Click += new System.EventHandler(this.btnMakeDefault_Click);
             // 
@@ -219,6 +230,18 @@
             this.panel1.Size = new System.Drawing.Size(624, 63);
             this.panel1.TabIndex = 4;
             // 
+            // btnApply
+            // 
+            this.btnApply.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.btnApply.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnApply.Location = new System.Drawing.Point(369, 5);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(120, 53);
+            this.btnApply.TabIndex = 1;
+            this.btnApply.Text = "Apply";
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
             // btnCancel
             // 
             this.btnCancel.Cursor = System.Windows.Forms.Cursors.Arrow;
@@ -231,16 +254,13 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btnApply
+            // panel2
             // 
-            this.btnApply.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.btnApply.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnApply.Location = new System.Drawing.Point(369, 5);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(120, 53);
-            this.btnApply.TabIndex = 1;
-            this.btnApply.Text = "Apply";
-            this.btnApply.UseVisualStyleBackColor = true;
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel2.Location = new System.Drawing.Point(489, 5);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(10, 53);
+            this.panel2.TabIndex = 3;
             // 
             // btnOK
             // 
@@ -252,14 +272,6 @@
             this.btnOK.TabIndex = 2;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
-            // 
-            // panel2
-            // 
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(489, 5);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(10, 53);
-            this.panel2.TabIndex = 3;
             // 
             // FrmSettings
             // 
@@ -300,7 +312,7 @@
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TextBox txtHistoryMaxSize;
+        private System.Windows.Forms.TextBox txtHistorySize;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox chkHistorySaveOnExit;
         private System.Windows.Forms.Label label1;
@@ -308,5 +320,6 @@
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label label6;
     }
 }

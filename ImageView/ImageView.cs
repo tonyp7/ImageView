@@ -273,17 +273,22 @@ namespace ImageView
                         workingData.image = Image.FromStream(fs);
                     }
                     
-                    //Add loaded file to history
-                    config.History.AddFile(workingData.fileInfo.FullName);
+                    
+                    
 
                     //Assign image to picture box then refresh sizing
                     pictureBox.Image = workingData.image;
                     resizePictureBox();
 
 
-                    // fixed visual infos
+                    //Add loaded file to history if necessary
+                    config.History.AddFile(workingData.fileInfo.FullName);
+                    //attempt to delete first to re-add it on top of the pile and not duplicate data
                     toolStripComboBoxNavigation.Items.Remove(workingData.fileInfo.FullName);
                     toolStripComboBoxNavigation.Items.Insert(0, workingData.fileInfo.FullName);
+                    //if now the list is above max size then we clean up the last item
+                    removeExcessHistoryItems();
+
                     toolStripComboBoxNavigation_UpdateText(workingData.fileInfo.FullName);
                     toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} x {2} BPP", workingData.image.Width, workingData.image.Height, Image.GetPixelFormatSize(workingData.image.PixelFormat));
                     toolStripStatusLabelImageInfo.Visible = true;
@@ -347,8 +352,29 @@ namespace ImageView
 
         private void showInformation()
         {
-            FrmInformation f = new FrmInformation(workingData);
-            f.ShowDialog();
+            if(workingData.fileInfo != null)
+            {
+                FrmInformation f = new FrmInformation(workingData);
+                f.ShowDialog();
+            }
+        }
+
+
+        public void removeExcessHistoryItems()
+        {
+            removeExcessHistoryItems(config.History.MaxSize);
+        }
+        /// <summary>
+        /// Forces a refresh of history, this is called if user changes its history size and all of a sudden there is not enough history size to store user history
+        /// </summary>
+        public void removeExcessHistoryItems(int size)
+        {
+
+            while(size < toolStripComboBoxNavigation.Items.Count)
+            {
+                toolStripComboBoxNavigation.Items.RemoveAt(toolStripComboBoxNavigation.Items.Count - 1);
+            }
+            
         }
 
 

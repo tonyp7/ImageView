@@ -9,7 +9,7 @@ using Microsoft.VisualBasic;
 
 namespace ImageView
 {
-    public class Config : ICloneable
+    public class Config : ICloneable, IEquatable<Config>
     {
         private string configFileLocation = null;
         public XmlDocument configFileDoc = null;
@@ -47,6 +47,7 @@ namespace ImageView
             History.Save(configFileDoc);
             Display.Save(configFileDoc);
             Window.Save(configFileDoc);
+            Slideshow.Save(configFileDoc);
 
             try
             {
@@ -93,6 +94,10 @@ namespace ImageView
 
 
                 //restore previous config
+                History.Load(configFileDoc);
+                Display.Load(configFileDoc);
+                Window.Load(configFileDoc);
+                Slideshow.Load(configFileDoc);
 
 
             }
@@ -158,25 +163,52 @@ namespace ImageView
 
         }
 
-
+        public bool Equals(Config other)
+        {
+            return Display.Equals(other) && History.Equals(other) && Slideshow.Equals(other) && Window.Equals(other);
+        }
     }
 
 
-    public class ConfigHistory : ICloneable
+    public class ConfigHistory : ICloneable, IEquatable<ConfigHistory>
     {
         public static readonly int MAXIMUM_HISTORY_SIZE = 99;
         public static readonly int DEFAULT_HISTORY_SIZE = 20;
 
         private List<string> history;
-        public int Size = DEFAULT_HISTORY_SIZE;
+
+        private int size;
+        public int MaxSize {
+            get
+            {
+                return size;
+            }
+            set
+            {
+                size = value;
+
+                //clean up history in case there are more items in history than its max capacity
+                if (history.Count > size)
+                {
+                    history.RemoveRange(size, history.Count - size);
+                }
+            }
+        }
         public bool SaveOnExit = true;
 
         
-
+        public int CurrentSize
+        {
+            get
+            {
+                return history.Count;
+            }
+        }
 
         public ConfigHistory()
         {
             history = new List<string>();
+            size = DEFAULT_HISTORY_SIZE;
         }
 
         public void AddFile(string file)
@@ -184,10 +216,10 @@ namespace ImageView
             history.Remove(file); //attemp to delete from history
             history.Insert(0, file); //reinsert as index 0 == last viewed
             
-            if(history.Count > Size)
+            if(history.Count > MaxSize)
             {
                 //delete everything after max size
-                history.RemoveRange(Size-1, history.Count - Size);
+                history.RemoveRange(MaxSize, history.Count - MaxSize);
             }
         }
 
@@ -196,10 +228,28 @@ namespace ImageView
             return history;
         }
 
+ 
+        public void Load(XmlDocument doc)
+        {
+            XmlNode n;
+            
+            n = doc.SelectSingleNode("/Settings/History/MaxSize");
 
+            n = doc.SelectSingleNode("/Settings/History/SaveOnExit");
+
+            XmlNodeList nlist = doc.SelectNodes("/Settings/History/Files/File");
+            if(nlist != null)
+            {
+                foreach(XmlNode nd in nlist)
+                {
+
+                }
+            }
+
+        }
         public void Save(XmlDocument doc)
         {
-            Config.SafeNodeSelect(doc, "/Settings/History/MaxSize", Size.ToString());
+            Config.SafeNodeSelect(doc, "/Settings/History/MaxSize", MaxSize.ToString());
             Config.SafeNodeSelect(doc, "/Settings/History/SaveOnExit", SaveOnExit.ToString());
 
             XmlNode n = Config.SafeNodeSelect(doc, "/Settings/History/Files");
@@ -221,16 +271,21 @@ namespace ImageView
         {
             ConfigHistory ch = new ConfigHistory();
             ch.history.AddRange(this.history);
-            ch.Size = this.Size;
+            ch.MaxSize = this.MaxSize;
             ch.SaveOnExit = this.SaveOnExit;
 
             return ch;
+        }
+
+        public bool Equals(ConfigHistory other)
+        {
+            return SaveOnExit == other.SaveOnExit && MaxSize == other.MaxSize;
         }
     }
 
     
 
-    public class ConfigWindow : ICloneable
+    public class ConfigWindow : ICloneable, IEquatable<ConfigWindow>
     {
         public int X { get; set; }
         public int Y { get; set; }
@@ -250,6 +305,11 @@ namespace ImageView
             return cw;
         }
 
+        public bool Equals(ConfigWindow other)
+        {
+            return X == other.X && Y == other.Y && Width == other.Width && Height == other.Height && State == other.State;
+        }
+
         public void Load(XmlDocument doc)
         {
 
@@ -265,7 +325,7 @@ namespace ImageView
         }
     }
 
-    public class ConfigSlideshow : ICloneable
+    public class ConfigSlideshow : ICloneable, IEquatable<ConfigSlideshow>
     {
         public static readonly int MAXIMUM_SLIDESHOW_TIMER = 999999;
         public static readonly int DEFAULT_SLIDESHOW_TIMER = 5000;
@@ -290,9 +350,14 @@ namespace ImageView
             c.Timer = this.Timer;
             return c;
         }
+
+        public bool Equals(ConfigSlideshow other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public class ConfigDisplay : ICloneable
+    public class ConfigDisplay : ICloneable, IEquatable<ConfigDisplay>
     {
         
 
@@ -319,6 +384,11 @@ namespace ImageView
             cd.SizeMode = this.SizeMode;
 
             return cd;
+        }
+
+        public bool Equals(ConfigDisplay other)
+        {
+            return Zoom == other.Zoom && SizeMode == other.SizeMode;
         }
     }
 

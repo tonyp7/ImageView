@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAbout));
             this.button1 = new System.Windows.Forms.Button();
             this.pictureBoxDonate = new System.Windows.Forms.PictureBox();
             this.labelName = new System.Windows.Forms.Label();
@@ -37,7 +38,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.label5 = new System.Windows.Forms.Label();
-            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.linkLabelGetImageView = new System.Windows.Forms.LinkLabel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -58,7 +59,7 @@
             // pictureBoxDonate
             // 
             this.pictureBoxDonate.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxDonate.Image = global::ImageView.Properties.Resources.paypal_donate_button;
+            this.pictureBoxDonate.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxDonate.Image")));
             this.pictureBoxDonate.Location = new System.Drawing.Point(103, 38);
             this.pictureBoxDonate.Name = "pictureBoxDonate";
             this.pictureBoxDonate.Size = new System.Drawing.Size(157, 46);
@@ -121,6 +122,7 @@
             this.linkLabel1.TabIndex = 9;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "https://github.com/tonyp7/ImageView";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
             // 
             // label5
             // 
@@ -131,15 +133,16 @@
             this.label5.TabIndex = 10;
             this.label5.Text = "Get Latest Version:";
             // 
-            // linkLabel2
+            // linkLabelGetImageView
             // 
-            this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Location = new System.Drawing.Point(143, 91);
-            this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(126, 13);
-            this.linkLabel2.TabIndex = 11;
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.Text = "https://getimageview.net";
+            this.linkLabelGetImageView.AutoSize = true;
+            this.linkLabelGetImageView.Location = new System.Drawing.Point(143, 91);
+            this.linkLabelGetImageView.Name = "linkLabelGetImageView";
+            this.linkLabelGetImageView.Size = new System.Drawing.Size(126, 13);
+            this.linkLabelGetImageView.TabIndex = 11;
+            this.linkLabelGetImageView.TabStop = true;
+            this.linkLabelGetImageView.Text = "https://getimageview.net";
+            this.linkLabelGetImageView.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
             // 
             // groupBox1
             // 
@@ -177,7 +180,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(397, 290);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.linkLabel2);
+            this.Controls.Add(this.linkLabelGetImageView);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label4);
@@ -212,7 +215,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.LinkLabel linkLabel2;
+        private System.Windows.Forms.LinkLabel linkLabelGetImageView;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;

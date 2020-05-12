@@ -28,7 +28,7 @@ namespace ImageView
             }
         }
 
-        private Config config;
+        public Config config;
 
 
 
@@ -442,7 +442,7 @@ namespace ImageView
 
         private void showSettings()
         {
-            FrmSettings f = new FrmSettings(config);
+            FrmSettings f = new FrmSettings(this);
             f.ShowDialog();
         }
 
@@ -481,10 +481,10 @@ namespace ImageView
             delete();
         }
 
-
-
-
-
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 
 

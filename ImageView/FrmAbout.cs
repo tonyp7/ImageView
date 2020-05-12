@@ -40,5 +40,11 @@ namespace ImageView
         {
 
         }
+
+        private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            LinkLabel lbl = (LinkLabel)sender;
+            Program.LaunchURL(lbl.Text);
+        }
     }
 }

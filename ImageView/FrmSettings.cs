@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace ImageView
 {
     public partial class FrmSettings : Form
     {
-        private Config configOriginal;
+        private FrmMain frmMain;
         private Config configNew;
 
 
@@ -22,14 +23,14 @@ namespace ImageView
         {
             txtSlideshowTimer.Text = configNew.Slideshow.Timer.ToString();
             chkHistorySaveOnExit.Checked = configNew.History.SaveOnExit;
-            txtHistoryMaxSize.Text = configNew.History.Size.ToString();
+            txtHistorySize.Text = configNew.History.MaxSize.ToString();
         }
 
-        public FrmSettings(Config config)
+        public FrmSettings(FrmMain frmMain)
         {
             InitializeComponent();
-            this.configOriginal = config;
-            this.configNew = (Config)config.Clone();
+            this.frmMain = frmMain;
+            this.configNew = (Config)frmMain.config.Clone();
             loadUIElements();
 
         }
@@ -52,8 +53,6 @@ namespace ImageView
         private void btnMakeDefault_Click(object sender, EventArgs e)
         {
             Program.LaunchURL("ms-settings:defaultapps");
-            //bool result = await System.Launcher.LaunchUriAsync(new Uri("ms-settings:defaultapps"));
-
         }
 
 
@@ -91,6 +90,58 @@ namespace ImageView
         private void txtSlideshowTimer_TextChanged(object sender, EventArgs e)
         {
             validateNumericTextBox(sender, e, ConfigSlideshow.DEFAULT_SLIDESHOW_TIMER, ConfigSlideshow.MAXIMUM_SLIDESHOW_TIMER);
+        }
+
+        private void btnApply_Click(object sender, EventArgs e)
+        {
+            apply();
+        }
+
+
+
+        private void apply()
+        {
+            
+
+            int value;
+
+            ////////////////////////
+            // SLIDESHOW
+            ////////////////////////
+            if(int.TryParse(txtSlideshowTimer.Text, out value) && value > 0 && value <= ConfigSlideshow.MAXIMUM_SLIDESHOW_TIMER)
+            {
+                configNew.Slideshow.Timer = value;
+            }
+            else
+            {
+                txtSlideshowTimer.Text = frmMain.config.Slideshow.Timer.ToString(); //something input by the user is wrong so current config value is restored
+            }
+
+            ////////////////////////
+            // HISTORY
+            ////////////////////////
+            configNew.History.SaveOnExit = chkHistorySaveOnExit.Checked;
+            if (int.TryParse(txtHistorySize.Text, out value) && value >= 0 && value <= ConfigHistory.MAXIMUM_HISTORY_SIZE)
+            {
+                configNew.History.MaxSize = value;
+                //apply the new history size -- if the new value is less than the old we have some clean up to do
+                if(value < frmMain.config.History.MaxSize)
+                {
+                    frmMain.removeExcessHistoryItems(value);
+                }
+
+            }
+            else
+            {
+                txtSlideshowTimer.Text = frmMain.config.History.MaxSize.ToString(); //something input by the user is wrong so current config value is restored
+            }
+
+
+            /////FINISH: New Config becomes old
+            frmMain.config = configNew;
+            configNew = null;
+            configNew = (Config)frmMain.config.Clone();
+
         }
     }
 }
