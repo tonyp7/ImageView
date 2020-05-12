@@ -232,17 +232,45 @@ namespace ImageView
         public void Load(XmlDocument doc)
         {
             XmlNode n;
-            
+
+            int ivalue;
+            bool bvalue;
+
+
+            //max size
             n = doc.SelectSingleNode("/Settings/History/MaxSize");
+            if(n != null && int.TryParse(n.InnerText, out ivalue) && ivalue >= 0 && ivalue <= MAXIMUM_HISTORY_SIZE)
+            {
+                size = ivalue;
+            }
+            else
+            {
+                size = DEFAULT_HISTORY_SIZE;
+            }
 
+            //save on exit
             n = doc.SelectSingleNode("/Settings/History/SaveOnExit");
+            if(n!=null && bool.TryParse(n.InnerText, out bvalue))
+            {
+                SaveOnExit = bvalue;
+            }
 
+            //history
             XmlNodeList nlist = doc.SelectNodes("/Settings/History/Files/File");
             if(nlist != null)
             {
+                int i = 1;
                 foreach(XmlNode nd in nlist)
                 {
-
+                    history.Add(nd.InnerText);
+                    if(i > size)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        i++;
+                    }
                 }
             }
 
@@ -339,9 +367,27 @@ namespace ImageView
             Timer = DEFAULT_SLIDESHOW_TIMER;
         }
 
+        public void Load(XmlDocument doc)
+        {
+            XmlNode n;
+
+            int ivalue;
+
+            //timer
+            n = doc.SelectSingleNode("/Settings/Slideshow/Timer");
+            if (n != null && int.TryParse(n.InnerText, out ivalue) && ivalue >= 0 && ivalue <= MAXIMUM_SLIDESHOW_TIMER)
+            {
+                Timer = ivalue;
+            }
+            else
+            {
+                Timer = DEFAULT_SLIDESHOW_TIMER;
+            }
+        }
+
         public void Save(XmlDocument doc)
         {
-            Config.SafeNodeSelect(doc, "/Settings/Slideshow/Zoom", Timer.ToString());
+            Config.SafeNodeSelect(doc, "/Settings/Slideshow/Timer", Timer.ToString());
         }
 
         public object Clone()
@@ -364,10 +410,56 @@ namespace ImageView
         public int Zoom { get; set; }
         public ImageSizeMode SizeMode { get; set; }
 
+        private static readonly int DEFAULT_ZOOM = 100;
+        private static readonly ImageSizeMode DEFAULT_IMAGESIZEMODE = ImageSizeMode.Autosize;
+
         public ConfigDisplay()
         {
-            SizeMode = ImageSizeMode.Autosize;
-            Zoom = 100;
+            SizeMode = DEFAULT_IMAGESIZEMODE;
+            Zoom = DEFAULT_ZOOM;
+        }
+
+        public void Load(XmlDocument doc)
+        {
+            XmlNode n;
+            int ivalue;
+
+            //zoom
+            n = doc.SelectSingleNode("/Settings/Display/Zoom");
+            if (n != null && int.TryParse(n.InnerText, out ivalue) && ivalue > 0)
+            {
+                Zoom = ivalue;
+            }
+            else
+            {
+                Zoom = DEFAULT_ZOOM;
+            }
+
+            //image size mode
+            n = doc.SelectSingleNode("/Settings/Display/SizeMode");
+            if(n != null)
+            {
+                switch (n.InnerText)
+                {
+                    case "Autosize":
+                        SizeMode = ImageSizeMode.Autosize;
+                        break;
+                    case "Normal":
+                        SizeMode = ImageSizeMode.Normal;
+                        break;
+                    case "Zoom":
+                        SizeMode = ImageSizeMode.Zoom;
+                        break;
+                    default:
+                        SizeMode = DEFAULT_IMAGESIZEMODE;
+                        break;
+
+                }
+            }
+            else
+            {
+                SizeMode = DEFAULT_IMAGESIZEMODE;
+            }
         }
 
         public void Save(XmlDocument doc)
