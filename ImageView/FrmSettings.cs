@@ -143,5 +143,11 @@ namespace ImageView
             configNew = (Config)frmMain.config.Clone();
 
         }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            apply();
+            this.Close();
+        }
     }
 }
