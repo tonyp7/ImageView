@@ -485,6 +485,28 @@ namespace ImageView
         {
             this.Close();
         }
+
+        private void panelMain_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.All;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void panelMain_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            if(s != null & s.Count() > 0)
+            {
+                loadPicture(s[0]);
+            }
+
+        }
     }
 
 

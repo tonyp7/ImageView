@@ -518,6 +518,7 @@
             // 
             // panelMain
             // 
+            this.panelMain.AllowDrop = true;
             this.panelMain.AutoScroll = true;
             this.panelMain.BackColor = System.Drawing.Color.Black;
             this.panelMain.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
@@ -528,6 +529,8 @@
             this.panelMain.Name = "panelMain";
             this.panelMain.Size = new System.Drawing.Size(1008, 639);
             this.panelMain.TabIndex = 4;
+            this.panelMain.DragDrop += new System.Windows.Forms.DragEventHandler(this.panelMain_DragDrop);
+            this.panelMain.DragEnter += new System.Windows.Forms.DragEventHandler(this.panelMain_DragEnter);
             this.panelMain.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
             this.panelMain.Resize += new System.EventHandler(this.panelMain_Resize);
             // 
