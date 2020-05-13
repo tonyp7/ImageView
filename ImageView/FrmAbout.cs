@@ -21,7 +21,7 @@ namespace ImageView
             labelName.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 
             var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            labelVersion.Text = String.Format("Version {0}.{1}.{2}", v.Major, v.Minor, v.Revision);
+            labelVersion.Text = String.Format("Version {0}.{1}.{2}", v.Major, v.Minor, v.Build);
 
 
 
