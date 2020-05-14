@@ -52,6 +52,9 @@ namespace ImageView
             close();
 
 
+            //restore history
+            toolStripComboBoxNavigation.Items.AddRange( config.History.Get().ToArray() );
+
             //restore window size
             if (config.Window.Width != 0 && config.Window.Height != 0)
             {

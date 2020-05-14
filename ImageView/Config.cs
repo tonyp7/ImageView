@@ -198,6 +198,7 @@ namespace ImageView
         public bool SaveOnExit = true;
 
         
+
         public int CurrentSize
         {
             get
