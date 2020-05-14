@@ -457,11 +457,23 @@ namespace ImageView
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             //Save last window size and position
-            config.Window.X = this.Location.X;
-            config.Window.Y = this.Location.Y;
-            config.Window.Width = this.Width;
-            config.Window.Height = this.Height;
-            config.Window.State = this.WindowState;
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                config.Window.X = this.RestoreBounds.X;
+                config.Window.Y = this.RestoreBounds.Y;
+                config.Window.Width = this.RestoreBounds.Width;
+                config.Window.Height = this.RestoreBounds.Height;
+                config.Window.State = this.WindowState;
+            }
+            else
+            {
+                config.Window.X = this.Location.X;
+                config.Window.Y = this.Location.Y;
+                config.Window.Width = this.Width;
+                config.Window.Height = this.Height;
+                config.Window.State = this.WindowState;
+            }
+            
         }
 
         private void informationToolStripMenuItem_Click(object sender, EventArgs e)
