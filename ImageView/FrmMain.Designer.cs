@@ -42,6 +42,11 @@
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.informationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.rotateLeftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rotateRightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.verticalFlipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.horizontalFlipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fullscreenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.slideshowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -180,7 +185,12 @@
             // imageToolStripMenuItem
             // 
             this.imageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.informationToolStripMenuItem});
+            this.informationToolStripMenuItem,
+            this.toolStripSeparator9,
+            this.rotateLeftToolStripMenuItem,
+            this.rotateRightToolStripMenuItem,
+            this.verticalFlipToolStripMenuItem,
+            this.horizontalFlipToolStripMenuItem});
             this.imageToolStripMenuItem.Name = "imageToolStripMenuItem";
             this.imageToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
             this.imageToolStripMenuItem.Text = "&Image";
@@ -190,9 +200,50 @@
             this.informationToolStripMenuItem.Image = global::ImageView.Properties.Resources.properties16;
             this.informationToolStripMenuItem.Name = "informationToolStripMenuItem";
             this.informationToolStripMenuItem.ShortcutKeyDisplayString = "I";
-            this.informationToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.informationToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
             this.informationToolStripMenuItem.Text = "Information";
             this.informationToolStripMenuItem.Click += new System.EventHandler(this.informationToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator9
+            // 
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(251, 6);
+            // 
+            // rotateLeftToolStripMenuItem
+            // 
+            this.rotateLeftToolStripMenuItem.Image = global::ImageView.Properties.Resources.rotaterleft16;
+            this.rotateLeftToolStripMenuItem.Name = "rotateLeftToolStripMenuItem";
+            this.rotateLeftToolStripMenuItem.ShortcutKeyDisplayString = "L";
+            this.rotateLeftToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.rotateLeftToolStripMenuItem.Text = "Rotate Left (Counter Clockwise)";
+            this.rotateLeftToolStripMenuItem.Click += new System.EventHandler(this.rotateLeftToolStripMenuItem_Click);
+            // 
+            // rotateRightToolStripMenuItem
+            // 
+            this.rotateRightToolStripMenuItem.Image = global::ImageView.Properties.Resources.rotateright16;
+            this.rotateRightToolStripMenuItem.Name = "rotateRightToolStripMenuItem";
+            this.rotateRightToolStripMenuItem.ShortcutKeyDisplayString = "R";
+            this.rotateRightToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.rotateRightToolStripMenuItem.Text = "Rotate Right (Clockwise)";
+            this.rotateRightToolStripMenuItem.Click += new System.EventHandler(this.rotateRightToolStripMenuItem_Click);
+            // 
+            // verticalFlipToolStripMenuItem
+            // 
+            this.verticalFlipToolStripMenuItem.Image = global::ImageView.Properties.Resources.verticalflip16;
+            this.verticalFlipToolStripMenuItem.Name = "verticalFlipToolStripMenuItem";
+            this.verticalFlipToolStripMenuItem.ShortcutKeyDisplayString = "V";
+            this.verticalFlipToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.verticalFlipToolStripMenuItem.Text = "Vertical Flip";
+            this.verticalFlipToolStripMenuItem.Click += new System.EventHandler(this.verticalFlipToolStripMenuItem_Click);
+            // 
+            // horizontalFlipToolStripMenuItem
+            // 
+            this.horizontalFlipToolStripMenuItem.Image = global::ImageView.Properties.Resources.horizontalflip16;
+            this.horizontalFlipToolStripMenuItem.Name = "horizontalFlipToolStripMenuItem";
+            this.horizontalFlipToolStripMenuItem.ShortcutKeyDisplayString = "H";
+            this.horizontalFlipToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.horizontalFlipToolStripMenuItem.Text = "Horizontal Flip";
+            this.horizontalFlipToolStripMenuItem.Click += new System.EventHandler(this.horizontalFlipToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -648,6 +699,11 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripMenuItem rotateLeftToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rotateRightToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem verticalFlipToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem horizontalFlipToolStripMenuItem;
     }
 }
 

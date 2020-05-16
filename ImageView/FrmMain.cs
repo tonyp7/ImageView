@@ -248,6 +248,12 @@ namespace ImageView
 
         }
 
+        /// <summary>
+        /// Implements a lot of shortcut keys when Windows Forms does not natively support the shortcuts. For instance, single key shortcuts are invalid for winforms
+        /// so this method contains many single key shortcuts
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)
         {
 
@@ -267,6 +273,18 @@ namespace ImageView
                     break;
                 case Keys.F:
                     toggleFullScreen();
+                    break;
+                case Keys.L:
+                    rotateLeft();
+                    break;
+                case Keys.R:
+                    rotateRight();
+                    break;
+                case Keys.V:
+                    verticalFlip();
+                    break;
+                case Keys.H:
+                    horizontalFlip();
                     break;
                 case Keys.Escape:
                     if (fullscreen)
@@ -522,6 +540,30 @@ namespace ImageView
             }
 
         }
+
+        private void rotateLeftToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotateLeft();
+        }
+
+        private void rotateRightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotateRight();
+        }
+
+
+        private void verticalFlipToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            verticalFlip();
+        }
+
+        private void horizontalFlipToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            horizontalFlip();
+        }
+
+
+
     }
 
 
