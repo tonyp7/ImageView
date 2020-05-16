@@ -6,8 +6,13 @@ ImageView is portable and self-contained within its executable. Installation is 
 
 ImageView is safe and respects your privacy. It runs offline with no connection to the Internet.
 
-# Download
-
 # Screenshots
 
 ![Main interface](https://github.com/tonyp7/ImageView/raw/master/Screenshots/screenshot1.jpg)
+
+# Download
+
+* [ImageView_1.1.2_Setup.exe](https://github.com/tonyp7/ImageView/releases/download/v1.1.2/ImageView_1.1.2_Setup.exe)
+* [ImageView_1.1.2_Portable.zip](https://github.com/tonyp7/ImageView/releases/download/v1.1.2/ImageView_1.1.2_Portable.zip)
+
+The portable version will not register the app as an image viewer. It is recommended to use the setup version for simplicity.
