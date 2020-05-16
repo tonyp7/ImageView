@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmInformation));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageFile = new System.Windows.Forms.TabPage();
@@ -74,6 +76,15 @@
             this.dgvFile.AllowUserToAddRows = false;
             this.dgvFile.AllowUserToDeleteRows = false;
             this.dgvFile.AllowUserToOrderColumns = true;
+            this.dgvFile.BackgroundColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.ControlDark;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvFile.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvFile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvFile.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colProperty,
@@ -84,6 +95,7 @@
             this.dgvFile.Name = "dgvFile";
             this.dgvFile.ReadOnly = true;
             this.dgvFile.RowHeadersVisible = false;
+            this.dgvFile.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvFile.Size = new System.Drawing.Size(450, 346);
             this.dgvFile.TabIndex = 1;
             // 
@@ -117,6 +129,15 @@
             this.dgvExif.AllowUserToAddRows = false;
             this.dgvExif.AllowUserToDeleteRows = false;
             this.dgvExif.AllowUserToOrderColumns = true;
+            this.dgvExif.BackgroundColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.ControlDark;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvExif.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvExif.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvExif.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn1,
@@ -127,6 +148,7 @@
             this.dgvExif.Name = "dgvExif";
             this.dgvExif.ReadOnly = true;
             this.dgvExif.RowHeadersVisible = false;
+            this.dgvExif.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvExif.Size = new System.Drawing.Size(450, 346);
             this.dgvExif.TabIndex = 2;
             // 

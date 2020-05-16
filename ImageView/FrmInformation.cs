@@ -26,15 +26,15 @@ namespace ImageView
             dgvFile.Rows.Add("Name", workingData.fileInfo.Name);
             dgvFile.Rows.Add("Dimensions", String.Format("{0} x {1}", workingData.image.Width, workingData.image.Height));
             dgvFile.Rows.Add("Pixel Format", Program.HumanReadablePixelFormat(workingData.image.PixelFormat));
-            dgvFile.Rows.Add("Size (bytes)", workingData.fileInfo.Length);
-            dgvFile.Rows.Add("Created", workingData.fileInfo.CreationTime);
-            dgvFile.Rows.Add("Last Written", workingData.fileInfo.LastWriteTime);
+            dgvFile.Rows.Add("Size (bytes)", workingData.fileInfo.Length.ToString());
+            dgvFile.Rows.Add("Created", workingData.fileInfo.CreationTime.ToString());
+            dgvFile.Rows.Add("Last Written", workingData.fileInfo.LastWriteTime.ToString());
             dgvFile.Rows.Add("Path", workingData.fileInfo.DirectoryName);
-            dgvFile.Rows.Add("File Attributes", workingData.fileInfo.Attributes);
+            dgvFile.Rows.Add("File Attributes", workingData.fileInfo.Attributes.ToString());
 
 
             //exif
-            foreach (PropertyItem property in workingData.image.PropertyItems)
+            foreach (PropertyItem property in workingData.propertyItems)
             {
                 object propValue;
                 switch ((PropertyTagType)property.Type)
@@ -82,7 +82,7 @@ namespace ImageView
                         break;
                 }
 
-                dgvExif.Rows.Add((PropertyTagId)property.Id, propValue);
+                dgvExif.Rows.Add((PropertyTagId)property.Id, propValue.ToString());
             }
 
 
