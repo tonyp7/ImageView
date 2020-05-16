@@ -71,6 +71,36 @@ namespace ImageView.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap horizontalflip16 {
+            get {
+                object obj = ResourceManager.GetObject("horizontalflip16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap horizontalflip24 {
+            get {
+                object obj = ResourceManager.GetObject("horizontalflip24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap horizontalflip32 {
+            get {
+                object obj = ResourceManager.GetObject("horizontalflip32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon imageview {
@@ -133,6 +163,66 @@ namespace ImageView.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap rotateright16 {
+            get {
+                object obj = ResourceManager.GetObject("rotateright16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap rotateright24 {
+            get {
+                object obj = ResourceManager.GetObject("rotateright24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap rotateright32 {
+            get {
+                object obj = ResourceManager.GetObject("rotateright32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap rotaterleft16 {
+            get {
+                object obj = ResourceManager.GetObject("rotaterleft16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap rotaterleft24 {
+            get {
+                object obj = ResourceManager.GetObject("rotaterleft24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap rotaterleft32 {
+            get {
+                object obj = ResourceManager.GetObject("rotaterleft32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap slideshow16 {
             get {
                 object obj = ResourceManager.GetObject("slideshow16", resourceCulture);
@@ -146,6 +236,36 @@ namespace ImageView.Properties {
         internal static System.Drawing.Bitmap slideshow32 {
             get {
                 object obj = ResourceManager.GetObject("slideshow32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap verticalflip16 {
+            get {
+                object obj = ResourceManager.GetObject("verticalflip16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap verticalflip24 {
+            get {
+                object obj = ResourceManager.GetObject("verticalflip24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap verticalflip32 {
+            get {
+                object obj = ResourceManager.GetObject("verticalflip32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
