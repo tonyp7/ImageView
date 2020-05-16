@@ -71,7 +71,7 @@ namespace ImageView
         }
         private void resizePictureBox(Image i)
         {
-
+            this.SuspendLayout();
 #if DEBUG
             if (workingData.fileInfo != null)
                 System.Diagnostics.Debug.WriteLine("resizePictureBox " + workingData.fileInfo.Name);
@@ -194,6 +194,8 @@ namespace ImageView
                 toolStripStatusLabelZoom.Text = String.Format("{0} %", zoom);
                 toolStripComboBoxZoom_UpdateText(String.Format("{0}%", zoom));
             }
+
+            this.ResumeLayout();
         }
 
 
