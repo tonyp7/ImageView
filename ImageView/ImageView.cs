@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Linq;
+using System.Drawing.Imaging;
 
 namespace ImageView
 {
@@ -18,6 +19,7 @@ namespace ImageView
         public FileInfo fileInfo;
         public string[] directoryFiles;
         public int directoryIndex;
+        public PropertyItem[] propertyItems;
 
         public WorkingData()
         {
@@ -31,6 +33,7 @@ namespace ImageView
             directoryIndex = -1;
             directoryFiles = null;
             image = null;
+            propertyItems = null;
         }
     }
 
@@ -271,6 +274,7 @@ namespace ImageView
                     using (FileStream fs = new FileStream(workingData.fileInfo.FullName, FileMode.Open, FileAccess.Read))
                     {
                         workingData.image = Image.FromStream(fs);
+                        workingData.propertyItems = (PropertyItem[])workingData.image.PropertyItems.Clone();
                     }
                     
                     
@@ -458,6 +462,48 @@ namespace ImageView
             timerSlideShow.Start();
         }
 
+
+        private void horizontalFlip()
+        {
+            if (workingData.image != null)
+            {
+                workingData.image.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                pictureBox.Image = workingData.image;
+            }
+        }
+
+        private void verticalFlip()
+        {
+            if (workingData.image != null)
+            {
+                workingData.image.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                pictureBox.Image = workingData.image;
+            }
+        }
+
+        private void rotateRight()
+        {
+            if (workingData.image != null)
+            {
+                workingData.image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                pictureBox.Image = workingData.image;
+                resizePictureBox(); //see rotate left
+            }
+        }
+
+        private void rotateLeft()
+        {
+            if (workingData.image != null)
+            {
+                workingData.image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                pictureBox.Image = workingData.image;
+
+                //this will recenter the image properly in the panel 
+                //in case the image width/height are different, if you rotate in normal (not autosize) mode, the 
+                //image position X and Y needs to be updated
+                resizePictureBox(); 
+            }
+        }
 
 
         /// <summary>
