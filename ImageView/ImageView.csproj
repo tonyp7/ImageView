@@ -180,6 +180,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="imageview.ico" />
+    <None Include="Resources\image.png" />
+    <None Include="Resources\settings32.png" />
+    <None Include="Resources\settings.png" />
     <None Include="Resources\delete.png" />
     <None Include="Resources\open.png" />
     <None Include="Resources\slideshow.png" />

@@ -147,6 +147,7 @@
             // 
             // deleteToolStripMenuItem
             // 
+            this.deleteToolStripMenuItem.Image = global::ImageView.Properties.Resources.delete;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
@@ -461,7 +462,7 @@
             this.toolStripDropDownButtonDisplayType.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.normalSizeToolStripMenuItem,
             this.AutosizeToolStripMenuItem});
-            this.toolStripDropDownButtonDisplayType.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButtonDisplayType.Image")));
+            this.toolStripDropDownButtonDisplayType.Image = global::ImageView.Properties.Resources.image;
             this.toolStripDropDownButtonDisplayType.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButtonDisplayType.Name = "toolStripDropDownButtonDisplayType";
             this.toolStripDropDownButtonDisplayType.Size = new System.Drawing.Size(45, 39);
@@ -470,14 +471,14 @@
             // normalSizeToolStripMenuItem
             // 
             this.normalSizeToolStripMenuItem.Name = "normalSizeToolStripMenuItem";
-            this.normalSizeToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.normalSizeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.normalSizeToolStripMenuItem.Text = "Normal";
             this.normalSizeToolStripMenuItem.Click += new System.EventHandler(this.normalSizeToolStripMenuItem_Click);
             // 
             // AutosizeToolStripMenuItem
             // 
             this.AutosizeToolStripMenuItem.Name = "AutosizeToolStripMenuItem";
-            this.AutosizeToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.AutosizeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.AutosizeToolStripMenuItem.Text = "Autosize";
             this.AutosizeToolStripMenuItem.Click += new System.EventHandler(this.AutosizeToolStripMenuItem_Click);
             // 
