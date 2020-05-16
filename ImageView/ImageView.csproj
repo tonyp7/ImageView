@@ -180,6 +180,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="imageview.ico" />
+    <None Include="Resources\delete.png" />
+    <None Include="Resources\open.png" />
+    <None Include="Resources\slideshow.png" />
+    <None Include="Resources\right.png" />
+    <None Include="Resources\left.png" />
+    <None Include="Resources\left32.png" />
+    <None Include="Resources\left24.png" />
+    <None Include="Resources\right32.png" />
+    <None Include="Resources\right24.png" />
+    <None Include="Resources\right16.png" />
+    <None Include="Resources\left16.png" />
     <None Include="Resources\rotaterleft32.png" />
     <None Include="Resources\rotaterleft24.png" />
     <None Include="Resources\rotaterleft16.png" />

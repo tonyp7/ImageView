@@ -69,6 +69,7 @@ namespace ImageView
         }
 
 
+
         private void FrmMain_MouseWheel(object sender, MouseEventArgs e)
         {
             if(e.Delta < 0) //scroll down
