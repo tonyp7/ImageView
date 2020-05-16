@@ -180,6 +180,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="imageview.ico" />
+    <None Include="Resources\rotaterleft32.png" />
+    <None Include="Resources\rotaterleft24.png" />
+    <None Include="Resources\rotaterleft16.png" />
+    <None Include="Resources\rotateright32.png" />
+    <None Include="Resources\rotateright24.png" />
+    <None Include="Resources\rotateright16.png" />
+    <None Include="Resources\horizontalflip32.png" />
+    <None Include="Resources\horizontalflip24.png" />
+    <None Include="Resources\horizontalflip16.png" />
+    <None Include="Resources\verticalflip32.png" />
+    <None Include="Resources\verticalflip24.png" />
+    <None Include="Resources\verticalflip16.png" />
     <None Include="Resources\imageview.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
