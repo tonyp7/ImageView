@@ -474,7 +474,7 @@
             // 
             this.normalSizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.normalSizeToolStripMenuItem.Name = "normalSizeToolStripMenuItem";
-            this.normalSizeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.normalSizeToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.normalSizeToolStripMenuItem.Text = "Normal";
             this.normalSizeToolStripMenuItem.Click += new System.EventHandler(this.normalSizeToolStripMenuItem_Click);
             // 
@@ -482,7 +482,7 @@
             // 
             this.AutosizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.AutosizeToolStripMenuItem.Name = "AutosizeToolStripMenuItem";
-            this.AutosizeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.AutosizeToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.AutosizeToolStripMenuItem.Text = "Autosize";
             this.AutosizeToolStripMenuItem.Click += new System.EventHandler(this.AutosizeToolStripMenuItem_Click);
             // 
