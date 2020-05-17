@@ -64,6 +64,25 @@ namespace ImageView
             toolStripStatusLabelFileSize.Text = "";
         }
 
+        private void refreshImageSizeModeUI()
+        {
+            switch (config.Display.SizeMode)
+            {
+                case ImageSizeMode.Autosize:
+                    AutosizeToolStripMenuItem.Image = ImageView.Properties.Resources.apply16;
+                    normalSizeToolStripMenuItem.Image = null;
+                    break;
+                case ImageSizeMode.Normal:
+                    AutosizeToolStripMenuItem.Image = null;
+                    normalSizeToolStripMenuItem.Image = ImageView.Properties.Resources.apply16;
+                    break;
+                default:
+                    AutosizeToolStripMenuItem.Image = null;
+                    normalSizeToolStripMenuItem.Image = null;
+                    break;
+            }
+
+        }
 
         private void resizePictureBox()
         {

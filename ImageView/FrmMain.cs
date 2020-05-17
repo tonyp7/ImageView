@@ -41,6 +41,8 @@ namespace ImageView
         //private FormWindowState windowStateBeforeEnteringFullscreen = FormWindowState.Normal;
         //private Point window
 
+
+
         public FrmMain()
         {
             InitializeComponent();
@@ -54,6 +56,9 @@ namespace ImageView
 
             //restore history
             toolStripComboBoxNavigation.Items.AddRange( config.History.Get().ToArray() );
+
+            //set check mark on the type of image view
+            refreshImageSizeModeUI();
 
             //restore window size
             if (config.Window.Width != 0 && config.Window.Height != 0)
@@ -104,13 +109,18 @@ namespace ImageView
         private void AutosizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             config.Display.SizeMode = ImageSizeMode.Autosize;
+            refreshImageSizeModeUI();
             resizePictureBox();
         }
         private void normalSizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             config.Display.SizeMode = ImageSizeMode.Normal;
+            refreshImageSizeModeUI();
             resizePictureBox();
         }
+
+
+
 
 
 
@@ -158,23 +168,39 @@ namespace ImageView
         }
         private void toolStripComboBoxZoom_SelectedIndexChanged(object sender, EventArgs e)
         {
+            zoom();
+        }
+
+        private void toolStripComboBoxZoom_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '\r')
+            {
+                zoom();
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// Zoom! max zoom is for the moment set to 400 arbitrarily. When zooming on big pictures the program becomes a giant sloth and the pictubox control shows its limit here
+        /// until a more robust solution is found, this will stay in place.
+        /// </summary>
+        private void zoom()
+        {
             int zoom = 100;
             if (int.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
             {
+                if (zoom > 400) zoom = 400;
                 config.Display.SizeMode = ImageSizeMode.Zoom;
                 config.Display.Zoom = zoom;
-#if DEBUG
-                System.Diagnostics.Debug.WriteLine("Resize from toolStripComboBoxZoom_SelectedIndexChanged");
-#endif
+                refreshImageSizeModeUI();
                 resizePictureBox();
 
                 //remove focus from the textbox so that user can navigate with arrow keys etc.
                 this.ActiveControl = null;
             }
-
         }
 
-        
+
 
         private void panelMain_Resize(object sender, EventArgs e)
         {
@@ -425,26 +451,6 @@ namespace ImageView
 
             }
             
-
-            //if (drag)
-            //{
-            //    int deltaX = e.X - mousePosition.X;
-            //    int deltaY = mousePosition.Y - e.Y;
-
-            //    int scrollX = panelMain.HorizontalScroll.Value + deltaX;
-            //    int scrollY = panelMain.VerticalScroll.Value + deltaY;
-
-            //    scrollX = Program.Clamp(scrollX, panelMain.HorizontalScroll.Minimum, panelMain.HorizontalScroll.Maximum);
-            //    scrollY = Program.Clamp(scrollY, panelMain.VerticalScroll.Minimum, panelMain.VerticalScroll.Maximum);
-
-
-            //    panelMain.HorizontalScroll.Value = scrollX;
-            //    panelMain.VerticalScroll.Value = scrollY;
-
-
-            //    mousePosition.X = e.X;
-            //    mousePosition.Y = e.Y;
-            //}
         }
 
         private void toolStripDropDownButtonDisplayType_Click(object sender, EventArgs e)
@@ -562,8 +568,6 @@ namespace ImageView
         {
             horizontalFlip();
         }
-
-
 
     }
 
