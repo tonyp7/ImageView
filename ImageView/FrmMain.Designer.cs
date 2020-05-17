@@ -324,7 +324,9 @@
             // 
             // aboutToolStripMenuItem
             // 
+            this.aboutToolStripMenuItem.Image = global::ImageView.Properties.Resources.help16;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
@@ -470,6 +472,7 @@
             // 
             // normalSizeToolStripMenuItem
             // 
+            this.normalSizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.normalSizeToolStripMenuItem.Name = "normalSizeToolStripMenuItem";
             this.normalSizeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.normalSizeToolStripMenuItem.Text = "Normal";
@@ -477,6 +480,7 @@
             // 
             // AutosizeToolStripMenuItem
             // 
+            this.AutosizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.AutosizeToolStripMenuItem.Name = "AutosizeToolStripMenuItem";
             this.AutosizeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.AutosizeToolStripMenuItem.Text = "Autosize";
@@ -499,6 +503,7 @@
             this.toolStripComboBoxZoom.Size = new System.Drawing.Size(80, 42);
             this.toolStripComboBoxZoom.Text = "100%";
             this.toolStripComboBoxZoom.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxZoom_SelectedIndexChanged);
+            this.toolStripComboBoxZoom.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.toolStripComboBoxZoom_KeyPress);
             this.toolStripComboBoxZoom.Click += new System.EventHandler(this.toolStripComboBoxZoom_Click);
             // 
             // toolStripSeparator6
@@ -509,7 +514,7 @@
             // toolStripButtonSettings
             // 
             this.toolStripButtonSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSettings.Image")));
+            this.toolStripButtonSettings.Image = global::ImageView.Properties.Resources.settings32;
             this.toolStripButtonSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonSettings.Name = "toolStripButtonSettings";
             this.toolStripButtonSettings.Size = new System.Drawing.Size(36, 39);

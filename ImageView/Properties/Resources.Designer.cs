@@ -63,6 +63,26 @@ namespace ImageView.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap apply16 {
+            get {
+                object obj = ResourceManager.GetObject("apply16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap apply32 {
+            get {
+                object obj = ResourceManager.GetObject("apply32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap close16 {
             get {
                 object obj = ResourceManager.GetObject("close16", resourceCulture);
@@ -76,6 +96,16 @@ namespace ImageView.Properties {
         internal static System.Drawing.Bitmap delete {
             get {
                 object obj = ResourceManager.GetObject("delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap help16 {
+            get {
+                object obj = ResourceManager.GetObject("help16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
