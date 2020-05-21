@@ -100,6 +100,9 @@
     </Compile>
     <Compile Include="ImageProperties.cs" />
     <Compile Include="ImageView.cs" />
+    <Compile Include="PictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WinTaskbar.cs" />
@@ -180,6 +183,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="imageview.ico" />
+    <None Include="Resources\zoom16.png" />
+    <None Include="Resources\zoomout.ico" />
+    <None Include="Resources\zoomin.ico" />
+    <None Include="Resources\move.ico" />
     <None Include="Resources\apply16.png" />
     <None Include="Resources\apply32.png" />
     <None Include="Resources\help16.png" />
