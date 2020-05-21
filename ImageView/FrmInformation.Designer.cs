@@ -199,7 +199,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmInformation";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "FrmInformation";
+            this.Text = "Information";
             this.Load += new System.EventHandler(this.FrmInformation_Load);
             this.tabControl.ResumeLayout(false);
             this.tabPageFile.ResumeLayout(false);
