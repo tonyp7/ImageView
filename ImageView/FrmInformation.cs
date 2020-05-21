@@ -61,7 +61,7 @@ namespace ImageView
                         }
                         else
                         {
-                            propValue = ((decimal)sdividend / (decimal)sdivisor);
+                            propValue = Math.Round(((double)sdividend / (double)sdivisor), 1);
                         }
                         break;
                     case PropertyTagType.Rational:
@@ -73,7 +73,7 @@ namespace ImageView
                         }
                         else
                         {
-                            propValue = ((decimal)dividend / (decimal)divisor);
+                            propValue = Math.Round( ((double)dividend / (double)divisor), 1);
                         }
                         break;
                     case PropertyTagType.Undefined:
