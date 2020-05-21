@@ -479,14 +479,18 @@ namespace ImageView
 
         public int Zoom { get; set; }
         public ImageSizeMode SizeMode { get; set; }
+        public int ZoomStep { get; set; }
 
         private static readonly int DEFAULT_ZOOM = 100;
+        private static readonly int DEFAULT_ZOOM_STEP = 25;
+        public static readonly int MAX_ZOOM = 400;
         private static readonly ImageSizeMode DEFAULT_IMAGESIZEMODE = ImageSizeMode.Autosize;
 
         public ConfigDisplay()
         {
             SizeMode = DEFAULT_IMAGESIZEMODE;
             Zoom = DEFAULT_ZOOM;
+            ZoomStep = DEFAULT_ZOOM_STEP;
         }
 
         public void Load(XmlDocument doc)
@@ -503,6 +507,18 @@ namespace ImageView
             else
             {
                 Zoom = DEFAULT_ZOOM;
+            }
+
+
+            //zoom step
+            n = doc.SelectSingleNode("/Settings/Display/ZoomStep");
+            if (n != null && int.TryParse(n.InnerText, out ivalue) && ivalue > 0)
+            {
+                ZoomStep = ivalue;
+            }
+            else
+            {
+                ZoomStep = DEFAULT_ZOOM_STEP;
             }
 
             //image size mode
@@ -535,7 +551,9 @@ namespace ImageView
         public void Save(XmlDocument doc)
         {
             Config.SafeNodeSelect(doc, "/Settings/Display/Zoom", Zoom.ToString());
+            Config.SafeNodeSelect(doc, "/Settings/Display/ZoomStep", SizeMode.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Display/SizeMode", SizeMode.ToString());
+            
         }
 
         public object Clone()
@@ -544,13 +562,14 @@ namespace ImageView
 
             cd.Zoom = this.Zoom;
             cd.SizeMode = this.SizeMode;
+            cd.ZoomStep = this.ZoomStep;
 
             return cd;
         }
 
         public bool Equals(ConfigDisplay other)
         {
-            return Zoom == other.Zoom && SizeMode == other.SizeMode;
+            return Zoom == other.Zoom && SizeMode == other.SizeMode && ZoomStep == other.ZoomStep;
         }
     }
 
