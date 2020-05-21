@@ -53,6 +53,8 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.previousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.zoomToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,6 +83,8 @@
             this.toolStripStatusLabelImagePosition = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelZoom = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelFileSize = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelSpring = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelPixelPosition = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelMain = new System.Windows.Forms.Panel();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -253,7 +257,9 @@
             this.slideshowToolStripMenuItem,
             this.toolStripSeparator5,
             this.previousToolStripMenuItem,
-            this.nextToolStripMenuItem});
+            this.nextToolStripMenuItem,
+            this.toolStripSeparator10,
+            this.zoomToolToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "&View";
@@ -295,6 +301,20 @@
             this.nextToolStripMenuItem.ShortcutKeyDisplayString = "Right";
             this.nextToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.nextToolStripMenuItem.Text = "Next";
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(143, 6);
+            // 
+            // zoomToolToolStripMenuItem
+            // 
+            this.zoomToolToolStripMenuItem.Image = global::ImageView.Properties.Resources.zoom16;
+            this.zoomToolToolStripMenuItem.Name = "zoomToolToolStripMenuItem";
+            this.zoomToolToolStripMenuItem.ShortcutKeyDisplayString = "Z";
+            this.zoomToolToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.zoomToolToolStripMenuItem.Text = "Zoom Tool";
+            this.zoomToolToolStripMenuItem.Click += new System.EventHandler(this.zoomToolToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -468,6 +488,7 @@
             this.toolStripDropDownButtonDisplayType.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButtonDisplayType.Name = "toolStripDropDownButtonDisplayType";
             this.toolStripDropDownButtonDisplayType.Size = new System.Drawing.Size(45, 39);
+            this.toolStripDropDownButtonDisplayType.ToolTipText = "Pick Image Sizing";
             this.toolStripDropDownButtonDisplayType.Click += new System.EventHandler(this.toolStripDropDownButtonDisplayType_Click);
             // 
             // normalSizeToolStripMenuItem
@@ -502,6 +523,7 @@
             this.toolStripComboBoxZoom.Name = "toolStripComboBoxZoom";
             this.toolStripComboBoxZoom.Size = new System.Drawing.Size(80, 42);
             this.toolStripComboBoxZoom.Text = "100%";
+            this.toolStripComboBoxZoom.ToolTipText = "Zoom";
             this.toolStripComboBoxZoom.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxZoom_SelectedIndexChanged);
             this.toolStripComboBoxZoom.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.toolStripComboBoxZoom_KeyPress);
             this.toolStripComboBoxZoom.Click += new System.EventHandler(this.toolStripComboBoxZoom_Click);
@@ -527,7 +549,9 @@
             this.toolStripStatusLabelImageInfo,
             this.toolStripStatusLabelImagePosition,
             this.toolStripStatusLabelZoom,
-            this.toolStripStatusLabelFileSize});
+            this.toolStripStatusLabelFileSize,
+            this.toolStripStatusLabelSpring,
+            this.toolStripStatusLabelPixelPosition});
             this.statusStrip.Location = new System.Drawing.Point(0, 705);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(1008, 24);
@@ -574,6 +598,19 @@
             this.toolStripStatusLabelFileSize.Size = new System.Drawing.Size(49, 19);
             this.toolStripStatusLabelFileSize.Text = "FileSize";
             // 
+            // toolStripStatusLabelSpring
+            // 
+            this.toolStripStatusLabelSpring.Name = "toolStripStatusLabelSpring";
+            this.toolStripStatusLabelSpring.Size = new System.Drawing.Size(470, 19);
+            this.toolStripStatusLabelSpring.Spring = true;
+            // 
+            // toolStripStatusLabelPixelPosition
+            // 
+            this.toolStripStatusLabelPixelPosition.Name = "toolStripStatusLabelPixelPosition";
+            this.toolStripStatusLabelPixelPosition.Size = new System.Drawing.Size(75, 19);
+            this.toolStripStatusLabelPixelPosition.Text = "PixelPosition";
+            this.toolStripStatusLabelPixelPosition.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            // 
             // panelMain
             // 
             this.panelMain.AllowDrop = true;
@@ -600,8 +637,11 @@
             this.pictureBox.Size = new System.Drawing.Size(556, 309);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
+            this.pictureBox.Click += new System.EventHandler(this.pictureBox_Click);
             this.pictureBox.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
             this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
+            this.pictureBox.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
+            this.pictureBox.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
             this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             // 
@@ -639,6 +679,7 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmMain_FormClosed);
             this.Load += new System.EventHandler(this.FrmMain_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmMain_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FrmMain_KeyUp);
             this.Resize += new System.EventHandler(this.FrmMain_Resize);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
@@ -679,6 +720,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButtonDisplayType;
         private System.Windows.Forms.PictureBox pictureBox;
+        //private ImageView.PictureBox pictureBox;
         private System.Windows.Forms.ToolStripMenuItem AutosizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem normalSizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelImageInfo;
@@ -711,6 +753,10 @@
         private System.Windows.Forms.ToolStripMenuItem rotateRightToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem verticalFlipToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem horizontalFlipToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
+        private System.Windows.Forms.ToolStripMenuItem zoomToolToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelPixelPosition;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelSpring;
     }
 }
 

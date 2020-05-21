@@ -28,6 +28,12 @@ namespace ImageView
             }
         }
 
+        public enum Tool
+        {
+            None,
+            Zoom
+        }
+
         public Config config;
 
 
@@ -36,12 +42,11 @@ namespace ImageView
         private bool fullscreen = false;
 
         private Point mousePosition = new Point();
+        private Point mousePositionOnMouseDown = new Point();
 
         private FullScreenSaveState fullScreenSaveState = new FullScreenSaveState();
-        //private FormWindowState windowStateBeforeEnteringFullscreen = FormWindowState.Normal;
-        //private Point window
 
-
+        private Tool activeTool = Tool.None;
 
         public FrmMain()
         {
@@ -52,7 +57,6 @@ namespace ImageView
             config.Load();
 
             close();
-
 
             //restore history
             toolStripComboBoxNavigation.Items.AddRange( config.History.Get().ToArray() );
@@ -110,13 +114,19 @@ namespace ImageView
         {
             config.Display.SizeMode = ImageSizeMode.Autosize;
             refreshImageSizeModeUI();
+
+            panelMain.Resize -= panelMain_Resize;
             resizePictureBox();
+            panelMain.Resize += panelMain_Resize;
         }
         private void normalSizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             config.Display.SizeMode = ImageSizeMode.Normal;
             refreshImageSizeModeUI();
+
+            panelMain.Resize -= panelMain_Resize;
             resizePictureBox();
+            panelMain.Resize += panelMain_Resize;
         }
 
 
@@ -168,7 +178,9 @@ namespace ImageView
         }
         private void toolStripComboBoxZoom_SelectedIndexChanged(object sender, EventArgs e)
         {
+            panelMain.Resize -= panelMain_Resize;
             zoom();
+            panelMain.Resize += panelMain_Resize;
         }
 
         private void toolStripComboBoxZoom_KeyPress(object sender, KeyPressEventArgs e)
@@ -189,7 +201,7 @@ namespace ImageView
             int zoom = 100;
             if (int.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
             {
-                if (zoom > 400) zoom = 400;
+                zoom = Program.Clamp(zoom, 1, ConfigDisplay.MAX_ZOOM);
                 config.Display.SizeMode = ImageSizeMode.Zoom;
                 config.Display.Zoom = zoom;
                 refreshImageSizeModeUI();
@@ -254,6 +266,7 @@ namespace ImageView
             base.OnKeyDown(e);
             switch (e.KeyCode)
             {
+                case Keys.Menu:
                 case Keys.Left:
                 case Keys.Right:
                 case Keys.Up:
@@ -275,6 +288,31 @@ namespace ImageView
 
         }
 
+
+        private void FrmMain_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Menu:
+                    if (activeTool == Tool.Zoom)
+                    {
+                        var coord = pictureBox.PointToClient(Cursor.Position);
+
+                        if (pictureBox.DisplayRectangle.Contains(coord))
+                        {
+                            Cursor = new Cursor(Properties.Resources.zoomin.Handle);
+                        }
+                        else
+                        {
+                            Cursor = Cursors.Default;
+                        }
+
+
+                    }
+                    break;
+            }
+        }
+
         /// <summary>
         /// Implements a lot of shortcut keys when Windows Forms does not natively support the shortcuts. For instance, single key shortcuts are invalid for winforms
         /// so this method contains many single key shortcuts
@@ -286,6 +324,21 @@ namespace ImageView
 
             switch (e.KeyCode)
             {
+                case Keys.Menu:
+                    if (activeTool == Tool.Zoom)
+                    {
+                        var coord = pictureBox.PointToClient(Cursor.Position);
+                        if (pictureBox.DisplayRectangle.Contains(coord))
+                        {
+                            e.Handled = true; //prevent ALT triggering the toolstripmenu
+                            Cursor = new Cursor(Properties.Resources.zoomout.Handle);
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    break;
                 case Keys.Left:
                     previous();
                     break;
@@ -312,6 +365,9 @@ namespace ImageView
                     break;
                 case Keys.H:
                     horizontalFlip();
+                    break;
+                case Keys.Z:
+                    toggleZoomTool();
                     break;
                 case Keys.Escape:
                     if (fullscreen)
@@ -371,16 +427,25 @@ namespace ImageView
 
         private void pictureBox_DoubleClick(object sender, EventArgs e)
         {
-            if (timerSlideShow.Enabled)
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            //prevents a fullscreen trigger when trying to zoom on the picture
+            if (activeTool != Tool.Zoom) 
             {
-                //a double click while a slideshow is playing automatically stops it
-                exitSlideshow();
+                if (me.Button == MouseButtons.Left)
+                {
+                    if (timerSlideShow.Enabled)
+                    {
+                        //a double click while a slideshow is playing automatically stops it
+                        exitSlideshow();
+                    }
+                    else
+                    {
+                        toggleFullScreen();
+                    }
+                }
             }
-            else
-            {
-                toggleFullScreen();
-            }
-            
+
         }
 
 
@@ -417,41 +482,6 @@ namespace ImageView
 
 
 
-        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
-        {
-            if(e.Button == MouseButtons.Left)
-            {
-                mousePosition = e.Location;
-                
-            }
-            
-        }
-
-        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                this.Cursor = Cursors.Default;
-            }
-               
-            
-        }
-
-        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
-        {
-
-            if (e.Button == MouseButtons.Left)
-            {
-                if(this.Cursor == Cursors.Default) this.Cursor = Cursors.SizeAll;
-
-                Point changePoint = new Point(e.Location.X - mousePosition.X,
-                                  e.Location.Y - mousePosition.Y);
-                panelMain.AutoScrollPosition = new Point(-panelMain.AutoScrollPosition.X - changePoint.X,
-                                                      -panelMain.AutoScrollPosition.Y - changePoint.Y);
-
-            }
-            
-        }
 
         private void toolStripDropDownButtonDisplayType_Click(object sender, EventArgs e)
         {
@@ -568,6 +598,144 @@ namespace ImageView
         {
             horizontalFlip();
         }
+
+        private void zoomToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleZoomTool();
+        }
+
+
+
+        /// <summary>
+        /// Saves the mouse position when it is first moved down, in order to handle dragging of the picture correctly
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Middle)
+            {
+                mousePosition = e.Location;
+                mousePositionOnMouseDown = Control.MousePosition;
+            }
+        }
+
+        /// <summary>
+        /// If the tool is not zoom, cursor is restored to default.
+        /// Zoom tool stays active until user manually de-activate it
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                if (this.activeTool == Tool.None)
+                {
+                    this.Cursor = Cursors.Default;
+                }
+            }
+            else if(e.Button == MouseButtons.Left)
+            {
+                if (this.activeTool == Tool.Zoom)
+                {
+                    var coord = pictureBox.PointToClient(Cursor.Position);
+
+                    config.Display.SizeMode = ImageSizeMode.Zoom;
+
+
+                    int newZoom = Control.ModifierKeys != Keys.Alt ? (int)workingData.calculatedZoom + config.Display.ZoomStep : (int)workingData.calculatedZoom - config.Display.ZoomStep;
+
+                    newZoom = Program.Clamp(newZoom, 1, ConfigDisplay.MAX_ZOOM);
+
+                    panelMain.Resize -= panelMain_Resize;
+                    resizePictureBox(e.Location, newZoom);
+                    panelMain.Resize += panelMain_Resize;
+                    config.Display.Zoom = newZoom;
+
+                    refreshImageSizeModeUI();
+                }
+            }
+            else if(e.Button == MouseButtons.Right)
+            {
+#if DEBUG
+                Point panelHalfSize = new Point(panelMain.Width >> 1, panelMain.Height >> 1);
+                panelMain.AutoScrollPosition = new Point(e.Location.X - panelHalfSize.X, e.Location.Y - panelHalfSize.Y);
+#endif
+
+            }
+        }
+
+        private void pictureBox_Click(object sender, EventArgs ea)
+        {
+
+        }
+
+
+        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            //refresh pixel coord
+            double X, Y;
+            X = e.Location.X / workingData.calculatedZoom * 100.0;
+            Y = e.Location.Y / workingData.calculatedZoom * 100.0;
+            toolStripStatusLabelPixelPosition.Text = string.Format("{0:#},{1:#}", X, Y);
+
+            //drag image
+            if (e.Button == MouseButtons.Middle)
+            {
+                if (this.Cursor == Cursors.Default) this.Cursor = new Cursor(Properties.Resources.move.Handle);
+
+                Point changePoint = Point.Empty;
+                if (panelMain.VerticalScroll.Visible)
+                {
+                    changePoint.Y = e.Location.Y - mousePosition.Y;
+                }
+                if (panelMain.HorizontalScroll.Visible)
+                {
+                    changePoint.X = e.Location.X - mousePosition.X;
+                }
+                panelMain.AutoScrollPosition = new Point(-panelMain.AutoScrollPosition.X - changePoint.X,
+                                                      -panelMain.AutoScrollPosition.Y - changePoint.Y);
+
+            }
+
+        }
+
+        private void toggleZoomTool()
+        {
+            if(activeTool != Tool.Zoom)
+            {
+                activeTool = Tool.Zoom;
+
+                var coord = pictureBox.PointToClient(Cursor.Position);
+                if (pictureBox.DisplayRectangle.Contains(coord)){
+                    this.Cursor = new Cursor(Properties.Resources.zoomin.Handle);
+                }
+            }
+            else
+            {
+                activeTool = Tool.None;
+                if (this.Cursor != Cursors.Default)
+                    this.Cursor = Cursors.Default;
+            }
+        }
+
+        private void pictureBox_MouseEnter(object sender, EventArgs e)
+        {
+            this.toolStripStatusLabelPixelPosition.Visible = true;
+            if (activeTool == Tool.Zoom)
+            {
+                this.Cursor = new Cursor(Properties.Resources.zoomin.Handle);
+            }
+        }
+
+        private void pictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            this.toolStripStatusLabelPixelPosition.Visible = false;
+            if (this.Cursor != Cursors.Default)
+                this.Cursor = Cursors.Default;
+        }
+
 
     }
 
