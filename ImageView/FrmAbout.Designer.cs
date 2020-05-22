@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAbout));
             this.button1 = new System.Windows.Forms.Button();
             this.pictureBoxDonate = new System.Windows.Forms.PictureBox();
             this.labelName = new System.Windows.Forms.Label();
@@ -59,7 +58,7 @@
             // pictureBoxDonate
             // 
             this.pictureBoxDonate.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxDonate.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxDonate.Image")));
+            this.pictureBoxDonate.Image = global::ImageView.Properties.Resources.paypal_donate_button;
             this.pictureBoxDonate.Location = new System.Drawing.Point(103, 38);
             this.pictureBoxDonate.Name = "pictureBoxDonate";
             this.pictureBoxDonate.Size = new System.Drawing.Size(157, 46);
