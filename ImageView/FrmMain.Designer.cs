@@ -73,8 +73,8 @@
             this.toolStripComboBoxNavigation = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripDropDownButtonDisplayType = new System.Windows.Forms.ToolStripDropDownButton();
-            this.normalSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.AutosizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.realSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.BestFitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxZoom = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonSettings = new System.Windows.Forms.ToolStripButton();
@@ -482,8 +482,8 @@
             // toolStripDropDownButtonDisplayType
             // 
             this.toolStripDropDownButtonDisplayType.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.normalSizeToolStripMenuItem,
-            this.AutosizeToolStripMenuItem});
+            this.realSizeToolStripMenuItem,
+            this.BestFitToolStripMenuItem});
             this.toolStripDropDownButtonDisplayType.Image = global::ImageView.Properties.Resources.image;
             this.toolStripDropDownButtonDisplayType.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButtonDisplayType.Name = "toolStripDropDownButtonDisplayType";
@@ -491,21 +491,21 @@
             this.toolStripDropDownButtonDisplayType.ToolTipText = "Pick Image Sizing";
             this.toolStripDropDownButtonDisplayType.Click += new System.EventHandler(this.toolStripDropDownButtonDisplayType_Click);
             // 
-            // normalSizeToolStripMenuItem
+            // realSizeToolStripMenuItem
             // 
-            this.normalSizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.normalSizeToolStripMenuItem.Name = "normalSizeToolStripMenuItem";
-            this.normalSizeToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
-            this.normalSizeToolStripMenuItem.Text = "Normal";
-            this.normalSizeToolStripMenuItem.Click += new System.EventHandler(this.normalSizeToolStripMenuItem_Click);
+            this.realSizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.realSizeToolStripMenuItem.Name = "realSizeToolStripMenuItem";
+            this.realSizeToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.realSizeToolStripMenuItem.Text = "Real Size";
+            this.realSizeToolStripMenuItem.Click += new System.EventHandler(this.realSizeToolStripMenuItem_Click);
             // 
-            // AutosizeToolStripMenuItem
+            // BestFitToolStripMenuItem
             // 
-            this.AutosizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.AutosizeToolStripMenuItem.Name = "AutosizeToolStripMenuItem";
-            this.AutosizeToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
-            this.AutosizeToolStripMenuItem.Text = "Autosize";
-            this.AutosizeToolStripMenuItem.Click += new System.EventHandler(this.AutosizeToolStripMenuItem_Click);
+            this.BestFitToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.BestFitToolStripMenuItem.Name = "BestFitToolStripMenuItem";
+            this.BestFitToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.BestFitToolStripMenuItem.Text = "Best Fit";
+            this.BestFitToolStripMenuItem.Click += new System.EventHandler(this.BestFitStripMenuItem_Click);
             // 
             // toolStripComboBoxZoom
             // 
@@ -721,8 +721,8 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButtonDisplayType;
         private System.Windows.Forms.PictureBox pictureBox;
         //private ImageView.PictureBox pictureBox;
-        private System.Windows.Forms.ToolStripMenuItem AutosizeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem normalSizeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem BestFitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem realSizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelImageInfo;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelImagePosition;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelZoom;

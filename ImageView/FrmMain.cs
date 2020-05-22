@@ -133,18 +133,18 @@ namespace ImageView
         }
 
 
-        private void AutosizeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void BestFitStripMenuItem_Click(object sender, EventArgs e)
         {
-            config.Display.SizeMode = ImageSizeMode.Autosize;
+            config.Display.SizeMode = ImageSizeMode.BestFit;
             refreshImageSizeModeUI();
 
             panelMain.Resize -= panelMain_Resize;
             resizePictureBox();
             panelMain.Resize += panelMain_Resize;
         }
-        private void normalSizeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void realSizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            config.Display.SizeMode = ImageSizeMode.Normal;
+            config.Display.SizeMode = ImageSizeMode.RealSize;
             refreshImageSizeModeUI();
 
             panelMain.Resize -= panelMain_Resize;

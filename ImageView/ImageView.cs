@@ -95,17 +95,17 @@ namespace ImageView
         {
             switch (config.Display.SizeMode)
             {
-                case ImageSizeMode.Autosize:
-                    AutosizeToolStripMenuItem.Image = ImageView.Properties.Resources.apply16;
-                    normalSizeToolStripMenuItem.Image = null;
+                case ImageSizeMode.BestFit:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.apply16;
+                    realSizeToolStripMenuItem.Image = null;
                     break;
-                case ImageSizeMode.Normal:
-                    AutosizeToolStripMenuItem.Image = null;
-                    normalSizeToolStripMenuItem.Image = ImageView.Properties.Resources.apply16;
+                case ImageSizeMode.RealSize:
+                    BestFitToolStripMenuItem.Image = null;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.apply16;
                     break;
                 default:
-                    AutosizeToolStripMenuItem.Image = null;
-                    normalSizeToolStripMenuItem.Image = null;
+                    BestFitToolStripMenuItem.Image = null;
+                    realSizeToolStripMenuItem.Image = null;
                     break;
             }
 
@@ -206,7 +206,7 @@ namespace ImageView
             if (i == null) return;
 
 
-            if (config.Display.SizeMode == ImageSizeMode.Autosize)
+            if (config.Display.SizeMode == ImageSizeMode.BestFit)
             {
                 panelMain.AutoScroll = false;
 
@@ -219,7 +219,7 @@ namespace ImageView
                 toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)workingData.calculatedZoom);
                 toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)workingData.calculatedZoom));
             }
-            else if (config.Display.SizeMode == ImageSizeMode.Zoom || config.Display.SizeMode == ImageSizeMode.Normal)
+            else if (config.Display.SizeMode == ImageSizeMode.Zoom || config.Display.SizeMode == ImageSizeMode.RealSize)
             {
 
                 int previousWidth = i.Width;
@@ -273,7 +273,7 @@ namespace ImageView
                 int zoom;
                 if(newZoom == -1)
                 {
-                    zoom = config.Display.SizeMode == ImageSizeMode.Normal ? 100 : config.Display.Zoom;
+                    zoom = config.Display.SizeMode == ImageSizeMode.RealSize ? 100 : config.Display.Zoom;
                 }
                 else
                 {
@@ -388,9 +388,16 @@ namespace ImageView
                         workingData.image = Image.FromStream(fs);
                         workingData.propertyItems = (PropertyItem[])workingData.image.PropertyItems.Clone();
                     }
-                    
-                    
-                    
+
+                    //check under what image mode this should be loaded
+                    if(config.Display.SizeModeOnImageLoad != ImageSizeMode.Restore && config.Display.SizeModeOnImageLoad != config.Display.SizeMode)
+                    {
+                        config.Display.SizeMode = config.Display.SizeModeOnImageLoad;
+                        refreshImageSizeModeUI();
+                    }
+
+
+
 
                     //Assign image to picture box then refresh sizing
                     pictureBox.Image = workingData.image;
