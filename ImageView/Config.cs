@@ -504,10 +504,13 @@ namespace ImageView
         public ImageSizeMode SizeMode { get; set; }
         public int ZoomStep { get; set; }
 
+
+        public ImageSizeMode SizeModeOnImageLoad { get; set; }
+
         private static readonly int DEFAULT_ZOOM = 100;
         private static readonly int DEFAULT_ZOOM_STEP = 25;
         public static readonly int MAX_ZOOM = 400;
-        private static readonly ImageSizeMode DEFAULT_IMAGESIZEMODE = ImageSizeMode.Autosize;
+        private static readonly ImageSizeMode DEFAULT_IMAGESIZEMODE = ImageSizeMode.BestFit;
 
         public ConfigDisplay()
         {
@@ -544,30 +547,27 @@ namespace ImageView
                 ZoomStep = DEFAULT_ZOOM_STEP;
             }
 
+
             //image size mode
             n = doc.SelectSingleNode("/Settings/Display/SizeMode");
             if(n != null)
             {
-                switch (n.InnerText)
-                {
-                    case "Autosize":
-                        SizeMode = ImageSizeMode.Autosize;
-                        break;
-                    case "Normal":
-                        SizeMode = ImageSizeMode.Normal;
-                        break;
-                    case "Zoom":
-                        SizeMode = ImageSizeMode.Zoom;
-                        break;
-                    default:
-                        SizeMode = DEFAULT_IMAGESIZEMODE;
-                        break;
-
-                }
+                SizeMode = ParseImageSizeMode(n.InnerText);
             }
             else
             {
                 SizeMode = DEFAULT_IMAGESIZEMODE;
+            }
+
+            //SizeModeOnNextImage
+            n = doc.SelectSingleNode("/Settings/Display/SizeModeOnImageLoad");
+            if (n != null)
+            {
+                SizeModeOnImageLoad = ParseImageSizeMode(n.InnerText);
+            }
+            else
+            {
+                SizeModeOnImageLoad = DEFAULT_IMAGESIZEMODE;
             }
         }
 
@@ -576,7 +576,8 @@ namespace ImageView
             Config.SafeNodeSelect(doc, "/Settings/Display/Zoom", Zoom.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Display/ZoomStep", SizeMode.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Display/SizeMode", SizeMode.ToString());
-            
+            Config.SafeNodeSelect(doc, "/Settings/Display/SizeModeOnImageLoad", SizeModeOnImageLoad.ToString());
+
         }
 
         public object Clone()
@@ -586,21 +587,52 @@ namespace ImageView
             cd.Zoom = this.Zoom;
             cd.SizeMode = this.SizeMode;
             cd.ZoomStep = this.ZoomStep;
+            cd.SizeModeOnImageLoad = this.SizeModeOnImageLoad;
 
             return cd;
         }
 
         public bool Equals(ConfigDisplay other)
         {
-            return Zoom == other.Zoom && SizeMode == other.SizeMode && ZoomStep == other.ZoomStep;
+            return Zoom == other.Zoom
+                    && SizeMode == other.SizeMode
+                    && ZoomStep == other.ZoomStep
+                    && SizeModeOnImageLoad == other.SizeModeOnImageLoad
+                    ;
+        }
+
+        private static ImageSizeMode ParseImageSizeMode(string s)
+        {
+            ImageSizeMode sz;
+            switch (s)
+            {
+                case "BestFit":
+                case "AutoSize": //DEPRECATED in 1.4.x. TODO: To be deleted.
+                    sz = ImageSizeMode.BestFit;
+                    break;
+                case "Normal": //DEPRECATED in 1.4.x. TODO: To be deleted.
+                case "RealSize":
+                    sz = ImageSizeMode.RealSize;
+                    break;
+                case "Zoom":
+                    sz = ImageSizeMode.Zoom;
+                    break;
+                default:
+                    sz = DEFAULT_IMAGESIZEMODE;
+                    break;
+            }
+
+            return sz;
         }
     }
 
 
     public enum ImageSizeMode
     {
-        Autosize,
-        Normal,
-        Zoom
+        BestFit,
+        RealSize,
+        Zoom,
+        Restore
     }
+
 }
