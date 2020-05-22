@@ -45,6 +45,10 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnMakeDefault = new System.Windows.Forms.Button();
+            this.tabPageView = new System.Windows.Forms.TabPage();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.cmbOnLoadImageSizeMode = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -56,12 +60,15 @@
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabPageView.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
             // 
             this.tabControl.Controls.Add(this.tabPageGeneral);
+            this.tabControl.Controls.Add(this.tabPageView);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
@@ -217,6 +224,47 @@
             this.btnMakeDefault.UseVisualStyleBackColor = true;
             this.btnMakeDefault.Click += new System.EventHandler(this.btnMakeDefault_Click);
             // 
+            // tabPageView
+            // 
+            this.tabPageView.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageView.Controls.Add(this.groupBox5);
+            this.tabPageView.Location = new System.Drawing.Point(4, 22);
+            this.tabPageView.Name = "tabPageView";
+            this.tabPageView.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageView.Size = new System.Drawing.Size(616, 352);
+            this.tabPageView.TabIndex = 1;
+            this.tabPageView.Text = "Image Viewing";
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.cmbOnLoadImageSizeMode);
+            this.groupBox5.Controls.Add(this.label8);
+            this.groupBox5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox5.Location = new System.Drawing.Point(3, 3);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(610, 69);
+            this.groupBox5.TabIndex = 3;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Default Image Size Mode";
+            // 
+            // cmbOnLoadImageSizeMode
+            // 
+            this.cmbOnLoadImageSizeMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbOnLoadImageSizeMode.FormattingEnabled = true;
+            this.cmbOnLoadImageSizeMode.Location = new System.Drawing.Point(258, 28);
+            this.cmbOnLoadImageSizeMode.Name = "cmbOnLoadImageSizeMode";
+            this.cmbOnLoadImageSizeMode.Size = new System.Drawing.Size(154, 21);
+            this.cmbOnLoadImageSizeMode.TabIndex = 4;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(6, 31);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(246, 21);
+            this.label8.TabIndex = 3;
+            this.label8.Text = "When loading an image, set image size mode to:";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.btnApply);
@@ -296,6 +344,8 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            this.tabPageView.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -324,5 +374,9 @@
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TabPage tabPageView;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.ComboBox cmbOnLoadImageSizeMode;
+        private System.Windows.Forms.Label label8;
     }
 }

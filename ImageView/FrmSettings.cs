@@ -47,11 +47,30 @@ namespace ImageView
             txtSlideshowTimer.Text = configNew.Slideshow.Timer.ToString();
             chkHistorySaveOnExit.Checked = configNew.History.SaveOnExit;
             txtHistorySize.Text = configNew.History.MaxSize.ToString();
+
+            
+            switch (configNew.Display.SizeModeOnImageLoad)
+            {
+                case ImageSizeMode.BestFit:
+                    cmbOnLoadImageSizeMode.SelectedIndex = 0;
+                    break;
+                case ImageSizeMode.RealSize:
+                    cmbOnLoadImageSizeMode.SelectedIndex = 1;
+                    break;
+                case ImageSizeMode.Zoom:
+                    cmbOnLoadImageSizeMode.SelectedIndex = 2;
+                    break;
+                case ImageSizeMode.Restore:
+                    cmbOnLoadImageSizeMode.SelectedIndex = 3;
+                    break;
+            }
         }
 
         public FrmSettings(FrmMain frmMain)
         {
             InitializeComponent();
+            cmbOnLoadImageSizeMode.Items.AddRange(new string[] { "Best Fit", "Real Size", "Zoom", "Same as last viewed image" });
+
             this.frmMain = frmMain;
             this.configNew = (Config)frmMain.config.Clone();
             loadUIElements();
@@ -160,6 +179,27 @@ namespace ImageView
             }
 
 
+            ////////////////////////
+            // VIEW
+            ////////////////////////
+            string onImageLoadSizeMode = (string)cmbOnLoadImageSizeMode.SelectedItem;
+            switch (onImageLoadSizeMode)
+            {
+                case "Best Fit":
+                    configNew.Display.SizeModeOnImageLoad = ImageSizeMode.BestFit;
+                    break;
+                case "Real Size":
+                    configNew.Display.SizeModeOnImageLoad = ImageSizeMode.RealSize;
+                    break;
+                case "Zoom":
+                    configNew.Display.SizeModeOnImageLoad = ImageSizeMode.Zoom;
+                    break;
+                default:
+                    configNew.Display.SizeModeOnImageLoad = ImageSizeMode.Restore;
+                    break;
+            }
+
+
             /////FINISH: New Config becomes old
             frmMain.config = configNew;
             configNew = null;
@@ -171,6 +211,11 @@ namespace ImageView
         {
             apply();
             this.Close();
+        }
+
+        private void cmbNextImageSizeMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
