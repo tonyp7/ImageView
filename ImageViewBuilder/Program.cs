@@ -7,6 +7,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Diagnostics;
 using System.Xml;
+using System.Net;
+using System.Collections.Specialized;
+using System.Security.Cryptography;
 
 namespace ImageViewBuilder
 {
@@ -17,6 +20,14 @@ namespace ImageViewBuilder
             OK = 0,
             ERR_SETUP_BUILD = 1,
             ERR_UNKNOWN = -1,
+        }
+
+
+        public enum FileType
+        {
+            PadFile,
+            SetupFile,
+            PortableFile
         }
 
 
@@ -100,6 +111,8 @@ namespace ImageViewBuilder
                 setupFileWithVersion = Path.Combine(setupFile.Directory.FullName, setupFileWithVersion);
                 setupFile.CopyTo(setupFileWithVersion, true);
 
+                setupFile = new FileInfo(setupFileWithVersion);
+
                 Console.WriteLine(String.Format("Setup file copied to: {0}", setupFileWithVersion));
 
                 return RETURN_CODE.OK;
@@ -141,7 +154,50 @@ namespace ImageViewBuilder
             return RETURN_CODE.OK;
         }
 
-        static RETURN_CODE updatePadFile(Version v, FileInfo setupFile)
+        static RETURN_CODE fileUpload(Version v, FileType fileType, FileInfo file)
+        {
+            Console.Write("Uploading file " + file.Name + "... ");
+
+            WebClient client = new WebClient();
+
+#if DEBUG
+            string url = Properties.Resources.DEBUG_postFileURL;
+            Uri uri = new Uri(url);
+            var credentialCache = new CredentialCache();
+            credentialCache.Add(
+              new Uri(uri.GetLeftPart(UriPartial.Authority)),
+              "Basic",
+              new NetworkCredential(Properties.Resources.DEBUG_do_release_user, Properties.Resources.DEBUG_do_release_pwd)
+            );
+            client.UseDefaultCredentials = true;
+            client.Credentials = credentialCache;
+#else
+            string url = Properties.Resources.postFileURL;
+            Uri uri = new Uri(url);
+            var credentialCache = new CredentialCache();
+            credentialCache.Add(
+              new Uri(uri.GetLeftPart(UriPartial.Authority)),
+              "Basic",
+              new NetworkCredential(Properties.Resources.do_release_user, Properties.Resources.do_release_pwd)
+            );
+            client.UseDefaultCredentials = true;
+            client.Credentials = credentialCache;
+#endif
+
+
+            client.Headers.Add("X-Version", String.Format("{0}.{1}.{2}", v.Major, v.Minor, v.Build ) );
+            client.Headers.Add("X-Checksum", Hash( file  ) );
+            client.Headers.Add("X-Filetype",  fileType.ToString() );
+            byte[] response = client.UploadFile(url, "POST", file.FullName);
+            string responseStr = Encoding.UTF8.GetString(response);
+            Console.WriteLine(responseStr);
+
+            client.Dispose();
+
+            return RETURN_CODE.OK;
+        }
+
+        static RETURN_CODE updatePadFile(Version v, FileInfo setupFile, ref FileInfo padFile)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load( Properties.Resources.PadFileFullName );
@@ -173,16 +229,40 @@ namespace ImageViewBuilder
 
             Console.WriteLine(String.Format("Updated PAD file: {0}", Properties.Resources.PadFileFullName));
 
-
+            padFile = new FileInfo(Properties.Resources.PadFileFullName);
 
             return RETURN_CODE.OK;
         }
 
+        static string Hash(FileInfo fi)
+        {
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                var hash = sha1.ComputeHash(File.ReadAllBytes(fi.FullName));
+                var sb = new StringBuilder(hash.Length * 2);
+
+                foreach (byte b in hash)
+                {
+                    sb.Append(b.ToString("x2"));
+                }
+
+                return sb.ToString();
+            }
+        }
+
+        static void clearConsoleBuffer()
+        {
+            while (Console.KeyAvailable)
+                Console.ReadKey(true);
+        }
+
         static void Main(string[] args)
         {
+            ConsoleKeyInfo c;
             Version v = getVersion();
             FileInfo setupFile = null;
             FileInfo portableAppFile = null;
+            FileInfo padFile = null;
 
             //generate setup file
             buildSetupFile(v, ref setupFile);
@@ -191,16 +271,23 @@ namespace ImageViewBuilder
             createPortableApp(v, ref portableAppFile);
 
             //Update the PAD file
-            updatePadFile(v, setupFile);
+            updatePadFile(v, setupFile, ref padFile);
 
             //end of fiddling with files, now proceed to upload if needed
             Console.Write("Would you like to upload new version (Y/n)? ");
-            char c = (char)Console.Read();
-
-            if(c == 'y' || c == 'Y' || c == '\r')
+            c = Console.ReadKey();
+            if(c.KeyChar == 'y' || c.KeyChar == 'Y' || c.KeyChar == '\r')
             {
-
+                Console.WriteLine(c.KeyChar);
+                fileUpload(v, FileType.PadFile, padFile);
+                fileUpload(v, FileType.SetupFile, setupFile);
+                fileUpload(v, FileType.PortableFile, portableAppFile);
             }
+            clearConsoleBuffer();
+
+
+            Console.Write("Press any key to exit . . .");
+            c = Console.ReadKey();
 
 
             return;
