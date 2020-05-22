@@ -12,7 +12,7 @@ ImageView is safe and respects your privacy. It runs offline with no connection 
 
 # Download
 
-* [ImageView_1.2.2_Setup.exe](https://github.com/tonyp7/ImageView/releases/download/v1.2.2/ImageView_1.2.2_Setup.exe)
-* [ImageView_1.2.2_Portable.zip](https://github.com/tonyp7/ImageView/releases/download/v1.2.2/ImageView_1.2.2_Portable.zip)
+* [ImageView_1.4.1_Setup.exe](https://github.com/tonyp7/ImageView/releases/download/v1.4.1/ImageView_1.2.2_Setup.exe)
+* [ImageView_1.4.1_Portable.zip](https://github.com/tonyp7/ImageView/releases/download/v1.4.1/ImageView_1.2.2_Portable.zip)
 
 The portable version will not register the app as an image viewer. It is recommended to use the setup version for simplicity.
