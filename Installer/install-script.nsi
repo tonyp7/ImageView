@@ -83,7 +83,10 @@ Section "ImageView Program" SecMain
   
   ;install files
   File "..\ImageView\bin\Release\ImageView.exe"
-  File "..\LICENSE"
+  File "..\ImageView\bin\Release\Magick.Native-Q8-x64.dll"
+  File "..\ImageView\bin\Release\Magick.NET-Q8-x64.dll"
+  File "..\ImageView\bin\Release\LICENSE"
+  File "..\ImageView\bin\Release\DEPENDENCIES.md"
   
   ; Set registry view to 64bit
   SetRegView 64
@@ -115,7 +118,22 @@ Section "ImageView Program" SecMain
   WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".wdp" "ImageView.wdp"
   ;jfif
   WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".jfif" "ImageView.jfif"
+  ;webp
+  WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".webp" "ImageView.webp"
+  ;cr2 (Canon Raw)
+  WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".cr2" "ImageView.cr2"
+  ;dnp (Digital Negative Raw)
+  WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".dng" "ImageView.dng"
+  ;jp2 (JPEG 2000)
+  WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".jp2" "ImageView.jp2"
+  ;psd
+  WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".psd" "ImageView.psd"
+  ;svg
+  WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".svg" "ImageView.svg"
+  ;tga
+  WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".tga" "ImageView.tga"
   
+
   ;command
   WriteRegStr HKLM "Software\ImageView\shell" "" ""
   WriteRegStr HKLM "Software\ImageView\shell\open" "" ""
@@ -158,6 +176,34 @@ Section "ImageView Program" SecMain
   WriteRegStr HKCR "ImageView.jfif" "" ""
   WriteRegStr HKCR "ImageView.jfif\DefaultIcon" "" "$INSTDIR\ImageView.exe,0"
   WriteRegStr HKCR "ImageView.jfif\shell\open\command" "" '"$INSTDIR\ImageView.exe" "%1"'
+  ;webp
+  WriteRegStr HKCR "ImageView.webp" "" ""
+  WriteRegStr HKCR "ImageView.webp\DefaultIcon" "" "$INSTDIR\ImageView.exe,0"
+  WriteRegStr HKCR "ImageView.webp\shell\open\command" "" '"$INSTDIR\ImageView.exe" "%1"'
+  ;cr2
+  WriteRegStr HKCR "ImageView.cr2" "" ""
+  WriteRegStr HKCR "ImageView.cr2\DefaultIcon" "" "$INSTDIR\ImageView.exe,0"
+  WriteRegStr HKCR "ImageView.cr2\shell\open\command" "" '"$INSTDIR\ImageView.exe" "%1"'
+  ;dnp
+  WriteRegStr HKCR "ImageView.dnp" "" ""
+  WriteRegStr HKCR "ImageView.dnp\DefaultIcon" "" "$INSTDIR\ImageView.exe,0"
+  WriteRegStr HKCR "ImageView.dnp\shell\open\command" "" '"$INSTDIR\ImageView.exe" "%1"'
+  ;jp2
+  WriteRegStr HKCR "ImageView.jp2" "" ""
+  WriteRegStr HKCR "ImageView.jp2\DefaultIcon" "" "$INSTDIR\ImageView.exe,0"
+  WriteRegStr HKCR "ImageView.jp2\shell\open\command" "" '"$INSTDIR\ImageView.exe" "%1"'
+  ;psd
+  WriteRegStr HKCR "ImageView.psd" "" ""
+  WriteRegStr HKCR "ImageView.psd\DefaultIcon" "" "$INSTDIR\ImageView.exe,0"
+  WriteRegStr HKCR "ImageView.psd\shell\open\command" "" '"$INSTDIR\ImageView.exe" "%1"'
+  ;svg
+  WriteRegStr HKCR "ImageView.svg" "" ""
+  WriteRegStr HKCR "ImageView.svg\DefaultIcon" "" "$INSTDIR\ImageView.exe,0"
+  WriteRegStr HKCR "ImageView.svg\shell\open\command" "" '"$INSTDIR\ImageView.exe" "%1"'
+  ;tga
+  WriteRegStr HKCR "ImageView.tga" "" ""
+  WriteRegStr HKCR "ImageView.tga\DefaultIcon" "" "$INSTDIR\ImageView.exe,0"
+  WriteRegStr HKCR "ImageView.tga\shell\open\command" "" '"$INSTDIR\ImageView.exe" "%1"'
   
   
   ;Create uninstaller
@@ -194,6 +240,9 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\ImageView.exe"
   Delete "$INSTDIR\LICENSE"
+  Delete "$INSTDIR\DEPENDENCIES.md"
+  Delete "$INSTDIR\Magick.Native-Q8-x64.dll"
+  Delete "$INSTDIR\Magick.NET-Q8-x64.dll"
   
   ;attempt to delete the config file that is auto-generated
   Delete "$LOCALAPPDATA\ImageView\config.xml"
@@ -220,6 +269,13 @@ Section "Uninstall"
   DeleteRegKey HKCR "ImageView.gif"
   DeleteRegKey HKCR "ImageView.wdp"
   DeleteRegKey HKCR "ImageView.jfif"
+  DeleteRegKey HKCR "ImageView.webp"
+  DeleteRegKey HKCR "ImageView.cr2"
+  DeleteRegKey HKCR "ImageView.dnp"
+  DeleteRegKey HKCR "ImageView.jp2"
+  DeleteRegKey HKCR "ImageView.psd"
+  DeleteRegKey HKCR "ImageView.svg"
+  DeleteRegKey HKCR "ImageView.tga"
   
 
 SectionEnd
