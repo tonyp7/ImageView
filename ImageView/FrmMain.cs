@@ -379,8 +379,12 @@ namespace ImageView
                     toggleZoomTool();
                     break;
                 case Keys.Escape:
-                    if (fullscreen)
+                    if (activeTool == Tool.Zoom)
                     {
+                        exitZoomTool();
+                    }
+                    else if (fullscreen)
+                    {                        
                         exitFullScreen();
                         timerSlideShow.Stop();
                     }
@@ -710,22 +714,34 @@ namespace ImageView
 
         }
 
+
+        private void enterZoomTool()
+        {
+            activeTool = Tool.Zoom;
+
+            var coord = pictureBox.PointToClient(Cursor.Position);
+            if (pictureBox.DisplayRectangle.Contains(coord))
+            {
+                this.Cursor = new Cursor(Properties.Resources.zoomin.Handle);
+            }
+        }
+
+        private void exitZoomTool()
+        {
+            activeTool = Tool.None;
+            if (this.Cursor != Cursors.Default)
+                this.Cursor = Cursors.Default;
+        }
+
         private void toggleZoomTool()
         {
             if(activeTool != Tool.Zoom)
             {
-                activeTool = Tool.Zoom;
-
-                var coord = pictureBox.PointToClient(Cursor.Position);
-                if (pictureBox.DisplayRectangle.Contains(coord)){
-                    this.Cursor = new Cursor(Properties.Resources.zoomin.Handle);
-                }
+                enterZoomTool();
             }
             else
             {
-                activeTool = Tool.None;
-                if (this.Cursor != Cursors.Default)
-                    this.Cursor = Cursors.Default;
+                exitZoomTool();
             }
         }
 
