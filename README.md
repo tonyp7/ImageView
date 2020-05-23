@@ -8,7 +8,7 @@ ImageView is safe and respects your privacy. It runs offline with no connection 
 
 # Screenshots
 
-![Main interface](https://github.com/tonyp7/ImageView/raw/master/Screenshots/screenshot1.jpg)
+![Main interface](https://getimageview.net/pad/screenshot.jpg)
 
 # Download
 
