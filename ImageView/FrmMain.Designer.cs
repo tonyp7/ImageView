@@ -58,9 +58,10 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSaveAs = new System.Windows.Forms.ToolStripButton();
@@ -75,6 +76,8 @@
             this.toolStripDropDownButtonDisplayType = new System.Windows.Forms.ToolStripDropDownButton();
             this.realSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.BestFitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fitToWidthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fitToHeightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxZoom = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonSettings = new System.Windows.Forms.ToolStripButton();
@@ -335,12 +338,33 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem,
+            this.checkForUpdatesToolStripMenuItem,
+            this.licenseToolStripMenuItem,
             this.toolStripSeparator7,
-            this.checkForUpdatesToolStripMenuItem});
+            this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "&Help";
+            // 
+            // checkForUpdatesToolStripMenuItem
+            // 
+            this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
+            this.checkForUpdatesToolStripMenuItem.Visible = false;
+            // 
+            // licenseToolStripMenuItem
+            // 
+            this.licenseToolStripMenuItem.Name = "licenseToolStripMenuItem";
+            this.licenseToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.licenseToolStripMenuItem.Text = "License";
+            this.licenseToolStripMenuItem.Click += new System.EventHandler(this.licenseToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(168, 6);
+            this.toolStripSeparator7.Visible = false;
             // 
             // aboutToolStripMenuItem
             // 
@@ -350,19 +374,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator7
-            // 
-            this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(168, 6);
-            this.toolStripSeparator7.Visible = false;
-            // 
-            // checkForUpdatesToolStripMenuItem
-            // 
-            this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
-            this.checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
-            this.checkForUpdatesToolStripMenuItem.Visible = false;
             // 
             // toolStrip
             // 
@@ -483,7 +494,9 @@
             // 
             this.toolStripDropDownButtonDisplayType.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.realSizeToolStripMenuItem,
-            this.BestFitToolStripMenuItem});
+            this.BestFitToolStripMenuItem,
+            this.fitToWidthToolStripMenuItem,
+            this.fitToHeightToolStripMenuItem});
             this.toolStripDropDownButtonDisplayType.Image = global::ImageView.Properties.Resources.image;
             this.toolStripDropDownButtonDisplayType.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButtonDisplayType.Name = "toolStripDropDownButtonDisplayType";
@@ -495,7 +508,7 @@
             // 
             this.realSizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.realSizeToolStripMenuItem.Name = "realSizeToolStripMenuItem";
-            this.realSizeToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.realSizeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.realSizeToolStripMenuItem.Text = "Real Size";
             this.realSizeToolStripMenuItem.Click += new System.EventHandler(this.realSizeToolStripMenuItem_Click);
             // 
@@ -503,9 +516,25 @@
             // 
             this.BestFitToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.BestFitToolStripMenuItem.Name = "BestFitToolStripMenuItem";
-            this.BestFitToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.BestFitToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.BestFitToolStripMenuItem.Text = "Best Fit";
             this.BestFitToolStripMenuItem.Click += new System.EventHandler(this.BestFitStripMenuItem_Click);
+            // 
+            // fitToWidthToolStripMenuItem
+            // 
+            this.fitToWidthToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.fitToWidthToolStripMenuItem.Name = "fitToWidthToolStripMenuItem";
+            this.fitToWidthToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.fitToWidthToolStripMenuItem.Text = "Fit to Width";
+            this.fitToWidthToolStripMenuItem.Click += new System.EventHandler(this.fitToWidthToolStripMenuItem_Click);
+            // 
+            // fitToHeightToolStripMenuItem
+            // 
+            this.fitToHeightToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.fitToHeightToolStripMenuItem.Name = "fitToHeightToolStripMenuItem";
+            this.fitToHeightToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.fitToHeightToolStripMenuItem.Text = "Fit to Height";
+            this.fitToHeightToolStripMenuItem.Click += new System.EventHandler(this.fitToHeightToolStripMenuItem_Click);
             // 
             // toolStripComboBoxZoom
             // 
@@ -647,9 +676,6 @@
             // 
             // openFileDialog
             // 
-            this.openFileDialog.Filter = "Supported Image Files|*.jpg;*.jpeg;*.bmp;*.png;*.gif;*.tif;*.tiff|JPEG(*.jpg;*.jp" +
-    "eg)|*.jpg;*.jpeg|BPM(*.bmp)|*.bmp|PNG(*.png)|*.png|GIF(*.gif)|*.gif|TIF(*.tif;*." +
-    "tiff)|*.tif;*.tiff|All files (*.*)|*.*";
             this.openFileDialog.Title = "Open Image";
             // 
             // timerSlideShow
@@ -757,6 +783,9 @@
         private System.Windows.Forms.ToolStripMenuItem zoomToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelPixelPosition;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelSpring;
+        private System.Windows.Forms.ToolStripMenuItem licenseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fitToWidthToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fitToHeightToolStripMenuItem;
     }
 }
 
