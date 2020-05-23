@@ -27,6 +27,10 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Linq;
 using System.Drawing.Imaging;
+using System.Runtime.Serialization;
+using System.Collections.Generic;
+using ImageMagick;
+using System.Diagnostics;
 
 namespace ImageView
 {
@@ -37,12 +41,13 @@ namespace ImageView
     /// </summary>
     public class WorkingData
     {
-        public Image image;
+        public Bitmap bitmap = null;
+        public MagickImage nativeImage = null;
         public DirectoryInfo directoryInfo;
         public FileInfo fileInfo;
         public string[] directoryFiles;
         public int directoryIndex;
-        public PropertyItem[] propertyItems;
+        //public PropertyItem[] propertyItems;
         public double calculatedZoom;
 
         public WorkingData()
@@ -50,14 +55,19 @@ namespace ImageView
             reset();
         }
 
+
+        public void Dispose()
+        {
+            if (bitmap != null) bitmap.Dispose();
+            if (nativeImage != null) nativeImage.Dispose();
+        }
         public void reset()
         {
             directoryInfo = null;
             fileInfo = null;
             directoryIndex = -1;
             directoryFiles = null;
-            image = null;
-            propertyItems = null;
+            bitmap = null;
             calculatedZoom = -1.0;
         }
     }
@@ -75,6 +85,7 @@ namespace ImageView
         {
             pictureBox.Image = null;
 
+            workingData.Dispose();
             workingData.reset();
 
             toolStripStatusLabelImageInfo.Text = "Welcome! Open an image file to begin browsing.";
@@ -96,21 +107,134 @@ namespace ImageView
             switch (config.Display.SizeMode)
             {
                 case ImageSizeMode.BestFit:
-                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.apply16;
-                    realSizeToolStripMenuItem.Image = null;
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows_tick16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
                     break;
                 case ImageSizeMode.RealSize:
-                    BestFitToolStripMenuItem.Image = null;
-                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.apply16;
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid_tick16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
+                    break;
+                case ImageSizeMode.FitToWidth:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith_tick16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
+                    break;
+                case ImageSizeMode.FitToHeight:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv_tick16;
                     break;
                 default:
-                    BestFitToolStripMenuItem.Image = null;
-                    realSizeToolStripMenuItem.Image = null;
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
                     break;
             }
 
         }
 
+
+
+
+
+
+        /// <summary>
+        /// Calculate the display rectangle given an image i that is stretched in width to the size of the display panel
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="zoom"></param>
+        /// <returns></returns>
+        private Rectangle calculateFitToWidth(Image i, ref double zoom)
+        {
+            Rectangle rect = Rectangle.Empty;
+
+            //the width is locked to be window width
+            rect.X = 0;
+            rect.Width = panelMain.ClientSize.Width;
+
+            //height is simply a function of the zoom
+            zoom = rect.Width / (double)i.Width;
+            rect.Height = (int)Math.Round(zoom * (double)i.Height);
+
+
+
+            //if a vertical scrollbar is going to appear, we need to recalculate the size to take into account the width lost by the scrollbar's thickness
+            //weirdly enough the behavior of winforms is strange here. If a scrollbar is visible then the client size area is reflected. But we need to account
+            //for when this is not the case and so there's a test to check if the scroll bar is visible. If it is then we do not need to subsctract the thickness
+            //of the bar since it's already accounted for in the panel ClientSize.
+            if (rect.Height > panelMain.ClientSize.Height)
+            {
+                rect.Width = panelMain.ClientSize.Width -  (panelMain.VerticalScroll.Visible?0:System.Windows.Forms.SystemInformation.VerticalScrollBarWidth);
+                zoom = rect.Width / (double)i.Width;
+                rect.Height = (int)Math.Round(zoom * (double)i.Height);
+            }
+
+
+            //center y
+            if(rect.Height < panelMain.ClientSize.Height)
+            {
+                rect.Y = (panelMain.ClientSize.Height - rect.Height) >> 1;
+            }
+            else
+            {
+                rect.Y = 0;
+            }
+
+            zoom *= 100.0;
+
+            return rect;
+        }
+
+
+
+        /// <summary>
+        /// Calculate the display rectangle given an image i that is stretched in height to the size of the display panel
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="zoom"></param>
+        /// <returns></returns>
+        private Rectangle calculateFitToHeight(Image i, ref double zoom)
+        {
+            Rectangle rect = Rectangle.Empty;
+
+            //the height is locked to be window height
+            rect.Y = 0;
+            rect.Height = panelMain.ClientSize.Height;
+
+            //width is simply a function of the zoom
+            zoom = rect.Height / (double)i.Height;
+            rect.Width = (int)Math.Round(zoom * (double)i.Width);
+
+            //if an horizontal scrollbar is going to appear, we need to recalculate the size to take into account the height lost by the scrollbar's thickness
+            if (rect.Width > panelMain.ClientSize.Width)
+            {
+                rect.Height = panelMain.ClientSize.Height - (panelMain.HorizontalScroll.Visible?0:System.Windows.Forms.SystemInformation.HorizontalScrollBarHeight);
+                zoom = rect.Height / (double)i.Height;
+                rect.Width = (int)Math.Round(zoom * (double)i.Width);
+
+            }
+
+            //center x
+            if (rect.Width < panelMain.ClientSize.Width)
+            {
+                rect.X = (panelMain.ClientSize.Width - rect.Width) >> 1;
+            }
+            else
+            {
+                rect.X = 0;
+            }
+
+            zoom *= 100.0;
+
+            return rect;
+        }
 
         /// <summary>
         /// Given an image i, this function calculate the position and size of the image that should fit inside the display window
@@ -129,7 +253,7 @@ namespace ImageView
             
 
             //image can fit entirely on the screen so the display is actually normal
-            if (panelMain.Width >= i.Width && panelMain.Height >= i.Height)
+            if (panelMain.ClientSize.Width >= i.Width && panelMain.ClientSize.Height >= i.Height)
             {
                 zoom = 100.0;
 
@@ -140,13 +264,13 @@ namespace ImageView
                 //center image on screen
                 if (i != null)
                 {
-                    if (panelMain.Width > i.Width)
+                    if (panelMain.ClientSize.Width > i.Width)
                     {
-                        rect.X = (panelMain.Width - i.Width) >> 1;
+                        rect.X = (panelMain.ClientSize.Width - i.Width) >> 1;
                     }
-                    if (panelMain.Height > i.Height)
+                    if (panelMain.ClientSize.Height > i.Height)
                     {
-                        rect.Y = (panelMain.Height - i.Height) >> 1;
+                        rect.Y = (panelMain.ClientSize.Height - i.Height) >> 1;
                     }
                 }
             }
@@ -155,22 +279,22 @@ namespace ImageView
                 //either the width or height becomes the limiting factor, 
                 //this is determined by the aspect ratio of the image and the aspect ratio of the panel containing said image
                 double aspec = (double)i.Width / (double)i.Height;
-                double windowAspec = (double)panelMain.Width / (double)panelMain.Height;
+                double windowAspec = (double)panelMain.ClientSize.Width / (double)panelMain.ClientSize.Height;
                 if (aspec > windowAspec)
                 {
-                    zoom = ((double)panelMain.Width / (double)i.Width * 100.0);
-                    rect.Width = panelMain.Width;
+                    zoom = ((double)panelMain.ClientSize.Width / (double)i.Width * 100.0);
+                    rect.Width = panelMain.ClientSize.Width;
                     rect.Height = (int)Math.Round((rect.Width / aspec));
 
-                    rect.Y = (panelMain.Height - rect.Height) >> 1;
+                    rect.Y = (panelMain.ClientSize.Height - rect.Height) >> 1;
                 }
                 else
                 {
-                    zoom = ((double)panelMain.Height / (double)i.Height * 100.0);
-                    rect.Height = panelMain.Height;
+                    zoom = ((double)panelMain.ClientSize.Height / (double)i.Height * 100.0);
+                    rect.Height = panelMain.ClientSize.Height;
                     rect.Width = (int)Math.Round((rect.Height * aspec));
 
-                    rect.X = (panelMain.Width - rect.Width) >> 1;
+                    rect.X = (panelMain.ClientSize.Width - rect.Width) >> 1;
                 }
             }
 
@@ -185,6 +309,7 @@ namespace ImageView
         {
             resizePictureBox(null, Point.Empty, -1);
         }
+
         private void resizePictureBox(Image i, Point mouseCoord, int newZoom)
         {
 
@@ -212,12 +337,41 @@ namespace ImageView
 
                 Rectangle rect = calculateAutoSize(i, ref workingData.calculatedZoom);
                 pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                pictureBox.Location = rect.Location;
                 pictureBox.Size = rect.Size;
+                pictureBox.Location = rect.Location;
+                
 
                 toolStripStatusLabelZoom.Visible = true;
                 toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)workingData.calculatedZoom);
                 toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)workingData.calculatedZoom));
+            }
+            else if(config.Display.SizeMode == ImageSizeMode.FitToWidth)
+            {
+                panelMain.AutoScroll = false;
+                Rectangle rect = calculateFitToWidth(i, ref workingData.calculatedZoom);
+                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                pictureBox.Size = rect.Size;
+                pictureBox.Location = rect.Location;
+                panelMain.AutoScroll = true;
+
+                toolStripStatusLabelZoom.Visible = true;
+                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)workingData.calculatedZoom);
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)workingData.calculatedZoom));
+
+            }
+            else if (config.Display.SizeMode == ImageSizeMode.FitToHeight)
+            {
+                panelMain.AutoScroll = false;
+                Rectangle rect = calculateFitToHeight(i, ref workingData.calculatedZoom);
+                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                pictureBox.Size = rect.Size;
+                pictureBox.Location = rect.Location;
+                panelMain.AutoScroll = true;
+
+                toolStripStatusLabelZoom.Visible = true;
+                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)workingData.calculatedZoom);
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)workingData.calculatedZoom));
+
             }
             else if (config.Display.SizeMode == ImageSizeMode.Zoom || config.Display.SizeMode == ImageSizeMode.RealSize)
             {
@@ -367,6 +521,8 @@ namespace ImageView
         }
 
 
+        
+
         /// <summary>
         /// Todo: add a check if the file exists. If it doesn't and there's currently a working dir then refresh folder structure.
         /// </summary>
@@ -374,33 +530,56 @@ namespace ImageView
         /// <param name="loadFolderStructure"></param>
         private void loadPicture(string filename, bool loadFolderStructure = true)
         {
+
+
+#if DEBUG
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+#endif
             try
             {
+
+                //clean up previously used memory (if any)
+                workingData.Dispose();
+#if DEBUG
+                TimeSpan tsDisposeEnd = stopWatch.Elapsed;
+#endif
+
                 //FileInfo
                 workingData.fileInfo = new FileInfo(filename);
 
                 if (workingData.fileInfo.Exists)
                 {
 
-                    //Image is loaded from stream instead of FromFile because Image.FromFile locks the file
-                    using (FileStream fs = new FileStream(workingData.fileInfo.FullName, FileMode.Open, FileAccess.Read))
-                    {
-                        workingData.image = Image.FromStream(fs);
-                        workingData.propertyItems = (PropertyItem[])workingData.image.PropertyItems.Clone();
-                    }
+#if DEBUG
+                    TimeSpan nativeStart = stopWatch.Elapsed;
+#endif
+                    workingData.nativeImage = new ImageMagick.MagickImage(workingData.fileInfo);
+#if DEBUG
+                    TimeSpan nativeEnd = stopWatch.Elapsed;
+#endif
+                    workingData.bitmap = workingData.nativeImage.ToBitmap();
+#if DEBUG
+                    TimeSpan bitmapEnd = stopWatch.Elapsed;
+#endif
+
+#if DEBUG
+                    stopWatch.Stop();
+                    System.Diagnostics.Debug.WriteLine(String.Format("Dispose: {0:00}.{1:00}", tsDisposeEnd.Seconds, tsDisposeEnd.Milliseconds / 10));
+                    System.Diagnostics.Debug.WriteLine(String.Format("ImageMagik: {0:00}.{1:00}", nativeEnd.Subtract(nativeStart).Seconds, nativeEnd.Subtract(nativeStart).Milliseconds / 10));
+                    System.Diagnostics.Debug.WriteLine(String.Format("ToBitmap: {0:00}.{1:00}", bitmapEnd.Subtract(nativeEnd).Seconds, bitmapEnd.Subtract(nativeEnd).Milliseconds / 10));
+#endif
 
                     //check under what image mode this should be loaded
-                    if(config.Display.SizeModeOnImageLoad != ImageSizeMode.Restore && config.Display.SizeModeOnImageLoad != config.Display.SizeMode)
+                    if (config.Display.SizeModeOnImageLoad != ImageSizeMode.Restore && config.Display.SizeModeOnImageLoad != config.Display.SizeMode)
                     {
                         config.Display.SizeMode = config.Display.SizeModeOnImageLoad;
                         refreshImageSizeModeUI();
                     }
 
 
-
-
                     //Assign image to picture box then refresh sizing
-                    pictureBox.Image = workingData.image;
+                    pictureBox.Image = workingData.bitmap;
 
                     panelMain.Resize -= panelMain_Resize;
                     resizePictureBox();
@@ -416,11 +595,11 @@ namespace ImageView
                     removeExcessHistoryItems();
 
                     toolStripComboBoxNavigation_UpdateText(workingData.fileInfo.FullName);
-                    toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} x {2} BPP", workingData.image.Width, workingData.image.Height, Image.GetPixelFormatSize(workingData.image.PixelFormat));
+                    toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} - {2} {3}", workingData.nativeImage.BaseWidth, workingData.nativeImage.BaseHeight, workingData.nativeImage.ColorSpace, workingData.nativeImage.ColorType);
                     toolStripStatusLabelImageInfo.Visible = true;
                     toolStripStatusLabelFileSize.Text = NiceFileSize(workingData.fileInfo);
                     toolStripStatusLabelFileSize.Visible = true;
-                    this.Text = String.Format("{0} - {1}", filename, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
+                    this.Text = String.Format("{0} - {1}", workingData.fileInfo.FullName, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
 
 
                     // Check if we are in the current working dir and pic position
@@ -454,8 +633,7 @@ namespace ImageView
             }
             catch (OutOfMemoryException)
             {
-                // Image.FromFile(String) 
-                //The file does not have a valid image format. -or - GDI + does not support the pixel format of the file.
+
             }
             catch (Exception)
             {
@@ -465,14 +643,16 @@ namespace ImageView
 
 
 
+
+
         }
 
 
         private void copy()
         {
-            if(workingData.image != null)
+            if(workingData.bitmap != null)
             {
-                Clipboard.SetImage(workingData.image);
+                Clipboard.SetImage(workingData.bitmap);
             }
         }
 
@@ -587,38 +767,38 @@ namespace ImageView
 
         private void horizontalFlip()
         {
-            if (workingData.image != null)
+            if (workingData.bitmap != null)
             {
-                workingData.image.RotateFlip(RotateFlipType.RotateNoneFlipY);
-                pictureBox.Image = workingData.image;
+                workingData.bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                pictureBox.Image = workingData.bitmap;
             }
         }
 
         private void verticalFlip()
         {
-            if (workingData.image != null)
+            if (workingData.bitmap != null)
             {
-                workingData.image.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                pictureBox.Image = workingData.image;
+                workingData.bitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                pictureBox.Image = workingData.bitmap;
             }
         }
 
         private void rotateRight()
         {
-            if (workingData.image != null)
+            if (workingData.bitmap != null)
             {
-                workingData.image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                pictureBox.Image = workingData.image;
+                workingData.bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                pictureBox.Image = workingData.bitmap;
                 resizePictureBox(); //see rotate left
             }
         }
 
         private void rotateLeft()
         {
-            if (workingData.image != null)
+            if (workingData.bitmap != null)
             {
-                workingData.image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                pictureBox.Image = workingData.image;
+                workingData.bitmap.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                pictureBox.Image = workingData.bitmap;
 
                 //this will recenter the image properly in the panel 
                 //in case the image width/height are different, if you rotate in normal (not autosize) mode, the 
