@@ -43,7 +43,9 @@ namespace ImageView
         public ConfigWindow Window;
         public ConfigSlideshow Slideshow;
 
-        public readonly string[] ExtensionFilter = new string[]{ ".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif", ".gif" };
+        public readonly string[] ExtensionFilter = new string[]{ ".jpg", ".jpeg", ".png", ".bmp", "*.dib", ".tiff", ".tif", ".gif", ".webp", ".cr2", ".dng", ".jp2", ".psd", ".svg", ".tga" };
+
+
 
         //private Window window;
         //private Slideshow slideshow;
@@ -617,6 +619,12 @@ namespace ImageView
                 case "Zoom":
                     sz = ImageSizeMode.Zoom;
                     break;
+                case "FitToWidth":
+                    sz = ImageSizeMode.FitToWidth;
+                    break;
+                case "FitToHeight":
+                    sz = ImageSizeMode.FitToHeight;
+                    break;
                 default:
                     sz = DEFAULT_IMAGESIZEMODE;
                     break;
@@ -632,6 +640,8 @@ namespace ImageView
         BestFit,
         RealSize,
         Zoom,
+        FitToWidth,
+        FitToHeight,
         Restore
     }
 
