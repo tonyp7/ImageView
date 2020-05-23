@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+using ImageMagick;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -75,6 +76,8 @@ namespace ImageView
         {
             InitializeComponent();
             this.MouseWheel += FrmMain_MouseWheel;
+            this.openFileDialog.Filter = Properties.Resources.SupportedImageFiles;
+
             workingData = new WorkingData();
             config = new Config();
             config.Load();
@@ -133,24 +136,7 @@ namespace ImageView
         }
 
 
-        private void BestFitStripMenuItem_Click(object sender, EventArgs e)
-        {
-            config.Display.SizeMode = ImageSizeMode.BestFit;
-            refreshImageSizeModeUI();
 
-            panelMain.Resize -= panelMain_Resize;
-            resizePictureBox();
-            panelMain.Resize += panelMain_Resize;
-        }
-        private void realSizeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            config.Display.SizeMode = ImageSizeMode.RealSize;
-            refreshImageSizeModeUI();
-
-            panelMain.Resize -= panelMain_Resize;
-            resizePictureBox();
-            panelMain.Resize += panelMain_Resize;
-        }
 
 
 
@@ -759,7 +745,44 @@ namespace ImageView
                 this.Cursor = Cursors.Default;
         }
 
+        private void licenseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FrmLicense().ShowDialog();
+        }
 
+
+        /// <summary>
+        /// Change image size mode, refresh UI elements and resize the picture box
+        /// </summary>
+        /// <param name="sz">New image size mode to be set</param>
+        private void setImageSizeMode(ImageSizeMode sz)
+        {
+            config.Display.SizeMode = sz;
+            refreshImageSizeModeUI();
+
+            panelMain.Resize -= panelMain_Resize;
+            resizePictureBox();
+            panelMain.Resize += panelMain_Resize;
+        }
+
+        private void BestFitStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.BestFit);
+        }
+        private void realSizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.RealSize);
+        }
+
+        private void fitToWidthToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.FitToWidth);
+        }
+
+        private void fitToHeightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.FitToHeight);
+        }
     }
 
 
