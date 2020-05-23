@@ -19,7 +19,7 @@ namespace ImageView.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -96,6 +96,86 @@ namespace ImageView.Properties {
         internal static System.Drawing.Bitmap delete {
             get {
                 object obj = ResourceManager.GetObject("delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap expand_arrows_tick16 {
+            get {
+                object obj = ResourceManager.GetObject("expand_arrows_tick16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap expand_arrows16 {
+            get {
+                object obj = ResourceManager.GetObject("expand_arrows16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap expand_solid_tick16 {
+            get {
+                object obj = ResourceManager.GetObject("expand_solid_tick16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap expand_solid16 {
+            get {
+                object obj = ResourceManager.GetObject("expand_solid16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap fith_tick16 {
+            get {
+                object obj = ResourceManager.GetObject("fith_tick16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap fith16 {
+            get {
+                object obj = ResourceManager.GetObject("fith16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap fitv_tick16 {
+            get {
+                object obj = ResourceManager.GetObject("fitv_tick16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap fitv16 {
+            get {
+                object obj = ResourceManager.GetObject("fitv16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -357,6 +437,15 @@ namespace ImageView.Properties {
             get {
                 object obj = ResourceManager.GetObject("slideshow32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supported Image Files|*.bmp;*.dib;*.cr2;*.dng;*.jp2;*.jpg;*.jpeg;*.png;*.psd;*.svg;*.tga;*.tif;*.tiff;*.webp|Windows Bitmap (*.bmp;*.dib)|*.bmp;*.dib|Canon RAW (*.cr2)|*.cr2|Digital Negative (*.dng)|*.dng|JPEG 2000 (*.jp2)|*.jp2|Joint Photographic Experts Group (*.jpg;*.jpeg)|*.jpg;*.jpeg|Portable Network Graphics (*.png)|*.png|Adobe Photoshop (*.psd)|*.psd|Scalable Vector Graphics (*.svg)|*.svg|Truevision TGA (*.tga)|*.tga|Tagged Image File Format (*.tif;*.tiff)|*.tif;*.tiff|WebP (*.webp)|*.webp|All Files  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SupportedImageFiles {
+            get {
+                return ResourceManager.GetString("SupportedImageFiles", resourceCulture);
             }
         }
         

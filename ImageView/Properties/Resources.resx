@@ -226,4 +226,31 @@
   <data name="zoomout" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zoomout.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="SupportedImageFiles" xml:space="preserve">
+    <value>Supported Image Files|*.bmp;*.dib;*.cr2;*.dng;*.jp2;*.jpg;*.jpeg;*.png;*.psd;*.svg;*.tga;*.tif;*.tiff;*.webp|Windows Bitmap (*.bmp;*.dib)|*.bmp;*.dib|Canon RAW (*.cr2)|*.cr2|Digital Negative (*.dng)|*.dng|JPEG 2000 (*.jp2)|*.jp2|Joint Photographic Experts Group (*.jpg;*.jpeg)|*.jpg;*.jpeg|Portable Network Graphics (*.png)|*.png|Adobe Photoshop (*.psd)|*.psd|Scalable Vector Graphics (*.svg)|*.svg|Truevision TGA (*.tga)|*.tga|Tagged Image File Format (*.tif;*.tiff)|*.tif;*.tiff|WebP (*.webp)|*.webp|All Files (*.*)|*.*</value>
+  </data>
+  <data name="expand_arrows16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\expand_arrows16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="expand_arrows_tick16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\expand_arrows_tick16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="expand_solid16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\expand_solid16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="expand_solid_tick16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\expand_solid_tick16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fith16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fith16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fith_tick16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fith_tick16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fitv16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fitv16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fitv_tick16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fitv_tick16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
