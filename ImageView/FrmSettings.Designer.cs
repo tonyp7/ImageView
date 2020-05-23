@@ -53,8 +53,8 @@
             this.btnApply = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.btnOK = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.btnOK = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPageGeneral.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -371,12 +371,12 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnApply;
-        private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TabPage tabPageView;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.ComboBox cmbOnLoadImageSizeMode;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button btnOK;
     }
 }

@@ -57,11 +57,17 @@ namespace ImageView
                 case ImageSizeMode.RealSize:
                     cmbOnLoadImageSizeMode.SelectedIndex = 1;
                     break;
-                case ImageSizeMode.Zoom:
+                case ImageSizeMode.FitToWidth:
                     cmbOnLoadImageSizeMode.SelectedIndex = 2;
                     break;
-                case ImageSizeMode.Restore:
+                case ImageSizeMode.FitToHeight:
                     cmbOnLoadImageSizeMode.SelectedIndex = 3;
+                    break;
+                case ImageSizeMode.Zoom:
+                    cmbOnLoadImageSizeMode.SelectedIndex = 4;
+                    break;
+                case ImageSizeMode.Restore:
+                    cmbOnLoadImageSizeMode.SelectedIndex = 5;
                     break;
             }
         }
@@ -69,7 +75,7 @@ namespace ImageView
         public FrmSettings(FrmMain frmMain)
         {
             InitializeComponent();
-            cmbOnLoadImageSizeMode.Items.AddRange(new string[] { "Best Fit", "Real Size", "Zoom", "Same as last viewed image" });
+            cmbOnLoadImageSizeMode.Items.AddRange(new string[] { "Best Fit", "Real Size", "Fit to Width", "Fit to Height", "Zoom", "Same as last viewed image" });
 
             this.frmMain = frmMain;
             this.configNew = (Config)frmMain.config.Clone();
@@ -190,6 +196,12 @@ namespace ImageView
                     break;
                 case "Real Size":
                     configNew.Display.SizeModeOnImageLoad = ImageSizeMode.RealSize;
+                    break;
+                case "Fit to Width":
+                    configNew.Display.SizeModeOnImageLoad = ImageSizeMode.FitToWidth;
+                    break;
+                case "Fit to Height":
+                    configNew.Display.SizeModeOnImageLoad = ImageSizeMode.FitToHeight;
                     break;
                 case "Zoom":
                     configNew.Display.SizeModeOnImageLoad = ImageSizeMode.Zoom;
