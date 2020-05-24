@@ -141,8 +141,19 @@ namespace ImageViewBuilder
             }
 
             //Move newest build there
-            FileInfo buildExe = new FileInfo(Path.Combine(Properties.Resources.ExeBuildPath, Properties.Resources.ExeFileName));
-            buildExe.CopyTo(Path.Combine(Properties.Resources.PortableAppPath, Properties.Resources.ExeFileName));
+            //FileInfo buildExe = new FileInfo(Path.Combine(Properties.Resources.ExeBuildPath, Properties.Resources.ExeFileName));
+            //buildExe.CopyTo(Path.Combine(Properties.Resources.PortableAppPath, Properties.Resources.ExeFileName));
+
+            //move stuff to be zipped
+            string[] filter = new string[] { ".md", ".dll", ".exe" };
+            string[] releaseFiles = Directory.EnumerateFiles(Properties.Resources.ExeBuildPath, "*.*", SearchOption.TopDirectoryOnly).Where(file => filter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
+            foreach(string f in releaseFiles)
+            {
+                FileInfo fi = new FileInfo(f);
+                string dstF = Path.Combine(Properties.Resources.PortableAppPath, fi.Name);
+                fi.CopyTo(  dstF    , true);
+                Console.WriteLine(String.Format("Copied file to {0}", dstF));
+            }
 
             //Zip it -- but first delete previous
             File.Delete(portableAppFullName);
