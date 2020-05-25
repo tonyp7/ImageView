@@ -52,7 +52,7 @@ namespace ImageView
 
 
             //file
-            dgvFile.Rows.Add("Name", workingData.fileInfo.Name);
+            dgvFile.Rows.Add("Name", workingData.activeEntry.Name);
 
             //image relation
             dgvFile.Rows.Add("Dimensions", String.Format("{0} x {1}", workingData.nativeImage.BaseWidth, workingData.nativeImage.BaseHeight));
@@ -63,12 +63,10 @@ namespace ImageView
 
 
             //file related
-            dgvFile.Rows.Add("Size (bytes)", workingData.fileInfo.Length.ToString());
-            dgvFile.Rows.Add("Created", workingData.fileInfo.CreationTime.ToString());
-            dgvFile.Rows.Add("Last Written", workingData.fileInfo.LastWriteTime.ToString());
-            dgvFile.Rows.Add("Path", workingData.fileInfo.DirectoryName);
-            dgvFile.Rows.Add("File Attributes", workingData.fileInfo.Attributes.ToString());
-
+            dgvFile.Rows.Add("Size (bytes)", workingData.activeEntry.Length.ToString());
+            dgvFile.Rows.Add("Created", workingData.activeEntry.CreationTime.ToString());
+            dgvFile.Rows.Add("Last Written", workingData.activeEntry.LastWriteTime.ToString());
+            dgvFile.Rows.Add("Path", workingData.activeEntry.DirectoryName);
             
             IExifProfile profile = workingData.nativeImage.GetExifProfile();
             if (profile != null)
