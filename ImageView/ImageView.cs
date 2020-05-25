@@ -32,6 +32,10 @@ using System.Collections.Generic;
 using ImageMagick;
 using System.Diagnostics;
 
+using ImageView.Configuration;
+using SevenZipExtractor;
+using ImageView.ImageEntry;
+
 namespace ImageView
 {
 
@@ -43,12 +47,20 @@ namespace ImageView
     {
         public Bitmap bitmap = null;
         public MagickImage nativeImage = null;
-        public DirectoryInfo directoryInfo;
-        public FileInfo fileInfo;
-        public string[] directoryFiles;
+
+
+        //public DirectoryInfo directoryInfo;
+        //public FileInfo fileInfo;
+        //public string[] directoryFiles;
+        public IEntry activeEntry;
+        public IEntry[] entries;
+
         public int directoryIndex;
+
+
         //public PropertyItem[] propertyItems;
         public double calculatedZoom;
+        public ArchiveFile archive;
 
         public WorkingData()
         {
@@ -63,12 +75,19 @@ namespace ImageView
         }
         public void reset()
         {
-            directoryInfo = null;
-            fileInfo = null;
+            //directoryInfo = null;
+            //fileInfo = null;
             directoryIndex = -1;
-            directoryFiles = null;
+            //directoryFiles = null;
+            activeEntry = null;
+            entries = null;
             bitmap = null;
             calculatedZoom = -1.0;
+            if (archive != null)
+            {
+                archive.Dispose();
+                archive = null;
+            }
         }
     }
 
@@ -90,8 +109,8 @@ namespace ImageView
 
             toolStripStatusLabelImageInfo.Text = "Welcome! Open an image file to begin browsing.";
             this.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            toolStripComboBoxNavigation.Text = "";
 
+            toolStripComboBoxNavigation_UpdateText(String.Empty);
             toolStripStatusLabelImagePosition.Visible = false;
             toolStripStatusLabelImagePosition.Text = String.Empty;
             toolStripStatusLabelZoom.Visible = false;
@@ -139,6 +158,8 @@ namespace ImageView
             }
 
         }
+
+
 
 
 
@@ -315,8 +336,8 @@ namespace ImageView
 
             this.SuspendLayout();
 #if DEBUG
-            if (workingData.fileInfo != null)
-                System.Diagnostics.Debug.WriteLine("resizePictureBox " + workingData.fileInfo.Name);
+            if (workingData.activeEntry != null)
+                System.Diagnostics.Debug.WriteLine("resizePictureBox " + workingData.activeEntry.Name);
             else
                 System.Diagnostics.Debug.WriteLine("resizePictureBox");
 #endif
@@ -473,14 +494,14 @@ namespace ImageView
                 workingData.directoryIndex++;
 
                 //loop
-                if (workingData.directoryIndex >= workingData.directoryFiles.Length)
+                if (workingData.directoryIndex >= workingData.entries.Length)
                 {
                     workingData.directoryIndex = 0;
-
                 }
 
-                string file = workingData.directoryFiles[workingData.directoryIndex];
-                loadPicture(file, false);
+                IEntry entry = workingData.entries[workingData.directoryIndex];
+                //loadPicture(entry.FullName, false);
+                loadPicture(entry);
             }
         }
         private void previous()
@@ -492,37 +513,251 @@ namespace ImageView
                 //loop
                 if (workingData.directoryIndex < 0)
                 {
-                    workingData.directoryIndex = workingData.directoryFiles.Length - 1;
+                    workingData.directoryIndex = workingData.entries.Length - 1;
                 }
 
-                string file = workingData.directoryFiles[workingData.directoryIndex];
-                loadPicture(file, false);
+                IEntry entry = workingData.entries[workingData.directoryIndex];
+                //loadPicture(entry.FullName, false);
+                loadPicture(entry);
             }
 
         }
 
 
-        private static string NiceFileSize(FileInfo fi)
+        private static string NiceFileSize(long len)
         {
             string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            double len = fi.Length;
+            double lend = (double)len;
             int order = 0;
-            while (len >= 1024 && order < sizes.Length - 1)
+            while (lend >= 1024 && order < sizes.Length - 1)
             {
                 order++;
-                len = len / 1024;
+                lend = lend / 1024;
             }
 
             // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
             // show a single decimal place, and no space.
-            string result = String.Format("{0:0.##} {1}", len, sizes[order]);
+            string result = String.Format("{0:0.##} {1}", lend, sizes[order]);
 
             return result;
         }
 
 
-        
+        /// <summary>
+        /// History is made of simple strings that represent enough information to load a file:
+        ///  - The picture full name
+        ///  - The archive file (if any) from which the file derives
+        /// </summary>
+        /// <param name="tre"></param>
+        private void loadPicture(TextRepresentationEntry tre)
+        {
+            if(tre.ArchiveFile == String.Empty)
+            {
+                //it's just a regular file, go load it
+                loadPicture(tre.FullName);
+            }
+            else
+            {
+                if (File.Exists(tre.ArchiveFile))
+                {
+                    List<ArchiveEntry> imagesFiles = ArchiveEntry.GetImageFiles(tre.ArchiveFile);
 
+                    if(imagesFiles.Count > 0)
+                    {
+                        int index = imagesFiles.FindIndex(x => x.InternalArchiveFullName.Equals(tre.FullName));
+
+                        //check if image still exist inside this archive. Could have been deleted for whatever reason
+                        if(index != -1)
+                        {
+                            workingData.directoryIndex = index;
+                            workingData.entries = imagesFiles.ToArray();
+                            loadPicture(workingData.entries[index]);
+                        }
+                    }  
+                }
+            }
+
+        }
+
+
+
+        /// <summary>
+        /// When loading from a single fullname string, this full name can be many different things which leads to different behaviors
+        ///  - An image file: list images in the folder, load the image
+        ///  - A folder: list images in the folder, load the first image in the folder
+        ///  - An image inside an archive: list images inside the folder archive, load the image
+        ///  - An archive: list images in the archive, load the first image in the archive
+        /// </summary>
+        /// <param name="fullname"></param>
+        private void loadPicture(string fullname)
+        {
+
+            if (File.Exists(fullname))
+            {
+                //check if its an archive. Here we depend on the file extension. It's not a fullproof method but it's a reasonnable assumption
+                //and expectation that the file extension is correct
+                string fullnameL = fullname.ToLower();
+                if (Config.ArchiveFilter.Any(x => fullnameL.EndsWith(x)))
+                {
+                    try
+                    {
+                        List<ArchiveEntry> imagesFiles = ArchiveEntry.GetImageFiles(fullname);
+                        if(imagesFiles.Count > 0)
+                        {
+                            workingData.directoryIndex = 0;
+                            workingData.entries = imagesFiles.ToArray();
+
+                            loadPicture(workingData.entries[0]);
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        throw (e);
+                    }
+                   
+                }
+                else
+                {
+                    //attempt to load as a regular image
+                    string path = Path.GetDirectoryName(fullname);
+                    string[] files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly).Where(file => Config.ExtensionFilter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
+                    int index = Array.FindIndex(files, x => x.Contains(fullname));
+
+                    if(index != -1)
+                    {
+                        List<IEntry> l = new List<IEntry>();
+                        foreach (string s in files)
+                        {
+                            var e = new FileEntry(s);
+                            l.Add(e);
+                        }
+                        workingData.entries = l.ToArray();
+                        workingData.directoryIndex = index;
+                        loadPicture(workingData.entries[workingData.directoryIndex]);
+                    }
+                    else
+                    {
+                        //the file is probably not a supported image
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    FileAttributes attr = File.GetAttributes(fullname);
+                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                    {
+                        var files = Directory.EnumerateFiles(fullname, "*.*", SearchOption.TopDirectoryOnly).Where(file => Config.ExtensionFilter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
+                        //workingData.directoryIndex = Array.FindIndex(files, x => x.Contains(fullname));
+
+                        if (files.Length > 0)
+                        {
+
+                            List<IEntry> l = new List<IEntry>();
+                            foreach (string s in files)
+                            {
+                                var e = new FileEntry(s);
+                                l.Add(e);
+                            }
+
+                            workingData.directoryIndex = 0;
+                            workingData.entries = l.ToArray();
+
+                            loadPicture(workingData.entries[0]);
+
+                        }
+                        else
+                        {
+                            //no image files where founds.
+                            return;
+                        }
+                    }
+                }
+                catch (FileNotFoundException)
+                {
+                    //it's not a file, but its not a directory either? it could be a file inside an archive
+                    //TODO: support direct files inside archives
+                }
+            }
+
+
+
+        }
+
+        public void loadPicture(IEntry entry)
+        {
+            //clean up previously used memory (if any)
+            workingData.Dispose();
+            workingData.activeEntry = entry;
+
+            //load image
+#if DEBUG
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+#endif
+            using (Stream stream = workingData.activeEntry.GetStream())
+            {
+                workingData.nativeImage = new ImageMagick.MagickImage(stream);
+            }
+#if DEBUG
+            stopWatch.Stop();
+            System.Diagnostics.Debug.WriteLine(String.Format("Loading image in {0} ms", stopWatch.Elapsed.Milliseconds));
+#endif
+
+            //convert to bitmap
+            workingData.bitmap = workingData.nativeImage.ToBitmap();
+
+
+            //check if the image mode should be changed because user wants a specific image size mode on load
+            if (viewingMode == ViewingMode.Normal)
+            {
+                if (config.Display.SizeModeOnImageLoad != ImageSizeMode.Restore && config.Display.SizeModeOnImageLoad != config.Display.SizeMode)
+                {
+                    config.Display.SizeMode = config.Display.SizeModeOnImageLoad;
+                    refreshImageSizeModeUI();
+                }
+            }
+
+#if DEBUG
+            stopWatch.Start();
+#endif
+            //Assign image to picture box then refresh sizing
+            pictureBox.Image = workingData.bitmap;
+            panelMain.Resize -= panelMain_Resize;
+            resizePictureBox();
+            panelMain.Resize += panelMain_Resize;
+#if DEBUG
+            stopWatch.Stop();
+            System.Diagnostics.Debug.WriteLine(String.Format("Paint done in {0} ms", stopWatch.Elapsed.Milliseconds));
+#endif
+
+            //Add loaded file to history if necessary
+            TextRepresentationEntry tre = workingData.activeEntry.ToText();
+            config.History.AddFile(tre);
+            SetHistoryList(config.History.Get());
+
+            //refresh UI elements
+            toolStripComboBoxNavigation_UpdateText(workingData.activeEntry.FullName);
+            toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} - {2} {3}", workingData.nativeImage.BaseWidth, workingData.nativeImage.BaseHeight, workingData.nativeImage.ColorSpace, workingData.nativeImage.ColorType);
+            toolStripStatusLabelImageInfo.Visible = true;
+            toolStripStatusLabelFileSize.Text = NiceFileSize(workingData.activeEntry.Length);
+            toolStripStatusLabelFileSize.Visible = true;
+            toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", workingData.directoryIndex + 1, workingData.entries.Length);
+            toolStripStatusLabelImagePosition.Visible = true;
+            this.Text = String.Format("{0} - {1}", workingData.activeEntry.FullName, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
+            
+        }
+
+
+        internal void SetHistoryList(List<TextRepresentationEntry> list)
+        {
+            toolStripComboBoxNavigation.Items.Clear();
+            toolStripComboBoxNavigation.Items.AddRange(config.History.Get().ToArray());
+        }
+
+
+        /*
         /// <summary>
         /// Todo: add a check if the file exists. If it doesn't and there's currently a working dir then refresh folder structure.
         /// </summary>
@@ -545,16 +780,19 @@ namespace ImageView
                 TimeSpan tsDisposeEnd = stopWatch.Elapsed;
 #endif
 
-                //FileInfo
-                workingData.fileInfo = new FileInfo(filename);
 
-                if (workingData.fileInfo.Exists)
+                workingData.activeEntry = new FileEntry(filename);
+
+                if (workingData.activeEntry.Exists)
                 {
 
 #if DEBUG
                     TimeSpan nativeStart = stopWatch.Elapsed;
 #endif
-                    workingData.nativeImage = new ImageMagick.MagickImage(workingData.fileInfo);
+                    //workingData.nativeImage = new ImageMagick.MagickImage(workingData.fileInfo);
+                    Stream stream = workingData.activeEntry.GetStream();
+                    workingData.nativeImage = new ImageMagick.MagickImage(stream);
+                    stream.Dispose();
 #if DEBUG
                     TimeSpan nativeEnd = stopWatch.Elapsed;
 #endif
@@ -570,12 +808,16 @@ namespace ImageView
                     System.Diagnostics.Debug.WriteLine(String.Format("ToBitmap: {0:00}.{1:00}", bitmapEnd.Subtract(nativeEnd).Seconds, bitmapEnd.Subtract(nativeEnd).Milliseconds / 10));
 #endif
 
-                    //check under what image mode this should be loaded
-                    if (config.Display.SizeModeOnImageLoad != ImageSizeMode.Restore && config.Display.SizeModeOnImageLoad != config.Display.SizeMode)
+                    if(viewingMode == ViewingMode.Normal)
                     {
-                        config.Display.SizeMode = config.Display.SizeModeOnImageLoad;
-                        refreshImageSizeModeUI();
+                        //check under what image mode this should be loaded
+                        if (config.Display.SizeModeOnImageLoad != ImageSizeMode.Restore && config.Display.SizeModeOnImageLoad != config.Display.SizeMode)
+                        {
+                            config.Display.SizeMode = config.Display.SizeModeOnImageLoad;
+                            refreshImageSizeModeUI();
+                        }
                     }
+
 
 
                     //Assign image to picture box then refresh sizing
@@ -587,19 +829,19 @@ namespace ImageView
 
 
                     //Add loaded file to history if necessary
-                    config.History.AddFile(workingData.fileInfo.FullName);
+                    config.History.AddFile(workingData.activeEntry.ToText());
                     //attempt to delete first to re-add it on top of the pile and not duplicate data
-                    toolStripComboBoxNavigation.Items.Remove(workingData.fileInfo.FullName);
-                    toolStripComboBoxNavigation.Items.Insert(0, workingData.fileInfo.FullName);
+                    toolStripComboBoxNavigation.Items.Remove(workingData.activeEntry.FullName);
+                    toolStripComboBoxNavigation.Items.Insert(0, workingData.activeEntry.FullName);
                     //if now the list is above max size then we clean up the last item
                     removeExcessHistoryItems();
 
-                    toolStripComboBoxNavigation_UpdateText(workingData.fileInfo.FullName);
+                    toolStripComboBoxNavigation_UpdateText(workingData.activeEntry.FullName);
                     toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} - {2} {3}", workingData.nativeImage.BaseWidth, workingData.nativeImage.BaseHeight, workingData.nativeImage.ColorSpace, workingData.nativeImage.ColorType);
                     toolStripStatusLabelImageInfo.Visible = true;
-                    toolStripStatusLabelFileSize.Text = NiceFileSize(workingData.fileInfo);
+                    toolStripStatusLabelFileSize.Text = NiceFileSize(workingData.activeEntry.Length);
                     toolStripStatusLabelFileSize.Visible = true;
-                    this.Text = String.Format("{0} - {1}", workingData.fileInfo.FullName, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
+                    this.Text = String.Format("{0} - {1}", workingData.activeEntry.FullName, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
 
 
                     // Check if we are in the current working dir and pic position
@@ -608,17 +850,18 @@ namespace ImageView
                     if (loadFolderStructure)
                     {
                         string path = Path.GetDirectoryName(filename);
-                        DirectoryInfo di = new DirectoryInfo(path);
-                        //if (workingData.directoryInfo == null || di.FullName != workingData.directoryInfo.FullName)
-                        //{
-                            workingData.directoryInfo = di;
-                            workingData.directoryFiles = Directory.EnumerateFiles(di.FullName, "*.*", SearchOption.TopDirectoryOnly).Where(file => config.ExtensionFilter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
-                            workingData.directoryIndex = Array.FindIndex(workingData.directoryFiles, x => x.Contains(filename));
-                        //}
+                        string[] files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly).Where(file => config.ExtensionFilter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
+                        workingData.directoryIndex = Array.FindIndex(files, x => x.Contains(filename));
+
+                        List<IEntry> l = new List<IEntry>();
+                        foreach(string s in files){
+                            var e = new FileEntry(s);
+                            l.Add(e);
+                        }
                     }
 
 
-                    toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", workingData.directoryIndex + 1, workingData.directoryFiles.Length);
+                    toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", workingData.directoryIndex + 1, workingData.entries.Length);
                     toolStripStatusLabelImagePosition.Visible = true;
                 }
                 else
@@ -645,7 +888,7 @@ namespace ImageView
 
 
 
-        }
+        }*/
 
 
         private void copy()
@@ -658,31 +901,12 @@ namespace ImageView
 
         private void showInformation()
         {
-            if(workingData.fileInfo != null)
+            if(workingData.activeEntry != null)
             {
                 FrmInformation f = new FrmInformation(workingData);
                 f.ShowDialog();
             }
         }
-
-
-        public void removeExcessHistoryItems()
-        {
-            removeExcessHistoryItems(config.History.MaxSize);
-        }
-        /// <summary>
-        /// Forces a refresh of history, this is called if user changes its history size and all of a sudden there is not enough history size to store user history
-        /// </summary>
-        public void removeExcessHistoryItems(int size)
-        {
-
-            while(size < toolStripComboBoxNavigation.Items.Count)
-            {
-                toolStripComboBoxNavigation.Items.RemoveAt(toolStripComboBoxNavigation.Items.Count - 1);
-            }
-            
-        }
-
 
 
         private void exitFullScreen()
@@ -700,7 +924,6 @@ namespace ImageView
             this.WindowState = fullScreenSaveState.WindowState;
             this.Location = fullScreenSaveState.Location;
             this.Size = fullScreenSaveState.Size;
-
 
             fullscreen = false;
         }
@@ -739,6 +962,8 @@ namespace ImageView
 
             fullscreen = true;
         }
+
+
         private void toggleFullScreen()
         {
             if (fullscreen)
@@ -752,6 +977,53 @@ namespace ImageView
         }
 
 
+        private void toggleReaderMode()
+        {
+            if(viewingMode == ViewingMode.Reader)
+            {
+                setViewMode(ViewingMode.Normal);
+            }
+            else
+            {
+                setViewMode(ViewingMode.Reader);
+            }
+        }
+
+        private void setViewMode(ViewingMode vm)
+        {
+
+            if(vm != viewingMode)
+            {
+                switch (viewingMode)
+                {
+                    case ViewingMode.Slideshow:
+                        exitSlideshow();
+                        break;
+                    case ViewingMode.Reader:
+                        exitReader();
+                        break;
+                }
+            }
+
+            switch (vm)
+            {
+                case ViewingMode.Slideshow:
+                    enterSlideshow();
+                    break;
+                case ViewingMode.Reader:
+                    if (timerSlideShow.Enabled) timerSlideShow.Stop();
+                    enterReader();
+                    break;
+                case ViewingMode.Normal:
+                    if (timerSlideShow.Enabled) timerSlideShow.Stop();
+                    break;
+            }
+
+            viewingMode = vm;
+        }
+
+
+
         private void exitSlideshow()
         {
             exitFullScreen();
@@ -759,6 +1031,8 @@ namespace ImageView
         }
         private void enterSlideshow()
         {
+            config.Display.SizeMode = config.Slideshow.SizeMode;
+            refreshImageSizeModeUI();
             enterFullScreen();
             timerSlideShow.Interval = config.Slideshow.Timer;
             timerSlideShow.Start();
@@ -815,27 +1089,33 @@ namespace ImageView
         /// </summary>
         private void delete()
         {
-            if (workingData.fileInfo != null)
+            if (workingData.activeEntry != null)
             {
-                if (MessageBox.Show(String.Format("The file {0} will be permanently deleted.\nAre you sure you want to continue?", workingData.fileInfo.Name), "Delete file?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (workingData.activeEntry.IsArchive)
+                {
+                    //TODO: add support for deletion inside an archive
+                    MessageBox.Show("This image file is contained inside an archive file.\nIt cannot be deleted.", "Cannot delete file", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                else if (MessageBox.Show(String.Format("The file {0} will be permanently deleted.\nAre you sure you want to continue?", workingData.activeEntry.Name), "Delete file?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     //before deleting, try to get access to the previous image, which will be automatically loaded upon file deletion.
                     //if there was only one image in the current working folder, then the app will close all
 
                     string nextFileToLoad = String.Empty;
-                    if (workingData.directoryFiles.Length > 1)
+                    if (workingData.entries.Length > 1)
                     {
                         //will try to move to the file
                         int moveToIndex = workingData.directoryIndex;
                         moveToIndex--;
-                        if (moveToIndex < 0) moveToIndex = workingData.directoryFiles.Length - 1; //auto loop to the end
-                        nextFileToLoad = workingData.directoryFiles[moveToIndex];
+                        if (moveToIndex < 0) moveToIndex = workingData.entries.Length - 1; //auto loop to the end
+                        IEntry entry = workingData.entries[moveToIndex];
+                        nextFileToLoad = entry.FullName;
                     }
 
 
                     try
                     {
-                        workingData.fileInfo.Delete();
+                        workingData.activeEntry.Delete();
                     }
                     catch (UnauthorizedAccessException uaex)
                     {

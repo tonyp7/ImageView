@@ -32,6 +32,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ImageView.Configuration;
 
 namespace ImageView
 {
@@ -175,7 +176,7 @@ namespace ImageView
                 //apply the new history size -- if the new value is less than the old we have some clean up to do
                 if(value < frmMain.config.History.MaxSize)
                 {
-                    frmMain.removeExcessHistoryItems(value);
+                    frmMain.SetHistoryList(configNew.History.Get());
                 }
 
             }

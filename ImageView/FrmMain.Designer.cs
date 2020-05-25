@@ -50,6 +50,7 @@
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fullscreenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.slideshowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.readerModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.previousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,6 +69,7 @@
             this.toolStripButtonDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonSlideShow = new System.Windows.Forms.ToolStripButton();
+            this.toolStripReaderMode = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonPrevious = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonNext = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -258,6 +260,7 @@
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fullscreenToolStripMenuItem,
             this.slideshowToolStripMenuItem,
+            this.readerModeToolStripMenuItem,
             this.toolStripSeparator5,
             this.previousToolStripMenuItem,
             this.nextToolStripMenuItem,
@@ -271,7 +274,7 @@
             // 
             this.fullscreenToolStripMenuItem.Name = "fullscreenToolStripMenuItem";
             this.fullscreenToolStripMenuItem.ShortcutKeyDisplayString = "F";
-            this.fullscreenToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.fullscreenToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.fullscreenToolStripMenuItem.Text = "Fullscreen";
             this.fullscreenToolStripMenuItem.Click += new System.EventHandler(this.fullscreenToolStripMenuItem_Click);
             // 
@@ -280,21 +283,31 @@
             this.slideshowToolStripMenuItem.Image = global::ImageView.Properties.Resources.slideshow32;
             this.slideshowToolStripMenuItem.Name = "slideshowToolStripMenuItem";
             this.slideshowToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.slideshowToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.slideshowToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.slideshowToolStripMenuItem.Text = "Slideshow";
             this.slideshowToolStripMenuItem.Click += new System.EventHandler(this.slideshowToolStripMenuItem_Click);
+            // 
+            // readerModeToolStripMenuItem
+            // 
+            this.readerModeToolStripMenuItem.Image = global::ImageView.Properties.Resources.openbook16;
+            this.readerModeToolStripMenuItem.Name = "readerModeToolStripMenuItem";
+            this.readerModeToolStripMenuItem.ShortcutKeyDisplayString = "";
+            this.readerModeToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.readerModeToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.readerModeToolStripMenuItem.Text = "Reader Mode";
+            this.readerModeToolStripMenuItem.Click += new System.EventHandler(this.readerModeToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(143, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(160, 6);
             // 
             // previousToolStripMenuItem
             // 
             this.previousToolStripMenuItem.Image = global::ImageView.Properties.Resources.left;
             this.previousToolStripMenuItem.Name = "previousToolStripMenuItem";
             this.previousToolStripMenuItem.ShortcutKeyDisplayString = "Left";
-            this.previousToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.previousToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.previousToolStripMenuItem.Text = "Previous";
             // 
             // nextToolStripMenuItem
@@ -302,20 +315,20 @@
             this.nextToolStripMenuItem.Image = global::ImageView.Properties.Resources.right;
             this.nextToolStripMenuItem.Name = "nextToolStripMenuItem";
             this.nextToolStripMenuItem.ShortcutKeyDisplayString = "Right";
-            this.nextToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.nextToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.nextToolStripMenuItem.Text = "Next";
             // 
             // toolStripSeparator10
             // 
             this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(143, 6);
+            this.toolStripSeparator10.Size = new System.Drawing.Size(160, 6);
             // 
             // zoomToolToolStripMenuItem
             // 
             this.zoomToolToolStripMenuItem.Image = global::ImageView.Properties.Resources.zoom16;
             this.zoomToolToolStripMenuItem.Name = "zoomToolToolStripMenuItem";
             this.zoomToolToolStripMenuItem.ShortcutKeyDisplayString = "Z";
-            this.zoomToolToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.zoomToolToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.zoomToolToolStripMenuItem.Text = "Zoom Tool";
             this.zoomToolToolStripMenuItem.Click += new System.EventHandler(this.zoomToolToolStripMenuItem_Click);
             // 
@@ -385,6 +398,7 @@
             this.toolStripButtonDelete,
             this.toolStripSeparator2,
             this.toolStripButtonSlideShow,
+            this.toolStripReaderMode,
             this.toolStripButtonPrevious,
             this.toolStripButtonNext,
             this.toolStripSeparator3,
@@ -404,6 +418,7 @@
             // 
             this.toolStripButtonOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButtonOpen.Image = global::ImageView.Properties.Resources.open32;
+            this.toolStripButtonOpen.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButtonOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonOpen.Name = "toolStripButtonOpen";
             this.toolStripButtonOpen.Size = new System.Drawing.Size(36, 39);
@@ -438,11 +453,23 @@
             // 
             this.toolStripButtonSlideShow.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButtonSlideShow.Image = global::ImageView.Properties.Resources.slideshow32;
+            this.toolStripButtonSlideShow.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButtonSlideShow.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonSlideShow.Name = "toolStripButtonSlideShow";
             this.toolStripButtonSlideShow.Size = new System.Drawing.Size(36, 39);
             this.toolStripButtonSlideShow.Text = "Slideshow";
             this.toolStripButtonSlideShow.Click += new System.EventHandler(this.toolStripButtonSlideShow_Click);
+            // 
+            // toolStripReaderMode
+            // 
+            this.toolStripReaderMode.BackColor = System.Drawing.SystemColors.Control;
+            this.toolStripReaderMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripReaderMode.Image = global::ImageView.Properties.Resources.openbook32;
+            this.toolStripReaderMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripReaderMode.Name = "toolStripReaderMode";
+            this.toolStripReaderMode.Size = new System.Drawing.Size(36, 39);
+            this.toolStripReaderMode.Text = "Read Mode";
+            this.toolStripReaderMode.Click += new System.EventHandler(this.toolStripReaderMode_Click);
             // 
             // toolStripButtonPrevious
             // 
@@ -566,6 +593,7 @@
             // 
             this.toolStripButtonSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButtonSettings.Image = global::ImageView.Properties.Resources.settings32;
+            this.toolStripButtonSettings.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButtonSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonSettings.Name = "toolStripButtonSettings";
             this.toolStripButtonSettings.Size = new System.Drawing.Size(36, 39);
@@ -786,6 +814,8 @@
         private System.Windows.Forms.ToolStripMenuItem licenseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fitToWidthToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fitToHeightToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripReaderMode;
+        private System.Windows.Forms.ToolStripMenuItem readerModeToolStripMenuItem;
     }
 }
 

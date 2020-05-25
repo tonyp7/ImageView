@@ -32,6 +32,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ImageView.Configuration;
+using ImageView.ImageEntry;
+using System.Diagnostics;
 
 namespace ImageView
 {
@@ -71,6 +74,7 @@ namespace ImageView
         private FullScreenSaveState fullScreenSaveState = new FullScreenSaveState();
 
         private Tool activeTool = Tool.None;
+        private ViewingMode viewingMode = ViewingMode.Normal;
 
         public FrmMain()
         {
@@ -131,6 +135,7 @@ namespace ImageView
 
             if (args != null && args.Length >= 2)
             {
+                //loadPicture(args[1]);
                 loadPicture(args[1]);
             }
         }
@@ -156,9 +161,11 @@ namespace ImageView
         }
         private void toolStripComboBoxNavigation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string value = (string)toolStripComboBoxNavigation.SelectedItem;
+
+            TextRepresentationEntry tre = (TextRepresentationEntry)toolStripComboBoxNavigation.SelectedItem;
+
             this.ActiveControl = null;
-            loadPicture(value);
+            loadPicture(tre);
 
             //This fixes a weird refresh issue where the button to expand the dropdown stays focused after the selection change
             toolStripComboBoxNavigation.Select(0, 0);
@@ -349,10 +356,18 @@ namespace ImageView
                     }
                     break;
                 case Keys.Left:
+                case Keys.PageUp:
                     previous();
                     break;
                 case Keys.Right:
+                case Keys.PageDown:
                     next();
+                    break;
+                case Keys.Down:
+                    scrollDown();
+                    break;
+                case Keys.Up:
+                    scrollUp();
                     break;
                 case Keys.P:
                     showSettings();
@@ -415,6 +430,7 @@ namespace ImageView
             DialogResult dr = openFileDialog.ShowDialog();
             if(dr == DialogResult.OK)
             {
+                //loadPicture(openFileDialog.FileName);
                 loadPicture(openFileDialog.FileName);
             }
         }
@@ -447,14 +463,13 @@ namespace ImageView
             {
                 if (me.Button == MouseButtons.Left)
                 {
-                    if (timerSlideShow.Enabled)
+                    if (fullscreen)
                     {
-                        //a double click while a slideshow is playing automatically stops it
-                        exitSlideshow();
+                        exitFullScreen();
                     }
                     else
                     {
-                        toggleFullScreen();
+                        enterFullScreen();
                     }
                 }
             }
@@ -470,12 +485,14 @@ namespace ImageView
 
         private void slideshowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            enterSlideshow();
+            //enterSlideshow();
+            setViewMode(ViewingMode.Slideshow);
         }
 
         private void toolStripButtonSlideShow_Click(object sender, EventArgs e)
         {
-            enterSlideshow();
+            //enterSlideshow();
+            setViewMode(ViewingMode.Slideshow);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -781,6 +798,23 @@ namespace ImageView
             panelMain.Resize += panelMain_Resize;
         }
 
+        
+
+        private void enterReader()
+        {
+            setImageSizeMode(config.Reader.SizeMode);
+            toolStripReaderMode.BackColor = SystemColors.MenuHighlight;
+        }
+
+        private void exitReader()
+        {
+            if(config.Display.SizeModeOnImageLoad != ImageSizeMode.Restore)
+            {
+                setImageSizeMode(config.Display.SizeModeOnImageLoad);
+            }
+            toolStripReaderMode.BackColor = SystemColors.Control;
+        }
+
         private void BestFitStripMenuItem_Click(object sender, EventArgs e)
         {
             setImageSizeMode(ImageSizeMode.BestFit);
@@ -798,6 +832,40 @@ namespace ImageView
         private void fitToHeightToolStripMenuItem_Click(object sender, EventArgs e)
         {
             setImageSizeMode(ImageSizeMode.FitToHeight);
+        }
+
+        private void toolStripReaderMode_Click(object sender, EventArgs e)
+        {
+            toggleReaderMode();
+        }
+
+        private void readerModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleReaderMode();
+        }
+
+
+        private void verticalScroll(int direction)
+        {
+            if (panelMain.VerticalScroll.Visible)
+            {
+                Point scroll = panelMain.AutoScrollPosition;
+
+                scroll.X *= -1;
+                scroll.Y = -scroll.Y + (panelMain.Height / 10)*direction;
+
+                panelMain.AutoScrollPosition = scroll;
+            }
+        }
+
+        private void scrollDown()
+        {
+            verticalScroll(1);
+        }
+
+        private void scrollUp()
+        {
+            verticalScroll(-1);
         }
     }
 
