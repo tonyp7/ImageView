@@ -19,7 +19,7 @@ namespace ImageView.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -303,6 +303,26 @@ namespace ImageView.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap openbook16 {
+            get {
+                object obj = ResourceManager.GetObject("openbook16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap openbook32 {
+            get {
+                object obj = ResourceManager.GetObject("openbook32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap paypal_donate_button {
             get {
                 object obj = ResourceManager.GetObject("paypal_donate_button", resourceCulture);
@@ -441,7 +461,7 @@ namespace ImageView.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Supported Image Files|*.bmp;*.dib;*.cr2;*.dng;*.jp2;*.jpg;*.jpeg;*.png;*.psd;*.svg;*.tga;*.tif;*.tiff;*.webp|Windows Bitmap (*.bmp;*.dib)|*.bmp;*.dib|Canon RAW (*.cr2)|*.cr2|Digital Negative (*.dng)|*.dng|JPEG 2000 (*.jp2)|*.jp2|Joint Photographic Experts Group (*.jpg;*.jpeg)|*.jpg;*.jpeg|Portable Network Graphics (*.png)|*.png|Adobe Photoshop (*.psd)|*.psd|Scalable Vector Graphics (*.svg)|*.svg|Truevision TGA (*.tga)|*.tga|Tagged Image File Format (*.tif;*.tiff)|*.tif;*.tiff|WebP (*.webp)|*.webp|All Files  [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to Supported Image Files|*.psd;*.cr2;*.cbz;*.cbr;*.cb7;*.cba;*.cbt;*.dng;*.jpg;*.jpeg;*.jp2;*.png;*.svg;*.tif;*.tiff;*.tga;*.webp;*.bmp;*.dib|Adobe Photoshop (*.psd)|*.psd|Canon RAW (*.cr2)|*.cr2|Comic Book Archive (*.cbz;*.cbr;*.cb7;*.cba;*.cbt)|*.cbz;*.cbr;*.cb7;*.cba;*.cbt|Digital Negative (*.dng)|*.dng|Joint Photographic Experts Group (*.jpg;*.jpeg)|*.jpg;*.jpeg|JPEG 2000 (*.jp2)|*.jp2|Portable Network Graphics (*.png)|*.png|Scalable Vector Graphics (*.svg)|*.svg|Tagged Image File Format (*.tif;*.tiff)|*.t [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SupportedImageFiles {
             get {
