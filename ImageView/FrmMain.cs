@@ -708,7 +708,7 @@ namespace ImageView
             double X, Y;
             X = e.Location.X / workingData.calculatedZoom * 100.0;
             Y = e.Location.Y / workingData.calculatedZoom * 100.0;
-            toolStripStatusLabelPixelPosition.Text = string.Format("{0:#},{1:#}", X, Y);
+            toolStripStatusLabelPixelPosition.Text = string.Format("{0:0},{1:0}", X, Y);
 
             //drag image
             if (e.Button == MouseButtons.Middle)
