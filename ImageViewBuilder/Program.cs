@@ -146,11 +146,28 @@ namespace ImageViewBuilder
 
             //move stuff to be zipped
             string[] filter = new string[] { ".md", ".dll", ".exe" };
-            string[] releaseFiles = Directory.EnumerateFiles(Properties.Resources.ExeBuildPath, "*.*", SearchOption.TopDirectoryOnly).Where(file => filter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
+            string[] releaseFiles = Directory.EnumerateFiles(Properties.Resources.ExeBuildPath, "*.*", SearchOption.AllDirectories).Where(file => filter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
             foreach(string f in releaseFiles)
             {
                 FileInfo fi = new FileInfo(f);
-                string dstF = Path.Combine(Properties.Resources.PortableAppPath, fi.Name);
+
+                if (fi.Directory.Name == "x86") continue; //hack
+
+                string dstF = String.Empty;
+                if(fi.Directory.FullName != Properties.Resources.ExeBuildPath)
+                {
+                    string dstDir = Path.Combine(Properties.Resources.PortableAppPath, fi.Directory.Name);
+                    if (!Directory.Exists(dstDir))
+                    {
+                        Directory.CreateDirectory(dstDir);
+                    }
+                    dstF = Path.Combine(dstDir, fi.Name);
+                }
+                else
+                {
+                    dstF = Path.Combine(Properties.Resources.PortableAppPath, fi.Name);
+                }
+
                 fi.CopyTo(  dstF    , true);
                 Console.WriteLine(String.Format("Copied file to {0}", dstF));
             }
