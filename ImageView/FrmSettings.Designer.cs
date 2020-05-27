@@ -53,8 +53,10 @@
             this.btnApply = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.btnOK = new System.Windows.Forms.Button();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.chkAutoRotate = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPageGeneral.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -63,6 +65,7 @@
             this.tabPageView.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -227,6 +230,7 @@
             // tabPageView
             // 
             this.tabPageView.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageView.Controls.Add(this.groupBox4);
             this.tabPageView.Controls.Add(this.groupBox5);
             this.tabPageView.Location = new System.Drawing.Point(4, 22);
             this.tabPageView.Name = "tabPageView";
@@ -323,6 +327,27 @@
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.chkAutoRotate);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox4.Location = new System.Drawing.Point(3, 72);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(610, 69);
+            this.groupBox4.TabIndex = 4;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Auto-rotate";
+            // 
+            // chkAutoRotate
+            // 
+            this.chkAutoRotate.AutoSize = true;
+            this.chkAutoRotate.Location = new System.Drawing.Point(23, 33);
+            this.chkAutoRotate.Name = "chkAutoRotate";
+            this.chkAutoRotate.Size = new System.Drawing.Size(341, 17);
+            this.chkAutoRotate.TabIndex = 0;
+            this.chkAutoRotate.Text = "Automatically rotate the image according to its orientation metadata";
+            this.chkAutoRotate.UseVisualStyleBackColor = true;
+            // 
             // FrmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -347,6 +372,8 @@
             this.tabPageView.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -378,5 +405,7 @@
         private System.Windows.Forms.ComboBox cmbOnLoadImageSizeMode;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.CheckBox chkAutoRotate;
     }
 }

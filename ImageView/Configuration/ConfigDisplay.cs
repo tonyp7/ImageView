@@ -14,6 +14,7 @@ namespace ImageView.Configuration
         public int Zoom { get; set; }
         public ImageSizeMode SizeMode { get; set; }
         public int ZoomStep { get; set; }
+        public bool AutoRotate { get; set; }
 
 
         public ImageSizeMode SizeModeOnImageLoad { get; set; }
@@ -21,6 +22,7 @@ namespace ImageView.Configuration
         private static readonly int DEFAULT_ZOOM = 100;
         private static readonly int DEFAULT_ZOOM_STEP = 25;
         public static readonly int MAX_ZOOM = 400;
+        private static readonly bool DEFAULT_AUTO_ROTATE = true;
         private static readonly ImageSizeMode DEFAULT_IMAGESIZEMODE = ImageSizeMode.BestFit;
 
         public ConfigDisplay()
@@ -28,12 +30,26 @@ namespace ImageView.Configuration
             SizeMode = DEFAULT_IMAGESIZEMODE;
             Zoom = DEFAULT_ZOOM;
             ZoomStep = DEFAULT_ZOOM_STEP;
+            AutoRotate = DEFAULT_AUTO_ROTATE;
         }
 
         public void Load(XmlDocument doc)
         {
             XmlNode n;
+            bool bvalue;
             int ivalue;
+
+
+            //Auto rotate
+            n = doc.SelectSingleNode("/Settings/Display/AutoRotate");
+            if (n != null && bool.TryParse(n.InnerText, out bvalue))
+            {
+                AutoRotate = bvalue;
+            }
+            else
+            {
+                AutoRotate = DEFAULT_AUTO_ROTATE;
+            }
 
             //zoom
             n = doc.SelectSingleNode("/Settings/Display/Zoom");
@@ -85,6 +101,7 @@ namespace ImageView.Configuration
 
         public void Save(XmlDocument doc)
         {
+            Config.SafeNodeSelect(doc, "/Settings/Display/AutoRotate", AutoRotate.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Display/Zoom", Zoom.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Display/ZoomStep", SizeMode.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Display/SizeMode", SizeMode.ToString());
@@ -100,6 +117,7 @@ namespace ImageView.Configuration
             cd.SizeMode = this.SizeMode;
             cd.ZoomStep = this.ZoomStep;
             cd.SizeModeOnImageLoad = this.SizeModeOnImageLoad;
+            cd.AutoRotate = this.AutoRotate;
 
             return cd;
         }
@@ -110,6 +128,7 @@ namespace ImageView.Configuration
                     && SizeMode == other.SizeMode
                     && ZoomStep == other.ZoomStep
                     && SizeModeOnImageLoad == other.SizeModeOnImageLoad
+                    && AutoRotate == other.AutoRotate
                     ;
         }
 

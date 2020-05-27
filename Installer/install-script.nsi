@@ -85,8 +85,12 @@ Section "ImageView Program" SecMain
   File "..\ImageView\bin\Release\ImageView.exe"
   File "..\ImageView\bin\Release\Magick.Native-Q8-x64.dll"
   File "..\ImageView\bin\Release\Magick.NET-Q8-x64.dll"
+  File "..\ImageView\bin\Release\SevenZipExtractor.dll"
   File "..\ImageView\bin\Release\LICENSE"
   File "..\ImageView\bin\Release\DEPENDENCIES.md"
+  
+  SetOutPath "$INSTDIR\x64"
+  File "..\ImageView\bin\Release\x64\7z.dll"
   
   ; Set registry view to 64bit
   SetRegView 64
@@ -243,12 +247,16 @@ Section "Uninstall"
   Delete "$INSTDIR\DEPENDENCIES.md"
   Delete "$INSTDIR\Magick.Native-Q8-x64.dll"
   Delete "$INSTDIR\Magick.NET-Q8-x64.dll"
+  Delete "$INSTDIR\SevenZipExtractor.dll"
+  Delete "$INSTDIR\x64\7z.dll"
+
   
   ;attempt to delete the config file that is auto-generated
   Delete "$LOCALAPPDATA\ImageView\config.xml"
   
   
   ;delete install folder
+  RMDir "$INSTDIR\x64"
   RMDir "$INSTDIR"
   
   ;remove start menu shortcuts

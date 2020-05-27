@@ -71,6 +71,11 @@ namespace ImageView
                     cmbOnLoadImageSizeMode.SelectedIndex = 5;
                     break;
             }
+
+            ////////////////////////
+            // VIEWING TAB: AUTO ROTATE
+            ////////////////////////
+            chkAutoRotate.Checked = configNew.Display.AutoRotate;
         }
 
         public FrmSettings(FrmMain frmMain)
@@ -187,7 +192,7 @@ namespace ImageView
 
 
             ////////////////////////
-            // VIEW
+            // VIEWING TAB: DEFAULT IMAGE SIZE MODE
             ////////////////////////
             string onImageLoadSizeMode = (string)cmbOnLoadImageSizeMode.SelectedItem;
             switch (onImageLoadSizeMode)
@@ -211,6 +216,12 @@ namespace ImageView
                     configNew.Display.SizeModeOnImageLoad = ImageSizeMode.Restore;
                     break;
             }
+
+            ////////////////////////
+            // VIEWING TAB: AUTO ROTATE
+            ////////////////////////
+            configNew.Display.AutoRotate = chkAutoRotate.Checked;
+
 
 
             /////FINISH: New Config becomes old

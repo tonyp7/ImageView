@@ -706,6 +706,10 @@ namespace ImageView
 #endif
 
             //convert to bitmap
+            if(config.Display.AutoRotate && workingData.nativeImage.Orientation != OrientationType.Undefined)
+            {
+                workingData.nativeImage.AutoOrient();
+            }
             workingData.bitmap = workingData.nativeImage.ToBitmap();
 
 
@@ -925,6 +929,9 @@ namespace ImageView
             this.Location = fullScreenSaveState.Location;
             this.Size = fullScreenSaveState.Size;
 
+            //if slideshow was on we disable it
+            if (timerSlideShow.Enabled) timerSlideShow.Stop();
+
             fullscreen = false;
         }
         private void enterFullScreen()
@@ -1027,7 +1034,6 @@ namespace ImageView
         private void exitSlideshow()
         {
             exitFullScreen();
-            timerSlideShow.Stop();
         }
         private void enterSlideshow()
         {
