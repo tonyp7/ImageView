@@ -70,15 +70,20 @@ namespace ImageView
 
         public void Dispose()
         {
-            if (bitmap != null) bitmap.Dispose();
-            if (nativeImage != null) nativeImage.Dispose();
+            if (bitmap != null)
+            {
+                bitmap.Dispose();
+                bitmap = null;
+            }
+            if (nativeImage != null && !nativeImage.IsDisposed)
+            {
+                nativeImage.Dispose();
+                nativeImage = null;
+            }
         }
         public void reset()
         {
-            //directoryInfo = null;
-            //fileInfo = null;
             directoryIndex = -1;
-            //directoryFiles = null;
             activeEntry = null;
             entries = null;
             bitmap = null;
@@ -500,7 +505,6 @@ namespace ImageView
                 }
 
                 IEntry entry = workingData.entries[workingData.directoryIndex];
-                //loadPicture(entry.FullName, false);
                 loadPicture(entry);
             }
         }
@@ -517,7 +521,6 @@ namespace ImageView
                 }
 
                 IEntry entry = workingData.entries[workingData.directoryIndex];
-                //loadPicture(entry.FullName, false);
                 loadPicture(entry);
             }
 
@@ -591,7 +594,6 @@ namespace ImageView
         /// <param name="fullname"></param>
         private void loadPicture(string fullname)
         {
-
             if (File.Exists(fullname))
             {
                 //check if its an archive. Here we depend on the file extension. It's not a fullproof method but it's a reasonnable assumption
@@ -759,141 +761,6 @@ namespace ImageView
             toolStripComboBoxNavigation.Items.Clear();
             toolStripComboBoxNavigation.Items.AddRange(config.History.Get().ToArray());
         }
-
-
-        /*
-        /// <summary>
-        /// Todo: add a check if the file exists. If it doesn't and there's currently a working dir then refresh folder structure.
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="loadFolderStructure"></param>
-        private void loadPicture(string filename, bool loadFolderStructure = true)
-        {
-
-
-#if DEBUG
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-#endif
-            try
-            {
-
-                //clean up previously used memory (if any)
-                workingData.Dispose();
-#if DEBUG
-                TimeSpan tsDisposeEnd = stopWatch.Elapsed;
-#endif
-
-
-                workingData.activeEntry = new FileEntry(filename);
-
-                if (workingData.activeEntry.Exists)
-                {
-
-#if DEBUG
-                    TimeSpan nativeStart = stopWatch.Elapsed;
-#endif
-                    //workingData.nativeImage = new ImageMagick.MagickImage(workingData.fileInfo);
-                    Stream stream = workingData.activeEntry.GetStream();
-                    workingData.nativeImage = new ImageMagick.MagickImage(stream);
-                    stream.Dispose();
-#if DEBUG
-                    TimeSpan nativeEnd = stopWatch.Elapsed;
-#endif
-                    workingData.bitmap = workingData.nativeImage.ToBitmap();
-#if DEBUG
-                    TimeSpan bitmapEnd = stopWatch.Elapsed;
-#endif
-
-#if DEBUG
-                    stopWatch.Stop();
-                    System.Diagnostics.Debug.WriteLine(String.Format("Dispose: {0:00}.{1:00}", tsDisposeEnd.Seconds, tsDisposeEnd.Milliseconds / 10));
-                    System.Diagnostics.Debug.WriteLine(String.Format("ImageMagik: {0:00}.{1:00}", nativeEnd.Subtract(nativeStart).Seconds, nativeEnd.Subtract(nativeStart).Milliseconds / 10));
-                    System.Diagnostics.Debug.WriteLine(String.Format("ToBitmap: {0:00}.{1:00}", bitmapEnd.Subtract(nativeEnd).Seconds, bitmapEnd.Subtract(nativeEnd).Milliseconds / 10));
-#endif
-
-                    if(viewingMode == ViewingMode.Normal)
-                    {
-                        //check under what image mode this should be loaded
-                        if (config.Display.SizeModeOnImageLoad != ImageSizeMode.Restore && config.Display.SizeModeOnImageLoad != config.Display.SizeMode)
-                        {
-                            config.Display.SizeMode = config.Display.SizeModeOnImageLoad;
-                            refreshImageSizeModeUI();
-                        }
-                    }
-
-
-
-                    //Assign image to picture box then refresh sizing
-                    pictureBox.Image = workingData.bitmap;
-
-                    panelMain.Resize -= panelMain_Resize;
-                    resizePictureBox();
-                    panelMain.Resize += panelMain_Resize;
-
-
-                    //Add loaded file to history if necessary
-                    config.History.AddFile(workingData.activeEntry.ToText());
-                    //attempt to delete first to re-add it on top of the pile and not duplicate data
-                    toolStripComboBoxNavigation.Items.Remove(workingData.activeEntry.FullName);
-                    toolStripComboBoxNavigation.Items.Insert(0, workingData.activeEntry.FullName);
-                    //if now the list is above max size then we clean up the last item
-                    removeExcessHistoryItems();
-
-                    toolStripComboBoxNavigation_UpdateText(workingData.activeEntry.FullName);
-                    toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} - {2} {3}", workingData.nativeImage.BaseWidth, workingData.nativeImage.BaseHeight, workingData.nativeImage.ColorSpace, workingData.nativeImage.ColorType);
-                    toolStripStatusLabelImageInfo.Visible = true;
-                    toolStripStatusLabelFileSize.Text = NiceFileSize(workingData.activeEntry.Length);
-                    toolStripStatusLabelFileSize.Visible = true;
-                    this.Text = String.Format("{0} - {1}", workingData.activeEntry.FullName, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
-
-
-                    // Check if we are in the current working dir and pic position
-                    // This whole check can be completely ignored. This avoids useless computations in case a user click on next/previous image
-                    // By default it is set to true
-                    if (loadFolderStructure)
-                    {
-                        string path = Path.GetDirectoryName(filename);
-                        string[] files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly).Where(file => config.ExtensionFilter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
-                        workingData.directoryIndex = Array.FindIndex(files, x => x.Contains(filename));
-
-                        List<IEntry> l = new List<IEntry>();
-                        foreach(string s in files){
-                            var e = new FileEntry(s);
-                            l.Add(e);
-                        }
-                    }
-
-
-                    toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", workingData.directoryIndex + 1, workingData.entries.Length);
-                    toolStripStatusLabelImagePosition.Visible = true;
-                }
-                else
-                {
-                    //there is an edge case here where the user was browsing a folder and then an image of said folder was moved/deleted
-                    MessageBox.Show("File " + filename + " does not exist", "Unable to load file", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    close();
-                }
-
-
-
-            }
-            catch (OutOfMemoryException)
-            {
-
-            }
-            catch (Exception)
-            {
-
-            }
-
-
-
-
-
-
-        }*/
-
 
         private void copy()
         {
