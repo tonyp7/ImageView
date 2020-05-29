@@ -14,6 +14,8 @@ ImageView is safe and respects your privacy. It runs offline with no connection 
 
 # Download
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/tonyp7/ImageView?style=for-the-badge)
+
 * [ImageView_Setup.exe](https://getimageview.net/files/ImageView_Setup.exe)
 * [ImageView_Portable.zip](https://getimageview.net/files/ImageView_Portable.zip)
 
