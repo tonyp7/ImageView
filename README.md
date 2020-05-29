@@ -1,22 +1,19 @@
-ImageView
-===
+<h1 align="center">ImageView</h1>
 
-![GitHub](https://img.shields.io/github/license/tonyp7/ImageView?style=for-the-badge)
-![Website](https://img.shields.io/badge/Website-getimageview.net-blue?style=for-the-badge&)
-
+<p align="center">
 ImageView is a free and open-source image viewer for Microsoft Windows. It focuses primarily on ease of use and aim to remain as lightweight as possible.
+</p>
 
-ImageView is safe and respects your privacy. It runs offline with no connection to the Internet.
+<p align="center">
+ <a href="https://getimageview.net/files/ImageView_Setup.exe">
+ <img alt="Download" src="https://img.shields.io/github/v/release/tonyp7/ImageView?style=for-the-badge">
+ </a>
+ <img alt="License" src="https://img.shields.io/github/license/tonyp7/ImageView?style=plastic" />
+  <a href="https://getimageview.net">
+   <img alt="Website" src="https://img.shields.io/badge/Website-getimageview.net-blue?style=plastic" />
+  </a>
+</p>
 
-# Screenshots
-
-![Main interface](https://getimageview.net/pad/screenshot.jpg)
-
-# Download
-
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/tonyp7/ImageView?style=for-the-badge)
-
-* [ImageView_Setup.exe](https://getimageview.net/files/ImageView_Setup.exe)
-* [ImageView_Portable.zip](https://getimageview.net/files/ImageView_Portable.zip)
-
-The portable version will not register the app as an image viewer. It is recommended to use the setup version for simplicity.
+<p align="center">
+ <img src="https://getimageview.net/pad/screenshot.jpg" />
+</p>
