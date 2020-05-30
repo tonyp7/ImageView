@@ -24,6 +24,7 @@ SOFTWARE.
  */
 
 using ImageMagick;
+using ImageView.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,8 +44,23 @@ namespace ImageView
         private WorkingData workingData;
         public FrmInformation(WorkingData workingData)
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            InitalizeComponentsCultureAware();
             this.workingData = workingData;
+        }
+
+
+        public void InitalizeComponentsCultureAware()
+        {
+            var lang = Settings.Get.General;
+
+            Text = lang.GetString("Information");
+            tabPageFile.Text = lang.GetString("File");
+
+            colProperty.HeaderText = lang.GetString("Property");
+            colValue.HeaderText = lang.GetString("Value");
+            colExifProperty.HeaderText = lang.GetString("Property");
+            colExifValue.HeaderText = lang.GetString("Value");
         }
 
         private void FrmInformation_Load(object sender, EventArgs e)

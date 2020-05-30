@@ -38,10 +38,10 @@
             this.colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPageEXIF = new System.Windows.Forms.TabPage();
             this.dgvExif = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnOK = new System.Windows.Forms.Button();
+            this.colExifProperty = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colExifValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabControl.SuspendLayout();
             this.tabPageFile.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvFile)).BeginInit();
@@ -140,8 +140,8 @@
             this.dgvExif.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvExif.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvExif.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn2});
+            this.colExifProperty,
+            this.colExifValue});
             this.dgvExif.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvExif.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgvExif.Location = new System.Drawing.Point(3, 3);
@@ -151,20 +151,6 @@
             this.dgvExif.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvExif.Size = new System.Drawing.Size(450, 346);
             this.dgvExif.TabIndex = 2;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.HeaderText = "Property";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            this.dataGridViewTextBoxColumn1.Width = 119;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn2.HeaderText = "Value";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.ReadOnly = true;
             // 
             // panel1
             // 
@@ -188,6 +174,20 @@
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            // 
+            // ColExifProperty
+            // 
+            this.colExifProperty.HeaderText = "Property";
+            this.colExifProperty.Name = "ColExifProperty";
+            this.colExifProperty.ReadOnly = true;
+            this.colExifProperty.Width = 119;
+            // 
+            // ColExifValue
+            // 
+            this.colExifValue.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colExifValue.HeaderText = "Value";
+            this.colExifValue.Name = "ColExifValue";
+            this.colExifValue.ReadOnly = true;
             // 
             // FrmInformation
             // 
@@ -222,7 +222,7 @@
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.TabPage tabPageEXIF;
         private System.Windows.Forms.DataGridView dgvExif;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colExifProperty;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colExifValue;
     }
 }
