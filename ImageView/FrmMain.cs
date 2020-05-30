@@ -35,6 +35,9 @@ using System.Windows.Forms;
 using ImageView.Configuration;
 using ImageView.ImageEntry;
 using System.Diagnostics;
+using System.Globalization;
+using System.Threading;
+using System.Resources;
 
 namespace ImageView
 {
@@ -61,10 +64,6 @@ namespace ImageView
             Zoom
         }
 
-        public Config config;
-
-
-
 
         private bool fullscreen = false;
 
@@ -81,29 +80,101 @@ namespace ImageView
             InitializeComponent();
             this.MouseWheel += FrmMain_MouseWheel;
             this.openFileDialog.Filter = Properties.Resources.SupportedImageFiles;
-
             workingData = new WorkingData();
-            config = new Config();
-            config.Load();
+
+            Settings.Get.Load();
+
+            //multilingual settings
+            InitalizeComponentsCultureAware();
 
             close();
 
             //restore history
-            toolStripComboBoxNavigation.Items.AddRange( config.History.Get().ToArray() );
+            toolStripComboBoxNavigation.Items.AddRange(Settings.Get.History.Get().ToArray() );
 
             //set check mark on the type of image view
             refreshImageSizeModeUI();
 
             //restore window size
-            if (config.Window.Width != 0 && config.Window.Height != 0)
+            if (Settings.Get.Window.Width != 0 && Settings.Get.Window.Height != 0)
             {
                 this.panelMain.Resize -= panelMain_Resize;
-                this.Location = new Point(config.Window.X, config.Window.Y);
-                this.Width = config.Window.Width;
-                this.Height = config.Window.Height;
-                this.WindowState = config.Window.State;
+                this.Location = new Point(Settings.Get.Window.X, Settings.Get.Window.Y);
+                this.Width = Settings.Get.Window.Width;
+                this.Height = Settings.Get.Window.Height;
+                this.WindowState = Settings.Get.Window.State;
                 this.panelMain.Resize += panelMain_Resize;
             }
+        }
+
+        public void InitalizeComponentsCultureAware()
+        {
+
+            this.SuspendLayout();
+            this.menuStrip.SuspendLayout();
+            this.toolStrip.SuspendLayout();
+            this.statusStrip.SuspendLayout();
+            this.panelMain.SuspendLayout();
+
+            this.menuStrip.Text = String.Empty;
+            this.fileToolStripMenuItem.Text = Settings.Get.General.GetString("MenuFile");
+            this.toolStripMenuItemOpen.Text = Settings.Get.General.GetString("Open");
+            this.closeToolStripMenuItem.Text = Settings.Get.General.GetString("Close");
+            this.deleteToolStripMenuItem.Text = Settings.Get.General.GetString("Delete");
+            this.exitToolStripMenuItem.Text = Settings.Get.General.GetString("Exit");
+            this.editToolStripMenuItem.Text = Settings.Get.General.GetString("Edit");
+            this.copyToolStripMenuItem.Text = Settings.Get.General.GetString("Copy");
+            this.imageToolStripMenuItem.Text = Settings.Get.General.GetString("Image");
+            this.informationToolStripMenuItem.Text = Settings.Get.General.GetString("Information");
+            this.rotateLeftToolStripMenuItem.Text = Settings.Get.General.GetString("RotateLeft");
+            this.rotateRightToolStripMenuItem.Text = Settings.Get.General.GetString("RotateRight");
+            this.verticalFlipToolStripMenuItem.Text = Settings.Get.General.GetString("VerticalFlip");
+            this.horizontalFlipToolStripMenuItem.Text = Settings.Get.General.GetString("HorizontalFlip");
+            this.viewToolStripMenuItem.Text = Settings.Get.General.GetString("View");
+            this.fullscreenToolStripMenuItem.Text = Settings.Get.General.GetString("Fullscreen");
+            this.slideshowToolStripMenuItem.Text = Settings.Get.General.GetString("Slideshow");
+            this.readerModeToolStripMenuItem.Text = Settings.Get.General.GetString("ReaderMode");
+            this.previousToolStripMenuItem.Text = Settings.Get.General.GetString("Previous");
+            this.nextToolStripMenuItem.Text = Settings.Get.General.GetString("Next");
+            this.zoomToolToolStripMenuItem.Text = Settings.Get.General.GetString("ZoomTool");
+            this.optionsToolStripMenuItem.Text = Settings.Get.General.GetString("Options");
+            this.settingsToolStripMenuItem.Text = Settings.Get.General.GetString("Settings");
+            this.helpToolStripMenuItem.Text = Settings.Get.General.GetString("Help");
+            this.checkForUpdatesToolStripMenuItem.Text = Settings.Get.General.GetString("CheckForUpdates");
+            this.licenseToolStripMenuItem.Text = Settings.Get.General.GetString("License");
+            this.aboutToolStripMenuItem.Text = Settings.Get.General.GetString("About");
+            this.toolStrip.Text = String.Empty;
+            this.toolStripButtonOpen.Text = Settings.Get.General.GetString("OpenImageFile");
+            this.toolStripButtonSaveAs.Text = Settings.Get.General.GetString("SaveImageCopyAs");
+            this.toolStripButtonDelete.Text = Settings.Get.General.GetString("DeleteImage");
+            this.toolStripButtonSlideShow.Text = Settings.Get.General.GetString("Slideshow");
+            this.toolStripReaderMode.Text = Settings.Get.General.GetString("ReaderMode");
+            this.toolStripButtonPrevious.Text = Settings.Get.General.GetString("PreviousImage");
+            this.toolStripButtonNext.Text = Settings.Get.General.GetString("NextImage");
+            this.realSizeToolStripMenuItem.Text = Settings.Get.General.GetString("RealSize");
+            this.BestFitToolStripMenuItem.Text = Settings.Get.General.GetString("BestFit");
+            this.fitToWidthToolStripMenuItem.Text = Settings.Get.General.GetString("FitToWidth");
+            this.fitToHeightToolStripMenuItem.Text = Settings.Get.General.GetString("FitToHeight");
+            this.toolStripComboBoxZoom.Text = String.Empty;
+            this.toolStripButtonSettings.Text = Settings.Get.General.GetString("Settings");
+            this.statusStrip.Text = String.Empty;
+            this.toolStripStatusLabelImageInfo.Text = Settings.Get.General.GetString("WelcomeStatus");
+            this.toolStripStatusLabelImagePosition.Text = String.Empty;
+            this.toolStripStatusLabelZoom.Text = String.Empty;
+            this.toolStripStatusLabelFileSize.Text = String.Empty;
+            this.toolStripStatusLabelPixelPosition.Text = String.Empty;
+
+            toolStripDropDownButtonDisplayType.ToolTipText = Settings.Get.General.GetString("PickImageSizeMode");
+
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
+            this.panelMain.ResumeLayout(false);
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -128,14 +199,16 @@ namespace ImageView
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-
+            if (Settings.Get.General.FirstLaunch)
+            {
+                new FrmSplashScreen(this).ShowDialog();
+            }
 
             resizeNavigationBar();
-            string[] args = Environment.GetCommandLineArgs();
 
+            string[] args = Environment.GetCommandLineArgs();
             if (args != null && args.Length >= 2)
             {
-                //loadPicture(args[1]);
                 loadPicture(args[1]);
             }
         }
@@ -218,8 +291,8 @@ namespace ImageView
             if (int.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
             {
                 zoom = Program.Clamp(zoom, 1, ConfigDisplay.MAX_ZOOM);
-                config.Display.SizeMode = ImageSizeMode.Zoom;
-                config.Display.Zoom = zoom;
+                Settings.Get.Display.SizeMode = ImageSizeMode.Zoom;
+                Settings.Get.Display.Zoom = zoom;
                 refreshImageSizeModeUI();
                 resizePictureBox();
 
@@ -242,7 +315,7 @@ namespace ImageView
         private void FrmMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             //Attempt to save config
-            config.Save();
+            Settings.Get.Save();
         }
 
 
@@ -544,19 +617,19 @@ namespace ImageView
             //Save last window size and position
             if (this.WindowState == FormWindowState.Maximized)
             {
-                config.Window.X = this.RestoreBounds.X;
-                config.Window.Y = this.RestoreBounds.Y;
-                config.Window.Width = this.RestoreBounds.Width;
-                config.Window.Height = this.RestoreBounds.Height;
-                config.Window.State = this.WindowState;
+                Settings.Get.Window.X = this.RestoreBounds.X;
+                Settings.Get.Window.Y = this.RestoreBounds.Y;
+                Settings.Get.Window.Width = this.RestoreBounds.Width;
+                Settings.Get.Window.Height = this.RestoreBounds.Height;
+                Settings.Get.Window.State = this.WindowState;
             }
             else
             {
-                config.Window.X = this.Location.X;
-                config.Window.Y = this.Location.Y;
-                config.Window.Width = this.Width;
-                config.Window.Height = this.Height;
-                config.Window.State = this.WindowState;
+                Settings.Get.Window.X = this.Location.X;
+                Settings.Get.Window.Y = this.Location.Y;
+                Settings.Get.Window.Width = this.Width;
+                Settings.Get.Window.Height = this.Height;
+                Settings.Get.Window.State = this.WindowState;
             }
             
         }
@@ -671,17 +744,17 @@ namespace ImageView
                 {
                     var coord = pictureBox.PointToClient(Cursor.Position);
 
-                    config.Display.SizeMode = ImageSizeMode.Zoom;
+                    Settings.Get.Display.SizeMode = ImageSizeMode.Zoom;
 
 
-                    int newZoom = Control.ModifierKeys != Keys.Alt ? (int)workingData.calculatedZoom + config.Display.ZoomStep : (int)workingData.calculatedZoom - config.Display.ZoomStep;
+                    int newZoom = Control.ModifierKeys != Keys.Alt ? (int)workingData.calculatedZoom + Settings.Get.Display.ZoomStep : (int)workingData.calculatedZoom - Settings.Get.Display.ZoomStep;
 
                     newZoom = Program.Clamp(newZoom, 1, ConfigDisplay.MAX_ZOOM);
 
                     panelMain.Resize -= panelMain_Resize;
                     resizePictureBox(e.Location, newZoom);
                     panelMain.Resize += panelMain_Resize;
-                    config.Display.Zoom = newZoom;
+                    Settings.Get.Display.Zoom = newZoom;
 
                     refreshImageSizeModeUI();
                 }
@@ -790,7 +863,7 @@ namespace ImageView
         /// <param name="sz">New image size mode to be set</param>
         private void setImageSizeMode(ImageSizeMode sz)
         {
-            config.Display.SizeMode = sz;
+            Settings.Get.Display.SizeMode = sz;
             refreshImageSizeModeUI();
 
             panelMain.Resize -= panelMain_Resize;
@@ -802,15 +875,15 @@ namespace ImageView
 
         private void enterReader()
         {
-            setImageSizeMode(config.Reader.SizeMode);
+            setImageSizeMode(Settings.Get.Reader.SizeMode);
             toolStripReaderMode.BackColor = SystemColors.MenuHighlight;
         }
 
         private void exitReader()
         {
-            if(config.Display.SizeModeOnImageLoad != ImageSizeMode.Restore)
+            if(Settings.Get.Display.SizeModeOnImageLoad != ImageSizeMode.Restore)
             {
-                setImageSizeMode(config.Display.SizeModeOnImageLoad);
+                setImageSizeMode(Settings.Get.Display.SizeModeOnImageLoad);
             }
             toolStripReaderMode.BackColor = SystemColors.Control;
         }
