@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+using ImageView.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -38,20 +39,30 @@ namespace ImageView
         public FrmAbout()
         {
             InitializeComponent();
+            InitalizeComponentsCultureAware();
+        }
 
+        public void InitalizeComponentsCultureAware()
+        {
 
-            this.Text = String.Format("About " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
-            labelName.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-
+            var lang = Settings.Get.General;
             var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            labelVersion.Text = String.Format("Version {0}.{1}.{2}", v.Major, v.Minor, v.Build);
 
+            //title
+            this.Text = String.Format(lang.GetString("AboutTitle"), System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
 
+            //dynamic stuff
+            labelName.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            labelVersion.Text = String.Format(lang.GetString("AboutVersion"), v.Major, v.Minor, v.Build);
 
-
-
-
-
+            //fixed stuff
+            this.lblFreeAndOpenSource.Text = lang.GetString("AboutFreeAndOpenSource");
+            this.labelCopyright.Text = lang.GetString("AboutLicense");
+            this.lblSourceCodeRepo.Text = lang.GetString("AboutSourceCodeRepo");
+            this.lblGetLatest.Text = lang.GetString("AboutGetLatest");
+            this.lblPleaseDonate2.Text = lang.GetString("AboutPleaseDonate2");
+            this.lblPleaseDonate.Text = lang.GetString("AboutPleaseDonate");
+            this.lblCredits.Text = lang.GetString("AboutDependencies");
         }
 
         private void pictureBoxDonate_Click(object sender, EventArgs e)

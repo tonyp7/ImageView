@@ -28,39 +28,39 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnOK = new System.Windows.Forms.Button();
             this.pictureBoxDonate = new System.Windows.Forms.PictureBox();
             this.labelName = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblFreeAndOpenSource = new System.Windows.Forms.Label();
             this.labelCopyright = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.lblSourceCodeRepo = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lblGetLatest = new System.Windows.Forms.Label();
             this.linkLabelGetImageView = new System.Windows.Forms.LinkLabel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblPleaseDonate2 = new System.Windows.Forms.Label();
+            this.lblPleaseDonate = new System.Windows.Forms.Label();
             this.lblCredits = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDonate)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // button1
+            // btnOK
             // 
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button1.Location = new System.Drawing.Point(278, 290);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(107, 34);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "OK";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.Location = new System.Drawing.Point(278, 290);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(107, 34);
+            this.btnOK.TabIndex = 0;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
             // 
             // pictureBoxDonate
             // 
             this.pictureBoxDonate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBoxDonate.Image = global::ImageView.Properties.Resources.paypal_donate_button;
-            this.pictureBoxDonate.Location = new System.Drawing.Point(103, 38);
+            this.pictureBoxDonate.Location = new System.Drawing.Point(103, 46);
             this.pictureBoxDonate.Name = "pictureBoxDonate";
             this.pictureBoxDonate.Size = new System.Drawing.Size(157, 46);
             this.pictureBoxDonate.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -86,14 +86,14 @@
             this.labelVersion.TabIndex = 3;
             this.labelVersion.Text = "label1";
             // 
-            // label1
+            // lblFreeAndOpenSource
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 35);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(228, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "This program is free and open source software.";
+            this.lblFreeAndOpenSource.AutoSize = true;
+            this.lblFreeAndOpenSource.Location = new System.Drawing.Point(12, 35);
+            this.lblFreeAndOpenSource.Name = "lblFreeAndOpenSource";
+            this.lblFreeAndOpenSource.Size = new System.Drawing.Size(228, 13);
+            this.lblFreeAndOpenSource.TabIndex = 4;
+            this.lblFreeAndOpenSource.Text = "This program is free and open source software.";
             // 
             // labelCopyright
             // 
@@ -104,19 +104,19 @@
             this.labelCopyright.TabIndex = 7;
             this.labelCopyright.Text = "Licensed under the MIT License. Copyright © 2020, Tony Pottier";
             // 
-            // label4
+            // lblSourceCodeRepo
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 78);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(125, 13);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Source Code Repository:";
+            this.lblSourceCodeRepo.Location = new System.Drawing.Point(5, 77);
+            this.lblSourceCodeRepo.Name = "lblSourceCodeRepo";
+            this.lblSourceCodeRepo.Size = new System.Drawing.Size(156, 13);
+            this.lblSourceCodeRepo.TabIndex = 8;
+            this.lblSourceCodeRepo.Text = "Source Code Repository:";
+            this.lblSourceCodeRepo.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(143, 78);
+            this.linkLabel1.Location = new System.Drawing.Point(167, 77);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(189, 13);
             this.linkLabel1.TabIndex = 9;
@@ -124,19 +124,19 @@
             this.linkLabel1.Text = "https://github.com/tonyp7/ImageView";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
             // 
-            // label5
+            // lblGetLatest
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(40, 91);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(97, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Get Latest Version:";
+            this.lblGetLatest.Location = new System.Drawing.Point(-1, 90);
+            this.lblGetLatest.Name = "lblGetLatest";
+            this.lblGetLatest.Size = new System.Drawing.Size(162, 13);
+            this.lblGetLatest.TabIndex = 10;
+            this.lblGetLatest.Text = "Get Latest Version:";
+            this.lblGetLatest.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // linkLabelGetImageView
             // 
             this.linkLabelGetImageView.AutoSize = true;
-            this.linkLabelGetImageView.Location = new System.Drawing.Point(143, 91);
+            this.linkLabelGetImageView.Location = new System.Drawing.Point(167, 90);
             this.linkLabelGetImageView.Name = "linkLabelGetImageView";
             this.linkLabelGetImageView.Size = new System.Drawing.Size(126, 13);
             this.linkLabelGetImageView.TabIndex = 11;
@@ -146,8 +146,8 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.lblPleaseDonate2);
+            this.groupBox1.Controls.Add(this.lblPleaseDonate);
             this.groupBox1.Controls.Add(this.pictureBoxDonate);
             this.groupBox1.Location = new System.Drawing.Point(12, 157);
             this.groupBox1.Name = "groupBox1";
@@ -155,24 +155,24 @@
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             // 
-            // label3
+            // lblPleaseDonate2
             // 
-            this.label3.Location = new System.Drawing.Point(6, 87);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(361, 13);
-            this.label3.TabIndex = 15;
-            this.label3.Text = "Every donation is greatly appreciated!";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lblPleaseDonate2.Location = new System.Drawing.Point(6, 95);
+            this.lblPleaseDonate2.Name = "lblPleaseDonate2";
+            this.lblPleaseDonate2.Size = new System.Drawing.Size(361, 13);
+            this.lblPleaseDonate2.TabIndex = 15;
+            this.lblPleaseDonate2.Text = "Every donation is greatly appreciated!";
+            this.lblPleaseDonate2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // label2
+            // lblPleaseDonate
             // 
-            this.label2.Location = new System.Drawing.Point(9, 16);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(358, 19);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "If you wish to support this program, please consider donating using the donate bu" +
+            this.lblPleaseDonate.Location = new System.Drawing.Point(6, 16);
+            this.lblPleaseDonate.Name = "lblPleaseDonate";
+            this.lblPleaseDonate.Size = new System.Drawing.Size(358, 27);
+            this.lblPleaseDonate.TabIndex = 14;
+            this.lblPleaseDonate.Text = "If you wish to support this program, please consider donating using the donate bu" +
     "tton below:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lblPleaseDonate.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // lblCredits
             // 
@@ -191,14 +191,14 @@
             this.Controls.Add(this.lblCredits);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.linkLabelGetImageView);
-            this.Controls.Add(this.label5);
+            this.Controls.Add(this.lblGetLatest);
             this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.label4);
+            this.Controls.Add(this.lblSourceCodeRepo);
             this.Controls.Add(this.labelCopyright);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblFreeAndOpenSource);
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.labelName);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnOK);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmAbout";
@@ -216,19 +216,19 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.PictureBox pictureBoxDonate;
         private System.Windows.Forms.Label labelName;
         private System.Windows.Forms.Label labelVersion;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblFreeAndOpenSource;
         private System.Windows.Forms.Label labelCopyright;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblSourceCodeRepo;
         private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblGetLatest;
         private System.Windows.Forms.LinkLabel linkLabelGetImageView;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblPleaseDonate2;
+        private System.Windows.Forms.Label lblPleaseDonate;
         private System.Windows.Forms.Label lblCredits;
     }
 }
