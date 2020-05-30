@@ -31,8 +31,8 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.btnOK = new System.Windows.Forms.Button();
             this.txtAdditional = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblAdditional = new System.Windows.Forms.Label();
+            this.lblLicense = new System.Windows.Forms.Label();
             this.txtLicense = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -43,8 +43,8 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.btnOK, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.txtAdditional, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.lblAdditional, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.lblLicense, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.txtLicense, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
@@ -82,24 +82,24 @@
             this.txtAdditional.Size = new System.Drawing.Size(778, 232);
             this.txtAdditional.TabIndex = 4;
             // 
-            // label4
+            // lblAdditional
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 251);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(462, 13);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "In addition, this software depends on additional libraries and art files; under t" +
+            this.lblAdditional.AutoSize = true;
+            this.lblAdditional.Location = new System.Drawing.Point(3, 251);
+            this.lblAdditional.Name = "lblAdditional";
+            this.lblAdditional.Size = new System.Drawing.Size(462, 13);
+            this.lblAdditional.TabIndex = 3;
+            this.lblAdditional.Text = "In addition, this software depends on additional libraries and art files; under t" +
     "he following licenses:";
             // 
-            // label3
+            // lblLicense
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(253, 13);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "This software is licensed under the following license:";
+            this.lblLicense.AutoSize = true;
+            this.lblLicense.Location = new System.Drawing.Point(3, 0);
+            this.lblLicense.Name = "lblLicense";
+            this.lblLicense.Size = new System.Drawing.Size(253, 13);
+            this.lblLicense.TabIndex = 1;
+            this.lblLicense.Text = "This software is licensed under the following license:";
             // 
             // txtLicense
             // 
@@ -124,7 +124,7 @@
             this.Name = "FrmLicense";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.Text = "FrmLicense";
+            this.Text = "License";
             this.Load += new System.EventHandler(this.FrmLicense_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
@@ -137,8 +137,8 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.TextBox txtAdditional;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblAdditional;
+        private System.Windows.Forms.Label lblLicense;
         private System.Windows.Forms.TextBox txtLicense;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageView.Configuration;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,6 +17,16 @@ namespace ImageView
         public FrmLicense()
         {
             InitializeComponent();
+            InitalizeComponentsCultureAware();
+        }
+
+        public void InitalizeComponentsCultureAware()
+        {
+            var lang = Settings.Get.General;
+
+            this.Text = lang.GetString("License");
+            lblLicense.Text = lang.GetString("LicenseMain");
+            lblAdditional.Text = lang.GetString("LicenseAdditional");
         }
 
         private void FrmLicense_Load(object sender, EventArgs e)
@@ -33,7 +44,8 @@ namespace ImageView
             }
             catch (Exception)
             {
-                MessageBox.Show("There was an unexpected error while loading the license files.\nPlease refer to https://getimageview.net", "Error loading license files", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var lang = Settings.Get.General;
+                MessageBox.Show(lang.GetString("LicenseErrorMessage"), lang.GetString("LicenseErrorTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
         }
