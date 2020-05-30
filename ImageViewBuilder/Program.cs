@@ -19,6 +19,7 @@ namespace ImageViewBuilder
         {
             OK = 0,
             ERR_SETUP_BUILD = 1,
+            ERR_DIGITAL_SIGN = 2,
             ERR_UNKNOWN = -1,
         }
 
@@ -35,16 +36,8 @@ namespace ImageViewBuilder
         {
             Version v = new Version();
 
-            //get run path
-            string runPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-
-            //get assembly
-            string assembly = "../../../../ImageView/Properties/AssemblyInfo.cs";
-            assembly = Path.Combine(runPath, assembly);
-
             //get the build version
-            
-            using (StreamReader sr = new StreamReader(assembly))
+            using (StreamReader sr = new StreamReader(Properties.Resources.AssemblyFileFullName))
             {
                 while (sr.Peek() > 0)
                 {
@@ -124,6 +117,40 @@ namespace ImageViewBuilder
 
         }
 
+
+        static RETURN_CODE SignExe(FileInfo fileToSign)
+        {
+
+            Console.Write("Digitally signing " + fileToSign.FullName + "... ");
+
+            Process process = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.FileName = Properties.Resources.SignToolFullName;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.Arguments = String.Format(Properties.Resources.SignToolArgs, fileToSign.FullName);
+            startInfo.UseShellExecute = false;
+            process.StartInfo = startInfo;
+            process.Start();
+            process.WaitForExit();
+
+
+            string output = process.StandardOutput.ReadToEnd();
+
+            if(output.Contains("Successfully signed:"))
+            {
+                Console.WriteLine("OK!");
+                return RETURN_CODE.OK;
+            }
+            else
+            {
+                Console.WriteLine(output);
+                return RETURN_CODE.ERR_DIGITAL_SIGN;
+            }
+
+            
+        }
 
         static RETURN_CODE createPortableApp(Version v, ref FileInfo portableAppFile)
         {
@@ -292,8 +319,13 @@ namespace ImageViewBuilder
             FileInfo portableAppFile = null;
             FileInfo padFile = null;
 
+            //Sign exe
+            SignExe(new FileInfo( Path.Combine(Properties.Resources.ExeBuildPath, Properties.Resources.ExeFileName)  ));
+
             //generate setup file
             buildSetupFile(v, ref setupFile);
+            //Sign setup
+            SignExe(setupFile);
 
             //Build the Portable app
             createPortableApp(v, ref portableAppFile);
