@@ -35,11 +35,33 @@ using System.ComponentModel;
 
 namespace ImageView.Configuration
 {
+
+    public sealed class Settings
+    {
+
+        private static Config _config = new Config();
+        public static Config Get
+        {
+            get { return _config; }
+            set { _config = value; }
+        }
+
+        private Settings()
+        {
+
+        }
+        static Settings()
+        {
+
+        }
+    }
+
     public class Config : ICloneable, IEquatable<Config>
     {
         private string configFileLocation = null;
         public XmlDocument configFileDoc = null;
 
+        public ConfigGeneral General;
         public ConfigHistory History;
         public ConfigDisplay Display;
         public ConfigWindow Window;
@@ -56,6 +78,7 @@ namespace ImageView.Configuration
             c.configFileLocation = (string)this.configFileLocation.Clone();
             c.configFileDoc = (XmlDocument)configFileDoc.Clone();
 
+            c.General = (ConfigGeneral)this.General.Clone();
             c.History = (ConfigHistory)this.History.Clone();
             c.Display = (ConfigDisplay)this.Display.Clone();
             c.Window = (ConfigWindow)this.Window.Clone();
@@ -69,6 +92,7 @@ namespace ImageView.Configuration
         public void Save()
         {
 
+            General.Save(configFileDoc);
             History.Save(configFileDoc);
             Display.Save(configFileDoc);
             Window.Save(configFileDoc);
@@ -113,6 +137,7 @@ namespace ImageView.Configuration
                 }
                 configFileDoc.Load(configFileLocation);
 
+                General = new ConfigGeneral();
                 History = new ConfigHistory();
                 Display = new ConfigDisplay();
                 Window = new ConfigWindow();
@@ -121,6 +146,7 @@ namespace ImageView.Configuration
 
 
                 //restore previous config
+                General.Load(configFileDoc);
                 History.Load(configFileDoc);
                 Display.Load(configFileDoc);
                 Window.Load(configFileDoc);
