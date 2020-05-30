@@ -128,7 +128,7 @@ namespace ImageView
 
         private void refreshImageSizeModeUI()
         {
-            switch (config.Display.SizeMode)
+            switch (Settings.Get.Display.SizeMode)
             {
                 case ImageSizeMode.BestFit:
                     BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows_tick16;
@@ -357,7 +357,7 @@ namespace ImageView
             if (i == null) return;
 
 
-            if (config.Display.SizeMode == ImageSizeMode.BestFit)
+            if (Settings.Get.Display.SizeMode == ImageSizeMode.BestFit)
             {
                 panelMain.AutoScroll = false;
 
@@ -371,7 +371,7 @@ namespace ImageView
                 toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)workingData.calculatedZoom);
                 toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)workingData.calculatedZoom));
             }
-            else if(config.Display.SizeMode == ImageSizeMode.FitToWidth)
+            else if(Settings.Get.Display.SizeMode == ImageSizeMode.FitToWidth)
             {
                 panelMain.AutoScroll = false;
                 Rectangle rect = calculateFitToWidth(i, ref workingData.calculatedZoom);
@@ -385,7 +385,7 @@ namespace ImageView
                 toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)workingData.calculatedZoom));
 
             }
-            else if (config.Display.SizeMode == ImageSizeMode.FitToHeight)
+            else if (Settings.Get.Display.SizeMode == ImageSizeMode.FitToHeight)
             {
                 panelMain.AutoScroll = false;
                 Rectangle rect = calculateFitToHeight(i, ref workingData.calculatedZoom);
@@ -399,7 +399,7 @@ namespace ImageView
                 toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)workingData.calculatedZoom));
 
             }
-            else if (config.Display.SizeMode == ImageSizeMode.Zoom || config.Display.SizeMode == ImageSizeMode.RealSize)
+            else if (Settings.Get.Display.SizeMode == ImageSizeMode.Zoom || Settings.Get.Display.SizeMode == ImageSizeMode.RealSize)
             {
 
                 int previousWidth = i.Width;
@@ -408,7 +408,7 @@ namespace ImageView
                 int newHeight = i.Height;
 
                 //for zoom we calculate new height and width but the code is otherwise the same than drawing the regular picture
-                if (config.Display.SizeMode == ImageSizeMode.Zoom)
+                if (Settings.Get.Display.SizeMode == ImageSizeMode.Zoom)
                 {
 
                     //calculate the previous height and width
@@ -416,7 +416,7 @@ namespace ImageView
                     previousHeight = (int)Math.Round(((double)i.Height * workingData.calculatedZoom / 100.0));
 
                     //calculate new zoom
-                    double zoomf = newZoom == -1 ? config.Display.Zoom / 100.0 : newZoom / 100.0;
+                    double zoomf = newZoom == -1 ? Settings.Get.Display.Zoom / 100.0 : newZoom / 100.0;
                     newWidth = (int)Math.Round(((double)i.Width * zoomf));
                     newHeight = (int)Math.Round(((double)i.Height * zoomf));
                     pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
@@ -453,7 +453,7 @@ namespace ImageView
                 int zoom;
                 if(newZoom == -1)
                 {
-                    zoom = config.Display.SizeMode == ImageSizeMode.RealSize ? 100 : config.Display.Zoom;
+                    zoom = Settings.Get.Display.SizeMode == ImageSizeMode.RealSize ? 100 : Settings.Get.Display.Zoom;
                 }
                 else
                 {
@@ -708,7 +708,7 @@ namespace ImageView
 #endif
 
             //convert to bitmap
-            if(config.Display.AutoRotate && workingData.nativeImage.Orientation != OrientationType.Undefined)
+            if(Settings.Get.Display.AutoRotate && workingData.nativeImage.Orientation != OrientationType.Undefined)
             {
                 workingData.nativeImage.AutoOrient();
             }
@@ -718,9 +718,9 @@ namespace ImageView
             //check if the image mode should be changed because user wants a specific image size mode on load
             if (viewingMode == ViewingMode.Normal)
             {
-                if (config.Display.SizeModeOnImageLoad != ImageSizeMode.Restore && config.Display.SizeModeOnImageLoad != config.Display.SizeMode)
+                if (Settings.Get.Display.SizeModeOnImageLoad != ImageSizeMode.Restore && Settings.Get.Display.SizeModeOnImageLoad != Settings.Get.Display.SizeMode)
                 {
-                    config.Display.SizeMode = config.Display.SizeModeOnImageLoad;
+                    Settings.Get.Display.SizeMode = Settings.Get.Display.SizeModeOnImageLoad;
                     refreshImageSizeModeUI();
                 }
             }
@@ -740,8 +740,8 @@ namespace ImageView
 
             //Add loaded file to history if necessary
             TextRepresentationEntry tre = workingData.activeEntry.ToText();
-            config.History.AddFile(tre);
-            SetHistoryList(config.History.Get());
+            Settings.Get.History.AddFile(tre);
+            SetHistoryList(Settings.Get.History.Get());
 
             //refresh UI elements
             toolStripComboBoxNavigation_UpdateText(workingData.activeEntry.FullName);
@@ -759,7 +759,7 @@ namespace ImageView
         internal void SetHistoryList(List<TextRepresentationEntry> list)
         {
             toolStripComboBoxNavigation.Items.Clear();
-            toolStripComboBoxNavigation.Items.AddRange(config.History.Get().ToArray());
+            toolStripComboBoxNavigation.Items.AddRange(Settings.Get.History.Get().ToArray());
         }
 
         private void copy()
@@ -904,10 +904,10 @@ namespace ImageView
         }
         private void enterSlideshow()
         {
-            config.Display.SizeMode = config.Slideshow.SizeMode;
+            Settings.Get.Display.SizeMode = Settings.Get.Slideshow.SizeMode;
             refreshImageSizeModeUI();
             enterFullScreen();
-            timerSlideShow.Interval = config.Slideshow.Timer;
+            timerSlideShow.Interval = Settings.Get.Slideshow.Timer;
             timerSlideShow.Start();
         }
 
