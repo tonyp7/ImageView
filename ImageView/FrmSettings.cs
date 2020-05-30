@@ -76,16 +76,74 @@ namespace ImageView
             // VIEWING TAB: AUTO ROTATE
             ////////////////////////
             chkAutoRotate.Checked = configNew.Display.AutoRotate;
+
+            ////////////////////////
+            // LANGUAGE
+            ////////////////////////
+            string currentLanguage = configNew.General.Culture.TwoLetterISOLanguageName;
+            switch (currentLanguage)
+            {
+                case "en":
+                    cmbLanguage.SelectedIndex = 0;
+                    break;
+                case "fr":
+                    cmbLanguage.SelectedIndex = 1;
+                    break;
+            }
         }
 
         public FrmSettings(FrmMain frmMain)
         {
             InitializeComponent();
-            cmbOnLoadImageSizeMode.Items.AddRange(new string[] { "Best Fit", "Real Size", "Fit to Width", "Fit to Height", "Zoom", "Same as last viewed image" });
 
+            cmbOnLoadImageSizeMode.Items.AddRange(new string[] { String.Empty, String.Empty, String.Empty, String.Empty, String.Empty, String.Empty });
+            cmbLanguage.Items.AddRange(new string[] { String.Empty, String.Empty});
+
+            InitalizeComponentsCultureAware(); 
+            
             this.frmMain = frmMain;
-            this.configNew = (Config)frmMain.config.Clone();
+            this.configNew = (Config)Settings.Get.Clone();
             loadUIElements();
+
+        }
+
+        public void InitalizeComponentsCultureAware()
+        {
+            var lang = Settings.Get.General;
+
+
+            this.Text = lang.GetString("Settings");
+            this.tabPageGeneral.Text = lang.GetString("SettingsGeneral");
+            this.grpHistory.Text = lang.GetString("SettingsHistory");
+            this.lblHistoryExplanation.Text = lang.GetString("SettingsHistoryExplanation");  
+            this.label5.Text = lang.GetString("SettingsHistoryMaxSize");
+            this.chkHistorySaveOnExit.Text = lang.GetString("SettingsHistorySaveOnExit");
+            this.grpSlideshow.Text = lang.GetString("Slideshow");
+            this.lblTimeToDisplayEachImage.Text = lang.GetString("SettingsSlideshowTimer");
+            this.grpDefaultApps.Text = lang.GetString("SettingsDefaultApp"); 
+            this.lblDefaultAppsExplanation.Text = lang.GetString("SettingsDefaultAppExplanation");
+            this.btnMakeDefault.Text = lang.GetString("SettingsChooseDefaultApps"); 
+            this.tabPageView.Text = lang.GetString("SettingsImageViewing");
+            this.grpAutoRotate.Text = lang.GetString("SettingsAutoRotate");
+            this.chkAutoRotate.Text = lang.GetString("SettingsAutoRotateExplanation");
+            this.grpDefaultSizeMode.Text = lang.GetString("SettingsDefaultSizeMode"); 
+            this.lblDefaultSizeModeExplanation.Text = lang.GetString("SettingsDefaultSizeModeExplanation"); 
+
+            this.btnApply.Text = lang.GetString("Apply");
+            this.btnCancel.Text = lang.GetString("Cancel");
+            this.btnOK.Text = lang.GetString("OK");
+
+
+            
+            cmbOnLoadImageSizeMode.Items[0] = lang.GetString("BestFit");
+            cmbOnLoadImageSizeMode.Items[1] = lang.GetString("RealSize");
+            cmbOnLoadImageSizeMode.Items[2] = lang.GetString("FitToWidth");
+            cmbOnLoadImageSizeMode.Items[3] = lang.GetString("FitToHeight");
+            cmbOnLoadImageSizeMode.Items[4] = lang.GetString("Zoom");
+            cmbOnLoadImageSizeMode.Items[5] = lang.GetString("ImageModeRestore");
+
+            cmbLanguage.Items[0] = lang.GetString("en");
+            cmbLanguage.Items[1] = lang.GetString("fr");
 
         }
 
@@ -168,7 +226,7 @@ namespace ImageView
             }
             else
             {
-                txtSlideshowTimer.Text = frmMain.config.Slideshow.Timer.ToString(); //something input by the user is wrong so current config value is restored
+                txtSlideshowTimer.Text = Settings.Get.Slideshow.Timer.ToString(); //something input by the user is wrong so current config value is restored
             }
 
             ////////////////////////
@@ -179,7 +237,7 @@ namespace ImageView
             {
                 configNew.History.MaxSize = value;
                 //apply the new history size -- if the new value is less than the old we have some clean up to do
-                if(value < frmMain.config.History.MaxSize)
+                if(value < Settings.Get.History.MaxSize)
                 {
                     frmMain.SetHistoryList(configNew.History.Get());
                 }
@@ -187,29 +245,28 @@ namespace ImageView
             }
             else
             {
-                txtSlideshowTimer.Text = frmMain.config.History.MaxSize.ToString(); //something input by the user is wrong so current config value is restored
+                txtSlideshowTimer.Text = Settings.Get.History.MaxSize.ToString(); //something input by the user is wrong so current config value is restored
             }
 
 
             ////////////////////////
             // VIEWING TAB: DEFAULT IMAGE SIZE MODE
             ////////////////////////
-            string onImageLoadSizeMode = (string)cmbOnLoadImageSizeMode.SelectedItem;
-            switch (onImageLoadSizeMode)
+            switch (cmbOnLoadImageSizeMode.SelectedIndex)
             {
-                case "Best Fit":
+                case 0:
                     configNew.Display.SizeModeOnImageLoad = ImageSizeMode.BestFit;
                     break;
-                case "Real Size":
+                case 1:
                     configNew.Display.SizeModeOnImageLoad = ImageSizeMode.RealSize;
                     break;
-                case "Fit to Width":
+                case 2:
                     configNew.Display.SizeModeOnImageLoad = ImageSizeMode.FitToWidth;
                     break;
-                case "Fit to Height":
+                case 3:
                     configNew.Display.SizeModeOnImageLoad = ImageSizeMode.FitToHeight;
                     break;
-                case "Zoom":
+                case 4:
                     configNew.Display.SizeModeOnImageLoad = ImageSizeMode.Zoom;
                     break;
                 default:
@@ -223,11 +280,32 @@ namespace ImageView
             configNew.Display.AutoRotate = chkAutoRotate.Checked;
 
 
+            ////////////////////////
+            // LANGUAGE
+            ////////////////////////
+            switch (cmbLanguage.SelectedIndex)
+            {
+                case 1:
+                    configNew.General.SetCulture("fr");
+                    break;
+                case 0:
+                default:
+                    configNew.General.SetCulture("en");
+                    break;
+            }
 
-            /////FINISH: New Config becomes old
-            frmMain.config = configNew;
+
+            /////FINISH: New Config becomes old -- but first check if the language needs to be reloaded
+            bool reloadLanguage = Settings.Get.General.Culture.TwoLetterISOLanguageName != configNew.General.Culture.TwoLetterISOLanguageName;
+            Settings.Get = configNew;
+            if (reloadLanguage)
+            {
+                InitalizeComponentsCultureAware();
+                frmMain.InitalizeComponentsCultureAware();
+
+            }
             configNew = null;
-            configNew = (Config)frmMain.config.Clone();
+            configNew = (Config)Settings.Get.Clone();
 
         }
 
