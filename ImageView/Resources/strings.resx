@@ -1,0 +1,355 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AboutDependencies" xml:space="preserve">
+    <value>This program depends on other work (libraries or art files). Please check out About/License for a complete information.</value>
+  </data>
+  <data name="AboutFreeAndOpenSource" xml:space="preserve">
+    <value>This program is free and open source software.</value>
+  </data>
+  <data name="AboutGetLatest" xml:space="preserve">
+    <value>Get Latest Version:</value>
+  </data>
+  <data name="AboutLicense" xml:space="preserve">
+    <value>Licensed under the MIT License. Copyright © 2020, Tony Pottier</value>
+  </data>
+  <data name="AboutPleaseDonate" xml:space="preserve">
+    <value>If you wish to support this program, please consider donating using the donate button below:</value>
+  </data>
+  <data name="AboutPleaseDonate2" xml:space="preserve">
+    <value>Every donation is greatly appreciated!</value>
+  </data>
+  <data name="AboutSourceCodeRepo" xml:space="preserve">
+    <value>Source Code Repository:</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>About {0}</value>
+  </data>
+  <data name="AboutVersion" xml:space="preserve">
+    <value>Version {0}.{1}.{2}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="BestFit" xml:space="preserve">
+    <value>Best Fit</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CheckForUpdates" xml:space="preserve">
+    <value>Check for Updates</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteImage" xml:space="preserve">
+    <value>Delete Image</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>&amp;Edit</value>
+  </data>
+  <data name="en" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="FitToHeight" xml:space="preserve">
+    <value>Fit to Height</value>
+  </data>
+  <data name="FitToWidth" xml:space="preserve">
+    <value>Fit to Width</value>
+  </data>
+  <data name="fr" xml:space="preserve">
+    <value>French</value>
+  </data>
+  <data name="Fullscreen" xml:space="preserve">
+    <value>Fullscreen</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>&amp;Help</value>
+  </data>
+  <data name="HorizontalFlip" xml:space="preserve">
+    <value>Horizontal Flip</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>&amp;Image</value>
+  </data>
+  <data name="ImageModeRestore" xml:space="preserve">
+    <value>Same as last viewed image</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="License" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="LicenseAdditional" xml:space="preserve">
+    <value>In addition, this software depends on additional libraries and art files; under the following licenses:</value>
+  </data>
+  <data name="LicenseErrorMessage" xml:space="preserve">
+    <value>There was an unexpected error while loading the license files.
+Please refer to https://getimageview.net</value>
+  </data>
+  <data name="LicenseErrorTitle" xml:space="preserve">
+    <value>Error loading license files</value>
+  </data>
+  <data name="LicenseMain" xml:space="preserve">
+    <value>This software is licensed under the following license:</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>&amp;File</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="NextImage" xml:space="preserve">
+    <value>Next Image</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="OpenImageFile" xml:space="preserve">
+    <value>Open Image File</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>&amp;Options</value>
+  </data>
+  <data name="PickImageSizeMode" xml:space="preserve">
+    <value>Pick Image Size Mode</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="PreviousImage" xml:space="preserve">
+    <value>Previous Image</value>
+  </data>
+  <data name="Property" xml:space="preserve">
+    <value>Property</value>
+  </data>
+  <data name="ReaderMode" xml:space="preserve">
+    <value>Reader Mode</value>
+  </data>
+  <data name="RealSize" xml:space="preserve">
+    <value>Real Size</value>
+  </data>
+  <data name="RotateLeft" xml:space="preserve">
+    <value>Rotate Left (Counter Clockwise)</value>
+  </data>
+  <data name="RotateRight" xml:space="preserve">
+    <value>Rotate Right (Clockwise)</value>
+  </data>
+  <data name="SaveImageCopyAs" xml:space="preserve">
+    <value>Save Image Copy As...</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsAutoRotate" xml:space="preserve">
+    <value>Automatically rotate</value>
+  </data>
+  <data name="SettingsAutoRotateExplanation" xml:space="preserve">
+    <value>Automatically rotate the image according to its orientation metadata</value>
+  </data>
+  <data name="SettingsChooseDefaultApps" xml:space="preserve">
+    <value>Choose Default Apps</value>
+  </data>
+  <data name="SettingsDefaultApp" xml:space="preserve">
+    <value>Default Application</value>
+  </data>
+  <data name="SettingsDefaultAppExplanation" xml:space="preserve">
+    <value>Click on the button below to launch Windows Default Applications. From there, you can select ImageView to be your default Photo Viewer.
+If you are using the portable version of ImageView, you need to run it with administrator privilege for this functionality to work.</value>
+  </data>
+  <data name="SettingsDefaultSizeMode" xml:space="preserve">
+    <value>Default Image Size Mode</value>
+  </data>
+  <data name="SettingsDefaultSizeModeExplanation" xml:space="preserve">
+    <value>When loading an image, set image size mode to:</value>
+  </data>
+  <data name="SettingsGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsHistory" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="SettingsHistoryExplanation" xml:space="preserve">
+    <value>A value of 0 will disable history. The maximum value is 99.</value>
+  </data>
+  <data name="SettingsHistoryMaxSize" xml:space="preserve">
+    <value>Number of items to keep in history:</value>
+  </data>
+  <data name="SettingsHistorySaveOnExit" xml:space="preserve">
+    <value>Save History When Exiting Program</value>
+  </data>
+  <data name="SettingsImageViewing" xml:space="preserve">
+    <value>Image Viewing</value>
+  </data>
+  <data name="SettingsSlideshowTimer" xml:space="preserve">
+    <value>Time to display each image:</value>
+  </data>
+  <data name="Slideshow" xml:space="preserve">
+    <value>Slideshow</value>
+  </data>
+  <data name="SplashExplanation" xml:space="preserve">
+    <value>It appears the first time you start ImageView.
+Please select your language.
+You can always change it later by going into the application settings.</value>
+  </data>
+  <data name="SplashSelected" xml:space="preserve">
+    <value>Selected Language: {0}</value>
+  </data>
+  <data name="SplashTitle" xml:space="preserve">
+    <value>Welcome!</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="VerticalFlip" xml:space="preserve">
+    <value>Vertical Flip</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>&amp;View</value>
+  </data>
+  <data name="WelcomeStatus" xml:space="preserve">
+    <value>Welcome! Open an image file to begin browsing.</value>
+  </data>
+  <data name="Zoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="ZoomTool" xml:space="preserve">
+    <value>Zoom Tool</value>
+  </data>
+</root>
