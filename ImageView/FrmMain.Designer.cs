@@ -535,7 +535,7 @@
             // 
             this.realSizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.realSizeToolStripMenuItem.Name = "realSizeToolStripMenuItem";
-            this.realSizeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.realSizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.realSizeToolStripMenuItem.Text = "Real Size";
             this.realSizeToolStripMenuItem.Click += new System.EventHandler(this.realSizeToolStripMenuItem_Click);
             // 
@@ -543,7 +543,7 @@
             // 
             this.BestFitToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.BestFitToolStripMenuItem.Name = "BestFitToolStripMenuItem";
-            this.BestFitToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.BestFitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.BestFitToolStripMenuItem.Text = "Best Fit";
             this.BestFitToolStripMenuItem.Click += new System.EventHandler(this.BestFitStripMenuItem_Click);
             // 
@@ -551,7 +551,7 @@
             // 
             this.fitToWidthToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.fitToWidthToolStripMenuItem.Name = "fitToWidthToolStripMenuItem";
-            this.fitToWidthToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.fitToWidthToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fitToWidthToolStripMenuItem.Text = "Fit to Width";
             this.fitToWidthToolStripMenuItem.Click += new System.EventHandler(this.fitToWidthToolStripMenuItem_Click);
             // 
@@ -559,7 +559,7 @@
             // 
             this.fitToHeightToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.fitToHeightToolStripMenuItem.Name = "fitToHeightToolStripMenuItem";
-            this.fitToHeightToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.fitToHeightToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fitToHeightToolStripMenuItem.Text = "Fit to Height";
             this.fitToHeightToolStripMenuItem.Click += new System.EventHandler(this.fitToHeightToolStripMenuItem_Click);
             // 
