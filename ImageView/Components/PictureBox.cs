@@ -25,12 +25,14 @@ namespace ImageView.Components
         public Bitmap Image { get; set; }
         public InterpolationMode InterpolationMode { get; set; }
 
+        public Rectangle SourceRectangle { get; set; }
+        public Rectangle DestinationRectangle { get; set; }
+
         protected override void OnPaint(PaintEventArgs paintEventArgs)
         {
             
             if (Image != null)
             {
-                
                 Rectangle rect = new Rectangle(0, 0, Image.Width, Image.Height);
                 this.Width = rect.Width;
                 this.Height = rect.Height;
