@@ -83,14 +83,19 @@ Section "ImageView Program" SecMain
   
   ;install files
   File "..\ImageView\bin\Release\ImageView.exe"
-  File "..\ImageView\bin\Release\Magick.Native-Q8-x64.dll"
-  File "..\ImageView\bin\Release\Magick.NET-Q8-x64.dll"
+  File "..\ImageView\bin\Release\Magick.Native-Q8-OpenMP-x64.dll"
+  File "..\ImageView\bin\Release\Magick.NET-Q8-OpenMP-x64.dll"
+  File "..\ImageView\bin\Release\vcomp140.dll"
   File "..\ImageView\bin\Release\SevenZipExtractor.dll"
   File "..\ImageView\bin\Release\LICENSE"
   File "..\ImageView\bin\Release\DEPENDENCIES.md"
   
   SetOutPath "$INSTDIR\x64"
   File "..\ImageView\bin\Release\x64\7z.dll"
+  
+  ;language files
+  SetOutPath "$INSTDIR\fr"
+  File "..\ImageView\bin\Release\fr\ImageView.resources.dll"
   
   ; Set registry view to 64bit
   SetRegView 64
@@ -245,10 +250,12 @@ Section "Uninstall"
   Delete "$INSTDIR\ImageView.exe"
   Delete "$INSTDIR\LICENSE"
   Delete "$INSTDIR\DEPENDENCIES.md"
-  Delete "$INSTDIR\Magick.Native-Q8-x64.dll"
-  Delete "$INSTDIR\Magick.NET-Q8-x64.dll"
+  Delete "$INSTDIR\Magick.Native-Q8-OpenMP-x64.dll"
+  Delete "$INSTDIR\Magick.NET-Q8-OpenMP-x64.dll"
+  Delete "$INSTDIR\vcomp140.dll"
   Delete "$INSTDIR\SevenZipExtractor.dll"
   Delete "$INSTDIR\x64\7z.dll"
+  Delete "$INSTDIR\fr\ImageView.resources.dll"
 
   
   ;attempt to delete the config file that is auto-generated
@@ -257,6 +264,7 @@ Section "Uninstall"
   
   ;delete install folder
   RMDir "$INSTDIR\x64"
+  RMDir "$INSTDIR\fr"
   RMDir "$INSTDIR"
   
   ;remove start menu shortcuts
