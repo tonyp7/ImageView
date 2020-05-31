@@ -283,6 +283,9 @@ Please refer to https://getimageview.net</value>
   <data name="SettingsAutoRotateExplanation" xml:space="preserve">
     <value>Automatically rotate the image according to its orientation metadata</value>
   </data>
+  <data name="SettingsCheckeredPatternBackground" xml:space="preserve">
+    <value>Use a checkered pattern background behind transparent images</value>
+  </data>
   <data name="SettingsChooseDefaultApps" xml:space="preserve">
     <value>Choose Default Apps</value>
   </data>
@@ -319,6 +322,9 @@ If you are using the portable version of ImageView, you need to run it with admi
   </data>
   <data name="SettingsSlideshowTimer" xml:space="preserve">
     <value>Time to display each image:</value>
+  </data>
+  <data name="SettingsTransparentImagesSupport" xml:space="preserve">
+    <value>Transparent Images Support</value>
   </data>
   <data name="Slideshow" xml:space="preserve">
     <value>Slideshow</value>

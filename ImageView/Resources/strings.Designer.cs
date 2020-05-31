@@ -557,6 +557,15 @@ namespace ImageView.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use a checkered pattern background behind transparent images.
+        /// </summary>
+        internal static string SettingsCheckeredPatternBackground {
+            get {
+                return ResourceManager.GetString("SettingsCheckeredPatternBackground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose Default Apps.
         /// </summary>
         internal static string SettingsChooseDefaultApps {
@@ -662,6 +671,15 @@ namespace ImageView.Resources {
         internal static string SettingsSlideshowTimer {
             get {
                 return ResourceManager.GetString("SettingsSlideshowTimer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transparent Images Support.
+        /// </summary>
+        internal static string SettingsTransparentImagesSupport {
+            get {
+                return ResourceManager.GetString("SettingsTransparentImagesSupport", resourceCulture);
             }
         }
         

@@ -283,6 +283,9 @@ Merci de vous référer à https://getimageview.net pour plus d'information.</va
   <data name="SettingsAutoRotateExplanation" xml:space="preserve">
     <value>Utiliser les meta-données de l'image pour en déterminer son orientation</value>
   </data>
+  <data name="SettingsCheckeredPatternBackground" xml:space="preserve">
+    <value>Utiliser un fond d'écran en damier derrière les images transparentes</value>
+  </data>
   <data name="SettingsChooseDefaultApps" xml:space="preserve">
     <value>Applications par défaut</value>
   </data>
@@ -319,6 +322,9 @@ Si vous utilisez la version portable d'ImageView, vous devrez la relancer avec u
   </data>
   <data name="SettingsSlideshowTimer" xml:space="preserve">
     <value>Temps d'affichage par image</value>
+  </data>
+  <data name="SettingsTransparentImagesSupport" xml:space="preserve">
+    <value>Images transparentes</value>
   </data>
   <data name="Slideshow" xml:space="preserve">
     <value>Diaporama</value>
