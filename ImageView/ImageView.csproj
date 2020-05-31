@@ -99,11 +99,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\PictureBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Components\PictureBox.Designer.cs">
-      <DependentUpon>PictureBox.cs</DependentUpon>
+    <Compile Include="Components\ImageBox.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\ConfigDisplay.cs" />
@@ -169,9 +166,6 @@
       <DependentUpon>strings.resx</DependentUpon>
     </Compile>
     <Compile Include="WinTaskbar.cs" />
-    <EmbeddedResource Include="Components\PictureBox.resx">
-      <DependentUpon>PictureBox.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
@@ -272,6 +266,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="imageview.ico" />
+    <None Include="Resources\transparent16.png" />
     <None Include="Resources\fr.png" />
     <None Include="Resources\en.png" />
     <None Include="Resources\openbook16.png" />
