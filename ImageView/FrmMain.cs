@@ -38,6 +38,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using System.Resources;
+using ImageView.Components;
 
 namespace ImageView
 {
@@ -75,14 +76,39 @@ namespace ImageView
         private Tool activeTool = Tool.None;
         private ViewingMode viewingMode = ViewingMode.Normal;
 
+        private ImageBox pictureBox;
         public FrmMain()
         {
             InitializeComponent();
+
+            Settings.Get.Load();
+
+            //Picture box stuff
+            // 
+            // pictureBox
+            // 
+            this.pictureBox = new ImageBox();
+            this.pictureBox.InitialImage = null;
+            this.pictureBox.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(556, 309);
+            this.pictureBox.TabIndex = 0;
+            this.pictureBox.TabStop = false;
+            this.pictureBox.Click += new System.EventHandler(this.pictureBox_Click);
+            this.pictureBox.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
+            this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
+            this.pictureBox.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
+            this.pictureBox.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
+            this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
+            this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
+            this.pictureBox.CheckeredPatternBackground = Settings.Get.Display.CheckeredPatternBackground;
+            this.panelMain.Controls.Add(this.pictureBox);
             this.MouseWheel += FrmMain_MouseWheel;
             this.openFileDialog.Filter = Properties.Resources.SupportedImageFiles;
             workingData = new WorkingData();
 
-            Settings.Get.Load();
+            
 
             //multilingual settings
             InitalizeComponentsCultureAware();

@@ -51,15 +51,17 @@
             this.cmbOnLoadImageSizeMode = new System.Windows.Forms.ComboBox();
             this.lblDefaultSizeModeExplanation = new System.Windows.Forms.Label();
             this.tabPageLanguage = new System.Windows.Forms.TabPage();
+            this.grpLanguage = new System.Windows.Forms.GroupBox();
+            this.cmbLanguage = new System.Windows.Forms.ComboBox();
+            this.lblLanguageExplanation = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnOK = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.grpLanguage = new System.Windows.Forms.GroupBox();
-            this.cmbLanguage = new System.Windows.Forms.ComboBox();
-            this.lblLanguageExplanation = new System.Windows.Forms.Label();
+            this.grpTransparent = new System.Windows.Forms.GroupBox();
+            this.chkCheckeredPatternBackground = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPageGeneral.SuspendLayout();
             this.grpHistory.SuspendLayout();
@@ -69,8 +71,9 @@
             this.grpAutoRotate.SuspendLayout();
             this.grpDefaultSizeMode.SuspendLayout();
             this.tabPageLanguage.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.grpLanguage.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.grpTransparent.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -226,6 +229,7 @@
             // tabPageView
             // 
             this.tabPageView.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageView.Controls.Add(this.grpTransparent);
             this.tabPageView.Controls.Add(this.grpAutoRotate);
             this.tabPageView.Controls.Add(this.grpDefaultSizeMode);
             this.tabPageView.Location = new System.Drawing.Point(4, 22);
@@ -297,6 +301,36 @@
             this.tabPageLanguage.TabIndex = 2;
             this.tabPageLanguage.Text = "Language";
             // 
+            // grpLanguage
+            // 
+            this.grpLanguage.Controls.Add(this.cmbLanguage);
+            this.grpLanguage.Controls.Add(this.lblLanguageExplanation);
+            this.grpLanguage.Dock = System.Windows.Forms.DockStyle.Top;
+            this.grpLanguage.Location = new System.Drawing.Point(3, 3);
+            this.grpLanguage.Name = "grpLanguage";
+            this.grpLanguage.Size = new System.Drawing.Size(610, 69);
+            this.grpLanguage.TabIndex = 4;
+            this.grpLanguage.TabStop = false;
+            this.grpLanguage.Text = "Language";
+            // 
+            // cmbLanguage
+            // 
+            this.cmbLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbLanguage.FormattingEnabled = true;
+            this.cmbLanguage.Location = new System.Drawing.Point(322, 28);
+            this.cmbLanguage.Name = "cmbLanguage";
+            this.cmbLanguage.Size = new System.Drawing.Size(201, 21);
+            this.cmbLanguage.TabIndex = 4;
+            // 
+            // lblLanguageExplanation
+            // 
+            this.lblLanguageExplanation.Location = new System.Drawing.Point(23, 31);
+            this.lblLanguageExplanation.Name = "lblLanguageExplanation";
+            this.lblLanguageExplanation.Size = new System.Drawing.Size(293, 21);
+            this.lblLanguageExplanation.TabIndex = 3;
+            this.lblLanguageExplanation.Text = "Choose the application\'s language:";
+            this.lblLanguageExplanation.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.btnApply);
@@ -355,35 +389,26 @@
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
-            // grpLanguage
+            // grpTransparent
             // 
-            this.grpLanguage.Controls.Add(this.cmbLanguage);
-            this.grpLanguage.Controls.Add(this.lblLanguageExplanation);
-            this.grpLanguage.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpLanguage.Location = new System.Drawing.Point(3, 3);
-            this.grpLanguage.Name = "grpLanguage";
-            this.grpLanguage.Size = new System.Drawing.Size(610, 69);
-            this.grpLanguage.TabIndex = 4;
-            this.grpLanguage.TabStop = false;
-            this.grpLanguage.Text = "Language";
+            this.grpTransparent.Controls.Add(this.chkCheckeredPatternBackground);
+            this.grpTransparent.Dock = System.Windows.Forms.DockStyle.Top;
+            this.grpTransparent.Location = new System.Drawing.Point(3, 141);
+            this.grpTransparent.Name = "grpTransparent";
+            this.grpTransparent.Size = new System.Drawing.Size(610, 69);
+            this.grpTransparent.TabIndex = 5;
+            this.grpTransparent.TabStop = false;
+            this.grpTransparent.Text = "Transparent Images Support";
             // 
-            // cmbLanguage
+            // chkCheckeredPatternBackground
             // 
-            this.cmbLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbLanguage.FormattingEnabled = true;
-            this.cmbLanguage.Location = new System.Drawing.Point(322, 28);
-            this.cmbLanguage.Name = "cmbLanguage";
-            this.cmbLanguage.Size = new System.Drawing.Size(201, 21);
-            this.cmbLanguage.TabIndex = 4;
-            // 
-            // lblLanguageExplanation
-            // 
-            this.lblLanguageExplanation.Location = new System.Drawing.Point(23, 31);
-            this.lblLanguageExplanation.Name = "lblLanguageExplanation";
-            this.lblLanguageExplanation.Size = new System.Drawing.Size(293, 21);
-            this.lblLanguageExplanation.TabIndex = 3;
-            this.lblLanguageExplanation.Text = "Choose the application\'s language:";
-            this.lblLanguageExplanation.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.chkCheckeredPatternBackground.AutoSize = true;
+            this.chkCheckeredPatternBackground.Location = new System.Drawing.Point(23, 33);
+            this.chkCheckeredPatternBackground.Name = "chkCheckeredPatternBackground";
+            this.chkCheckeredPatternBackground.Size = new System.Drawing.Size(331, 17);
+            this.chkCheckeredPatternBackground.TabIndex = 0;
+            this.chkCheckeredPatternBackground.Text = "Use a checkered pattern background behind transparent images";
+            this.chkCheckeredPatternBackground.UseVisualStyleBackColor = true;
             // 
             // FrmSettings
             // 
@@ -411,8 +436,10 @@
             this.grpAutoRotate.PerformLayout();
             this.grpDefaultSizeMode.ResumeLayout(false);
             this.tabPageLanguage.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
             this.grpLanguage.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.grpTransparent.ResumeLayout(false);
+            this.grpTransparent.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -449,5 +476,7 @@
         private System.Windows.Forms.GroupBox grpLanguage;
         private System.Windows.Forms.ComboBox cmbLanguage;
         private System.Windows.Forms.Label lblLanguageExplanation;
+        private System.Windows.Forms.GroupBox grpTransparent;
+        private System.Windows.Forms.CheckBox chkCheckeredPatternBackground;
     }
 }

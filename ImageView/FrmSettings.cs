@@ -77,6 +77,12 @@ namespace ImageView
             ////////////////////////
             chkAutoRotate.Checked = configNew.Display.AutoRotate;
 
+
+            ////////////////////////
+            // CHECKERED PATTERN
+            ////////////////////////
+            chkCheckeredPatternBackground.Checked = configNew.Display.CheckeredPatternBackground;
+
             ////////////////////////
             // LANGUAGE
             ////////////////////////
@@ -279,6 +285,10 @@ namespace ImageView
             ////////////////////////
             configNew.Display.AutoRotate = chkAutoRotate.Checked;
 
+            ////////////////////////
+            // CHECKERED PATTERN
+            ////////////////////////
+            configNew.Display.CheckeredPatternBackground = chkCheckeredPatternBackground.Checked;
 
             ////////////////////////
             // LANGUAGE
@@ -302,8 +312,8 @@ namespace ImageView
             {
                 InitalizeComponentsCultureAware();
                 frmMain.InitalizeComponentsCultureAware();
-
             }
+            frmMain.setCheckeredPatternBackground(configNew.Display.CheckeredPatternBackground);
             configNew = null;
             configNew = (Config)Settings.Get.Clone();
 

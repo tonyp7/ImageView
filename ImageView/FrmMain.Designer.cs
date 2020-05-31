@@ -91,15 +91,12 @@
             this.toolStripStatusLabelSpring = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelPixelPosition = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelMain = new System.Windows.Forms.Panel();
-            this.pictureBox = new System.Windows.Forms.PictureBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.timerSlideShow = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
-            this.panelMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -535,7 +532,7 @@
             // 
             this.realSizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.realSizeToolStripMenuItem.Name = "realSizeToolStripMenuItem";
-            this.realSizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.realSizeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.realSizeToolStripMenuItem.Text = "Real Size";
             this.realSizeToolStripMenuItem.Click += new System.EventHandler(this.realSizeToolStripMenuItem_Click);
             // 
@@ -543,7 +540,7 @@
             // 
             this.BestFitToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.BestFitToolStripMenuItem.Name = "BestFitToolStripMenuItem";
-            this.BestFitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.BestFitToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.BestFitToolStripMenuItem.Text = "Best Fit";
             this.BestFitToolStripMenuItem.Click += new System.EventHandler(this.BestFitStripMenuItem_Click);
             // 
@@ -551,7 +548,7 @@
             // 
             this.fitToWidthToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.fitToWidthToolStripMenuItem.Name = "fitToWidthToolStripMenuItem";
-            this.fitToWidthToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fitToWidthToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.fitToWidthToolStripMenuItem.Text = "Fit to Width";
             this.fitToWidthToolStripMenuItem.Click += new System.EventHandler(this.fitToWidthToolStripMenuItem_Click);
             // 
@@ -559,7 +556,7 @@
             // 
             this.fitToHeightToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.fitToHeightToolStripMenuItem.Name = "fitToHeightToolStripMenuItem";
-            this.fitToHeightToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fitToHeightToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.fitToHeightToolStripMenuItem.Text = "Fit to Height";
             this.fitToHeightToolStripMenuItem.Click += new System.EventHandler(this.fitToHeightToolStripMenuItem_Click);
             // 
@@ -675,7 +672,6 @@
             this.panelMain.BackColor = System.Drawing.Color.Black;
             this.panelMain.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.panelMain.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panelMain.Controls.Add(this.pictureBox);
             this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelMain.Location = new System.Drawing.Point(0, 66);
             this.panelMain.Name = "panelMain";
@@ -685,23 +681,6 @@
             this.panelMain.DragEnter += new System.Windows.Forms.DragEventHandler(this.panelMain_DragEnter);
             this.panelMain.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
             this.panelMain.Resize += new System.EventHandler(this.panelMain_Resize);
-            // 
-            // pictureBox
-            // 
-            this.pictureBox.InitialImage = null;
-            this.pictureBox.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(556, 309);
-            this.pictureBox.TabIndex = 0;
-            this.pictureBox.TabStop = false;
-            this.pictureBox.Click += new System.EventHandler(this.pictureBox_Click);
-            this.pictureBox.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
-            this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
-            this.pictureBox.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
-            this.pictureBox.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
-            this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
-            this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             // 
             // openFileDialog
             // 
@@ -742,8 +721,6 @@
             this.toolStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
-            this.panelMain.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -774,7 +751,7 @@
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxNavigation;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButtonDisplayType;
-        private System.Windows.Forms.PictureBox pictureBox;
+        //private System.Windows.Forms.PictureBox pictureBox;
         //private ImageView.PictureBox pictureBox;
         private System.Windows.Forms.ToolStripMenuItem BestFitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem realSizeToolStripMenuItem;

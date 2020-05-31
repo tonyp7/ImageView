@@ -168,7 +168,14 @@ namespace ImageView
 
 
 
-
+        public void setCheckeredPatternBackground(bool b)
+        {
+            if(this.pictureBox.CheckeredPatternBackground != b)
+            {
+                this.pictureBox.CheckeredPatternBackground = b;
+                this.pictureBox.Invalidate();
+            }
+        }
 
 
         /// <summary>
