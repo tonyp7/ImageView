@@ -15,6 +15,7 @@ namespace ImageView.Configuration
         public ImageSizeMode SizeMode { get; set; }
         public int ZoomStep { get; set; }
         public bool AutoRotate { get; set; }
+        public bool CheckeredPatternBackground { get; set; }
 
 
         public ImageSizeMode SizeModeOnImageLoad { get; set; }
@@ -23,6 +24,7 @@ namespace ImageView.Configuration
         private static readonly int DEFAULT_ZOOM_STEP = 25;
         public static readonly int MAX_ZOOM = 400;
         private static readonly bool DEFAULT_AUTO_ROTATE = true;
+        private static readonly bool DEFAULT_CHECKERED_PATTERN_BACKGROUND = true;
         private static readonly ImageSizeMode DEFAULT_IMAGESIZEMODE = ImageSizeMode.BestFit;
 
         public ConfigDisplay()
@@ -31,6 +33,7 @@ namespace ImageView.Configuration
             Zoom = DEFAULT_ZOOM;
             ZoomStep = DEFAULT_ZOOM_STEP;
             AutoRotate = DEFAULT_AUTO_ROTATE;
+            CheckeredPatternBackground = DEFAULT_CHECKERED_PATTERN_BACKGROUND;
         }
 
         public void Load(XmlDocument doc)
@@ -49,6 +52,17 @@ namespace ImageView.Configuration
             else
             {
                 AutoRotate = DEFAULT_AUTO_ROTATE;
+            }
+
+            //CheckeredPatternBackground
+            n = doc.SelectSingleNode("/Settings/Display/CheckeredPatternBackground");
+            if (n != null && bool.TryParse(n.InnerText, out bvalue))
+            {
+                CheckeredPatternBackground = bvalue;
+            }
+            else
+            {
+                CheckeredPatternBackground = DEFAULT_CHECKERED_PATTERN_BACKGROUND;
             }
 
             //zoom
@@ -102,6 +116,7 @@ namespace ImageView.Configuration
         public void Save(XmlDocument doc)
         {
             Config.SafeNodeSelect(doc, "/Settings/Display/AutoRotate", AutoRotate.ToString());
+            Config.SafeNodeSelect(doc, "/Settings/Display/CheckeredPatternBackground", CheckeredPatternBackground.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Display/Zoom", Zoom.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Display/ZoomStep", SizeMode.ToString());
             Config.SafeNodeSelect(doc, "/Settings/Display/SizeMode", SizeMode.ToString());
@@ -118,6 +133,7 @@ namespace ImageView.Configuration
             cd.ZoomStep = this.ZoomStep;
             cd.SizeModeOnImageLoad = this.SizeModeOnImageLoad;
             cd.AutoRotate = this.AutoRotate;
+            cd.CheckeredPatternBackground = this.CheckeredPatternBackground;
 
             return cd;
         }
@@ -129,6 +145,7 @@ namespace ImageView.Configuration
                     && ZoomStep == other.ZoomStep
                     && SizeModeOnImageLoad == other.SizeModeOnImageLoad
                     && AutoRotate == other.AutoRotate
+                    && CheckeredPatternBackground == other.CheckeredPatternBackground
                     ;
         }
 
