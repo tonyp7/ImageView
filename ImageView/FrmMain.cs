@@ -313,10 +313,11 @@ namespace ImageView
         /// </summary>
         private void zoom()
         {
-            int zoom = 100;
-            if (int.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
+            double zoom = 1.0;
+            if (double.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
             {
-                zoom = Program.Clamp(zoom, 1, ConfigDisplay.MAX_ZOOM);
+                zoom /= 100.0;
+                zoom = Program.Clamp(zoom, .01, ConfigDisplay.MAX_ZOOM);
                 Settings.Get.Display.SizeMode = ImageSizeMode.Zoom;
                 Settings.Get.Display.Zoom = zoom;
                 refreshImageSizeModeUI();
@@ -773,9 +774,9 @@ namespace ImageView
                     Settings.Get.Display.SizeMode = ImageSizeMode.Zoom;
 
 
-                    int newZoom = Control.ModifierKeys != Keys.Alt ? (int)workingData.calculatedZoom + Settings.Get.Display.ZoomStep : (int)workingData.calculatedZoom - Settings.Get.Display.ZoomStep;
+                    double newZoom = Control.ModifierKeys != Keys.Alt ? workingData.calculatedZoom + Settings.Get.Display.ZoomStep : workingData.calculatedZoom - Settings.Get.Display.ZoomStep;
 
-                    newZoom = Program.Clamp(newZoom, 1, ConfigDisplay.MAX_ZOOM);
+                    newZoom = Program.Clamp(newZoom, .01, ConfigDisplay.MAX_ZOOM);
 
                     panelMain.Resize -= panelMain_Resize;
                     resizePictureBox(e.Location, newZoom);
@@ -805,8 +806,8 @@ namespace ImageView
         {
             //refresh pixel coord
             double X, Y;
-            X = e.Location.X / workingData.calculatedZoom * 100.0;
-            Y = e.Location.Y / workingData.calculatedZoom * 100.0;
+            X = e.Location.X / workingData.calculatedZoom;
+            Y = e.Location.Y / workingData.calculatedZoom;
             toolStripStatusLabelPixelPosition.Text = string.Format("{0:0},{1:0}", X, Y);
 
             //drag image

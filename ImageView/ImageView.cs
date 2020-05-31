@@ -220,8 +220,6 @@ namespace ImageView
                 rect.Y = 0;
             }
 
-            zoom *= 100.0;
-
             return rect;
         }
 
@@ -264,8 +262,6 @@ namespace ImageView
                 rect.X = 0;
             }
 
-            zoom *= 100.0;
-
             return rect;
         }
 
@@ -288,7 +284,7 @@ namespace ImageView
             //image can fit entirely on the screen so the display is actually normal
             if (panelMain.ClientSize.Width >= i.Width && panelMain.ClientSize.Height >= i.Height)
             {
-                zoom = 100.0;
+                zoom = 1.0;
 
                 //pictureBox.SizeMode = PictureBoxSizeMode.Normal;
                 rect.Width = i.Width;
@@ -315,7 +311,7 @@ namespace ImageView
                 double windowAspec = (double)panelMain.ClientSize.Width / (double)panelMain.ClientSize.Height;
                 if (aspec > windowAspec)
                 {
-                    zoom = ((double)panelMain.ClientSize.Width / (double)i.Width * 100.0);
+                    zoom = ((double)panelMain.ClientSize.Width / (double)i.Width);
                     rect.Width = panelMain.ClientSize.Width;
                     rect.Height = (int)Math.Round((rect.Width / aspec));
 
@@ -323,7 +319,7 @@ namespace ImageView
                 }
                 else
                 {
-                    zoom = ((double)panelMain.ClientSize.Height / (double)i.Height * 100.0);
+                    zoom = ((double)panelMain.ClientSize.Height / (double)i.Height);
                     rect.Height = panelMain.ClientSize.Height;
                     rect.Width = (int)Math.Round((rect.Height * aspec));
 
@@ -334,7 +330,7 @@ namespace ImageView
             return rect;
         }
 
-        private void resizePictureBox(Point mouseCoord, int newZoom)
+        private void resizePictureBox(Point mouseCoord, double newZoom)
         {
             resizePictureBox(null, mouseCoord, newZoom);
         }
@@ -343,7 +339,7 @@ namespace ImageView
             resizePictureBox(null, Point.Empty, -1);
         }
 
-        private void resizePictureBox(Image i, Point mouseCoord, int newZoom)
+        private void resizePictureBox(Image i, Point mouseCoord, double newZoom)
         {
 
             this.SuspendLayout();
@@ -375,8 +371,8 @@ namespace ImageView
                 
 
                 toolStripStatusLabelZoom.Visible = true;
-                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)workingData.calculatedZoom);
-                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)workingData.calculatedZoom));
+                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(workingData.calculatedZoom * 100.0));
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(workingData.calculatedZoom * 100.0)));
             }
             else if(Settings.Get.Display.SizeMode == ImageSizeMode.FitToWidth)
             {
@@ -388,8 +384,8 @@ namespace ImageView
                 panelMain.AutoScroll = true;
 
                 toolStripStatusLabelZoom.Visible = true;
-                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)workingData.calculatedZoom);
-                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)workingData.calculatedZoom));
+                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(workingData.calculatedZoom * 100.0));
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(workingData.calculatedZoom * 100.0)));
 
             }
             else if (Settings.Get.Display.SizeMode == ImageSizeMode.FitToHeight)
@@ -402,8 +398,8 @@ namespace ImageView
                 panelMain.AutoScroll = true;
 
                 toolStripStatusLabelZoom.Visible = true;
-                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)workingData.calculatedZoom);
-                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)workingData.calculatedZoom));
+                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(workingData.calculatedZoom * 100.0));
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(workingData.calculatedZoom * 100.0)));
 
             }
             else if (Settings.Get.Display.SizeMode == ImageSizeMode.Zoom || Settings.Get.Display.SizeMode == ImageSizeMode.RealSize)
@@ -419,11 +415,11 @@ namespace ImageView
                 {
 
                     //calculate the previous height and width
-                    previousHeight = (int)Math.Round(((double)i.Width * workingData.calculatedZoom / 100.0));
-                    previousHeight = (int)Math.Round(((double)i.Height * workingData.calculatedZoom / 100.0));
+                    previousHeight = (int)Math.Round(((double)i.Width * workingData.calculatedZoom ));
+                    previousHeight = (int)Math.Round(((double)i.Height * workingData.calculatedZoom ));
 
                     //calculate new zoom
-                    double zoomf = newZoom == -1 ? Settings.Get.Display.Zoom / 100.0 : newZoom / 100.0;
+                    double zoomf = newZoom == -1 ? Settings.Get.Display.Zoom  : newZoom ;
                     newWidth = (int)Math.Round(((double)i.Width * zoomf));
                     newHeight = (int)Math.Round(((double)i.Height * zoomf));
                     pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
@@ -457,10 +453,10 @@ namespace ImageView
                 panelMain.AutoScroll = true;
 
                 //save the new zoom state
-                int zoom;
-                if(newZoom == -1)
+                double zoom;
+                if(newZoom == -1.0)
                 {
-                    zoom = Settings.Get.Display.SizeMode == ImageSizeMode.RealSize ? 100 : Settings.Get.Display.Zoom;
+                    zoom = Settings.Get.Display.SizeMode == ImageSizeMode.RealSize ? 1.0 : Settings.Get.Display.Zoom;
                 }
                 else
                 {
@@ -472,12 +468,12 @@ namespace ImageView
                 {
                     //translate mouse position to pixel coords
                     double Xpx, Ypx;
-                    Xpx = mouseCoord.X / workingData.calculatedZoom * 100.0;
-                    Ypx = mouseCoord.Y / workingData.calculatedZoom * 100.0;
+                    Xpx = mouseCoord.X / workingData.calculatedZoom ;
+                    Ypx = mouseCoord.Y / workingData.calculatedZoom ;
 
                     //translate these pixel coords to new coords
-                    Xpx = Xpx * (double)zoom / 100.0;
-                    Ypx = Ypx * (double)zoom / 100.0;
+                    Xpx = Xpx * (double)zoom ;
+                    Ypx = Ypx * (double)zoom ;
 
                     //center clicked ppoint
                     Point panelHalfSize = new Point(panelMain.Width >> 1, panelMain.Height >> 1);
@@ -488,8 +484,8 @@ namespace ImageView
                 workingData.calculatedZoom = (double)zoom;
 
                 toolStripStatusLabelZoom.Visible = true;
-                toolStripStatusLabelZoom.Text = String.Format("{0} %", zoom);
-                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", zoom));
+                toolStripStatusLabelZoom.Text = String.Format("{0} %", zoom*100.0);
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", zoom*100.0));
             }
 
             this.ResumeLayout();
