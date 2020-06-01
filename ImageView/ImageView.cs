@@ -244,8 +244,8 @@ namespace ImageView
                 //REFRESH DRAWING PORTION
                 float zoom = workingData.calculatedZoom;
                 Size clientSize = panelMain.Size;
-                RectangleF srcRect = new Rectangle();
-                RectangleF dstRect = new Rectangle();
+                RectangleF srcRect = new RectangleF();
+                RectangleF dstRect = new RectangleF();
                 dstRect.X = scroll.X;
                 dstRect.Y = scroll.Y;
                 dstRect.Width = clientSize.Width;
@@ -424,8 +424,8 @@ namespace ImageView
             if (Settings.Get.Display.SizeMode == ImageSizeMode.BestFit)
             {
                 panelMain.AutoScroll = false;
-                RectangleF srcRect = new Rectangle();
-                RectangleF dstRect = new Rectangle();
+                RectangleF srcRect = new RectangleF();
+                RectangleF dstRect = new RectangleF();
                 Rectangle rect = calculateAutoSize(i, ref workingData.calculatedZoom, ref srcRect, ref dstRect);
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
@@ -439,8 +439,8 @@ namespace ImageView
             else if(Settings.Get.Display.SizeMode == ImageSizeMode.FitToWidth)
             {
                 panelMain.AutoScroll = false;
-                RectangleF srcRect = new Rectangle();
-                RectangleF dstRect = new Rectangle();
+                RectangleF srcRect = new RectangleF();
+                RectangleF dstRect = new RectangleF();
                 Rectangle rect = calculateFitToWidth(i, ref workingData.calculatedZoom, ref srcRect, ref dstRect);
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
@@ -456,8 +456,8 @@ namespace ImageView
             else if (Settings.Get.Display.SizeMode == ImageSizeMode.FitToHeight)
             {
                 panelMain.AutoScroll = false;
-                RectangleF srcRect = new Rectangle();
-                RectangleF dstRect = new Rectangle();
+                RectangleF srcRect = new RectangleF();
+                RectangleF dstRect = new RectangleF();
                 Rectangle rect = calculateFitToHeight(i, ref workingData.calculatedZoom, ref srcRect, ref dstRect);
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
