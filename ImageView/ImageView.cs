@@ -48,13 +48,14 @@ namespace ImageView
         public Bitmap bitmap = null;
         public MagickImage nativeImage = null;
         public IEntry activeEntry;
-        public IEntry[] entries;
+        public List<IEntry> entries;
         public int directoryIndex;
         public float calculatedZoom;
         public ArchiveFile archive;
 
         public WorkingData()
         {
+            entries = new List<IEntry>();
             reset();
         }
 
@@ -76,7 +77,7 @@ namespace ImageView
         {
             directoryIndex = -1;
             activeEntry = null;
-            entries = null;
+            entries.Clear();
             bitmap = null;
             calculatedZoom = -1.0f;
             if (archive != null)
@@ -593,7 +594,7 @@ namespace ImageView
                 workingData.directoryIndex++;
 
                 //loop
-                if (workingData.directoryIndex >= workingData.entries.Length)
+                if (workingData.directoryIndex >= workingData.entries.Count)
                 {
                     workingData.directoryIndex = 0;
                 }
@@ -611,7 +612,7 @@ namespace ImageView
                 //loop
                 if (workingData.directoryIndex < 0)
                 {
-                    workingData.directoryIndex = workingData.entries.Length - 1;
+                    workingData.directoryIndex = workingData.entries.Count - 1;
                 }
 
                 IEntry entry = workingData.entries[workingData.directoryIndex];
@@ -667,7 +668,7 @@ namespace ImageView
                         if(index != -1)
                         {
                             workingData.directoryIndex = index;
-                            workingData.entries = imagesFiles.ToArray();
+                            workingData.entries = imagesFiles.ToList<IEntry>();
                             loadPicture(workingData.entries[index]);
                         }
                     }  
@@ -701,7 +702,7 @@ namespace ImageView
                         if(imagesFiles.Count > 0)
                         {
                             workingData.directoryIndex = 0;
-                            workingData.entries = imagesFiles.ToArray();
+                            workingData.entries = imagesFiles.ToList<IEntry>();
 
                             loadPicture(workingData.entries[0]);
                         }
@@ -727,7 +728,7 @@ namespace ImageView
                             var e = new FileEntry(s);
                             l.Add(e);
                         }
-                        workingData.entries = l.ToArray();
+                        workingData.entries = l;
                         workingData.directoryIndex = index;
                         loadPicture(workingData.entries[workingData.directoryIndex]);
                     }
@@ -758,7 +759,7 @@ namespace ImageView
                             }
 
                             workingData.directoryIndex = 0;
-                            workingData.entries = l.ToArray();
+                            workingData.entries = l;
 
                             loadPicture(workingData.entries[0]);
 
@@ -799,7 +800,17 @@ namespace ImageView
             }
             catch(Exception e)
             {
-                close();
+
+                MessageBox.Show(String.Format("Unable to load {0}.\nThis image is corrupted or has an invalid format.\nImage will attempt to automatically load the next image."));
+                //remove this picture from the list
+                if(workingData.entries.Count > 1)
+                {
+
+                }
+                else
+                {
+                    close();
+                }
                 return;
             }
             finally
@@ -853,7 +864,7 @@ namespace ImageView
             toolStripStatusLabelImageInfo.Visible = true;
             toolStripStatusLabelFileSize.Text = NiceFileSize(workingData.activeEntry.Length);
             toolStripStatusLabelFileSize.Visible = true;
-            toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", workingData.directoryIndex + 1, workingData.entries.Length);
+            toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", workingData.directoryIndex + 1, workingData.entries.Count);
             toolStripStatusLabelImagePosition.Visible = true;
             this.Text = String.Format("{0} - {1}", workingData.activeEntry.FullName, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
             
@@ -1079,12 +1090,12 @@ namespace ImageView
                     //if there was only one image in the current working folder, then the app will close all
 
                     string nextFileToLoad = String.Empty;
-                    if (workingData.entries.Length > 1)
+                    if (workingData.entries.Count > 1)
                     {
                         //will try to move to the file
                         int moveToIndex = workingData.directoryIndex;
                         moveToIndex--;
-                        if (moveToIndex < 0) moveToIndex = workingData.entries.Length - 1; //auto loop to the end
+                        if (moveToIndex < 0) moveToIndex = workingData.entries.Count - 1; //auto loop to the end
                         IEntry entry = workingData.entries[moveToIndex];
                         nextFileToLoad = entry.FullName;
                     }
