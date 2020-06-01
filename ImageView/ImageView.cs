@@ -792,9 +792,19 @@ namespace ImageView
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 #endif
-            using (Stream stream = workingData.activeEntry.GetStream())
+            Stream stream = workingData.activeEntry.GetStream();
+            try
             {
                 workingData.nativeImage = new ImageMagick.MagickImage(stream);
+            }
+            catch(Exception e)
+            {
+                close();
+                return;
+            }
+            finally
+            {
+                stream.Dispose();
             }
 #if DEBUG
             stopWatch.Stop();
