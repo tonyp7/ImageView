@@ -22,7 +22,8 @@ namespace ImageView.Configuration
 
         private static readonly float DEFAULT_ZOOM = 1.0f;
         private static readonly float DEFAULT_ZOOM_STEP = 0.25f;
-        public static readonly float MAX_ZOOM = 4.0f;
+        public static readonly float[] ZOOM_STEPS = { 0.05f, 0.10f, 0.25f, 0.5f, 0.75f, 1.0f, 1.25f, 1.50f, 2.0f, 4.0f, 8.0f, 16.0f};
+        public static readonly float MAX_ZOOM = 16.0f;
         private static readonly bool DEFAULT_AUTO_ROTATE = true;
         private static readonly bool DEFAULT_CHECKERED_PATTERN_BACKGROUND = true;
         private static readonly ImageSizeMode DEFAULT_IMAGESIZEMODE = ImageSizeMode.BestFit;
