@@ -175,7 +175,7 @@ namespace ImageView
         /// <param name="i"></param>
         /// <param name="zoom"></param>
         /// <returns></returns>
-        private Rectangle calculateFitToWidth(Image i, ref float zoom, ref Rectangle srcRect, ref Rectangle dstRect)
+        private Rectangle calculateFitToWidth(Image i, ref float zoom, ref RectangleF srcRect, ref RectangleF dstRect)
         {
             Rectangle rect = Rectangle.Empty;
             Size clientSize = panelMain.ClientSize;
@@ -217,7 +217,7 @@ namespace ImageView
             srcRect.X = 0;
             srcRect.Y = 0;
             srcRect.Width = i.Width;
-            srcRect.Height = (int)Math.Round((   (float)clientSize.Height / zoom   ));
+            srcRect.Height = (float)clientSize.Height / zoom;
 
             //target
             dstRect.X = 0;
@@ -268,36 +268,50 @@ namespace ImageView
         /// <param name="i"></param>
         /// <param name="zoom"></param>
         /// <returns></returns>
-        private Rectangle calculateFitToHeight(Image i, ref float zoom)
+        private Rectangle calculateFitToHeight(Image i, ref float zoom, ref RectangleF srcRect, ref RectangleF dstRect)
         {
             Rectangle rect = Rectangle.Empty;
+            Size clientSize = panelMain.ClientSize;
 
             //the height is locked to be window height
             rect.Y = 0;
-            rect.Height = panelMain.ClientSize.Height;
+            rect.Height = clientSize.Height;
 
             //width is simply a function of the zoom
             zoom = rect.Height / (float)i.Height;
             rect.Width = (int)Math.Round(zoom * (float)i.Width);
 
             //if an horizontal scrollbar is going to appear, we need to recalculate the size to take into account the height lost by the scrollbar's thickness
-            if (rect.Width > panelMain.ClientSize.Width)
+            if (rect.Width > clientSize.Width)
             {
-                rect.Height = panelMain.ClientSize.Height - (panelMain.HorizontalScroll.Visible?0:System.Windows.Forms.SystemInformation.HorizontalScrollBarHeight);
+                rect.Height = clientSize.Height - (panelMain.HorizontalScroll.Visible?0:System.Windows.Forms.SystemInformation.HorizontalScrollBarHeight);
                 zoom = rect.Height / (float)i.Height;
                 rect.Width = (int)Math.Round(zoom * (float)i.Width);
 
             }
 
             //center x
-            if (rect.Width < panelMain.ClientSize.Width)
+            if (rect.Width < clientSize.Width)
             {
-                rect.X = (panelMain.ClientSize.Width - rect.Width) >> 1;
+                rect.X = (clientSize.Width - rect.Width) >> 1;
             }
             else
             {
                 rect.X = 0;
             }
+
+
+            //calculate rects
+            dstRect.X = 0.0f;
+            dstRect.Y = 0.0f;
+            dstRect.Width = rect.Width;
+            dstRect.Height = rect.Height;
+
+            srcRect.X = 0.0f;
+            srcRect.Y = 0.0f;
+            srcRect.Width = dstRect.Width / zoom;
+            srcRect.Height = dstRect.Height / zoom; // = image height
+
 
             return rect;
         }
@@ -413,8 +427,8 @@ namespace ImageView
             else if(Settings.Get.Display.SizeMode == ImageSizeMode.FitToWidth)
             {
                 panelMain.AutoScroll = false;
-                Rectangle srcRect = new Rectangle();
-                Rectangle dstRect = new Rectangle();
+                RectangleF srcRect = new Rectangle();
+                RectangleF dstRect = new Rectangle();
                 Rectangle rect = calculateFitToWidth(i, ref workingData.calculatedZoom, ref srcRect, ref dstRect);
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
@@ -430,9 +444,13 @@ namespace ImageView
             else if (Settings.Get.Display.SizeMode == ImageSizeMode.FitToHeight)
             {
                 panelMain.AutoScroll = false;
-                Rectangle rect = calculateFitToHeight(i, ref workingData.calculatedZoom);
+                RectangleF srcRect = new Rectangle();
+                RectangleF dstRect = new Rectangle();
+                Rectangle rect = calculateFitToHeight(i, ref workingData.calculatedZoom, ref srcRect, ref dstRect);
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
+                pictureBox.SourceRectangle = srcRect;
+                pictureBox.TargetRectange = dstRect;
                 panelMain.AutoScroll = true;
 
                 toolStripStatusLabelZoom.Visible = true;
