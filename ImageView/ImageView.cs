@@ -546,15 +546,8 @@ namespace ImageView
                 //The current zoom now becomes what was calculated
                 workingData.calculatedZoom = zoom;
 
-
                 //DRAW
                 refreshDrawingSurface();
-
-                //fixes an issue when the picturebox doesn't completely redraw when a new zoom is applied
-                if (newZoom != -1.0)
-                {
-                    this.pictureBox.Invalidate();
-                }
 
                 toolStripStatusLabelZoom.Visible = true;
                 toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(zoom*100.0f));
@@ -562,6 +555,8 @@ namespace ImageView
             }
 
             this.ResumeLayout();
+            this.pictureBox.Invalidate(); //force a redraw
+
         }
 
 
@@ -798,25 +793,12 @@ namespace ImageView
             {
                 workingData.nativeImage = new ImageMagick.MagickImage(stream);
             }
-            catch(Exception e)
+            catch(Exception)
             {
-
-                MessageBox.Show(String.Format("Unable to load {0}.\nThis image is corrupted or has an invalid format.\nImage will attempt to automatically load the next image."));
-                //remove this picture from the list
-                if(workingData.entries.Count > 1)
-                {
-
-                }
-                else
-                {
-                    close();
-                }
-                return;
+                workingData.nativeImage = new MagickImage(Properties.Resources.error);
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally
-            {
-                stream.Dispose();
-            }
+            stream.Dispose();
 #if DEBUG
             stopWatch.Stop();
             System.Diagnostics.Debug.WriteLine(String.Format("Loading image in {0} ms", stopWatch.Elapsed.Milliseconds));
