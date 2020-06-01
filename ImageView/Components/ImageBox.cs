@@ -21,7 +21,6 @@ namespace ImageView.Components
         {
             textureBrush = new TextureBrush(ImageView.Properties.Resources.transparent16);
             textureBrush.WrapMode = WrapMode.Tile;
-
             this.DoubleBuffered = true;
         }
 
@@ -29,24 +28,48 @@ namespace ImageView.Components
         private TextureBrush textureBrush; 
         public InterpolationMode InterpolationMode { get; set; }
 
-        public Rectangle SourceRectange { get; set; }
-        public Rectangle TargetRectange { get; set; }
+        private RectangleF sourceRectangle = RectangleF.Empty;
+        private RectangleF targetRectangle = RectangleF.Empty;
+        public RectangleF SourceRectangle 
+        { 
+            get { return sourceRectangle; } 
+            set { sourceRectangle = value; }
+        }
+        public RectangleF TargetRectange
+        {
+            get { return targetRectangle; }
+            set { targetRectangle = value; }
+        }
         public bool CheckeredPatternBackground { get; set; }
 
         protected override void OnPaint(PaintEventArgs paintEventArgs)
         {
             if (Image != null) {
 
-                paintEventArgs.Graphics.PixelOffsetMode = PixelOffsetMode.None;
+                Graphics g = paintEventArgs.Graphics;
+                g.PixelOffsetMode = PixelOffsetMode.None;
 
                 if (CheckeredPatternBackground && Image.IsAlphaPixelFormat(Image.PixelFormat))
                 {
-                    paintEventArgs.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-                    paintEventArgs.Graphics.FillRectangle(textureBrush, 0, 0, this.Width, this.Height);
+                    g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                    g.FillRectangle(textureBrush, 0, 0, this.Width, this.Height);
                 }
 
-                paintEventArgs.Graphics.InterpolationMode = InterpolationMode.Default;
-                paintEventArgs.Graphics.DrawImage(Image, 0, 0, this.Width, this.Height);
+                
+
+                if(sourceRectangle != RectangleF.Empty)
+                {
+                    g.InterpolationMode = InterpolationMode.Default;
+                    g.DrawImage(Image, targetRectangle, sourceRectangle, GraphicsUnit.Pixel);
+
+                }
+                else
+                {
+                    g.InterpolationMode = InterpolationMode.Default;
+                    g.DrawImage(Image, 0, 0, this.Width, this.Height);
+                }
+
+                
             }
         }
     }

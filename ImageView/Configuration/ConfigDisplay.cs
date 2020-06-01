@@ -11,18 +11,19 @@ namespace ImageView.Configuration
     {
 
 
-        public int Zoom { get; set; }
+        public float Zoom { get; set; }
         public ImageSizeMode SizeMode { get; set; }
-        public int ZoomStep { get; set; }
+        public float ZoomStep { get; set; }
         public bool AutoRotate { get; set; }
         public bool CheckeredPatternBackground { get; set; }
 
 
         public ImageSizeMode SizeModeOnImageLoad { get; set; }
 
-        private static readonly int DEFAULT_ZOOM = 100;
-        private static readonly int DEFAULT_ZOOM_STEP = 25;
-        public static readonly int MAX_ZOOM = 400;
+        private static readonly float DEFAULT_ZOOM = 1.0f;
+        private static readonly float DEFAULT_ZOOM_STEP = 0.25f;
+        public static readonly float[] ZOOM_STEPS = { 0.05f, 0.10f, 0.25f, 0.5f, 0.75f, 1.0f, 1.25f, 1.50f, 2.0f, 4.0f, 8.0f, 16.0f};
+        public static readonly float MAX_ZOOM = 16.0f;
         private static readonly bool DEFAULT_AUTO_ROTATE = true;
         private static readonly bool DEFAULT_CHECKERED_PATTERN_BACKGROUND = true;
         private static readonly ImageSizeMode DEFAULT_IMAGESIZEMODE = ImageSizeMode.BestFit;
@@ -40,7 +41,8 @@ namespace ImageView.Configuration
         {
             XmlNode n;
             bool bvalue;
-            int ivalue;
+            //int ivalue;
+            float fvalue;
 
 
             //Auto rotate
@@ -67,9 +69,9 @@ namespace ImageView.Configuration
 
             //zoom
             n = doc.SelectSingleNode("/Settings/Display/Zoom");
-            if (n != null && int.TryParse(n.InnerText, out ivalue) && ivalue > 0)
+            if (n != null && float.TryParse(n.InnerText, out fvalue) && fvalue > 0.0f)
             {
-                Zoom = ivalue;
+                Zoom = fvalue;
             }
             else
             {
@@ -79,9 +81,9 @@ namespace ImageView.Configuration
 
             //zoom step
             n = doc.SelectSingleNode("/Settings/Display/ZoomStep");
-            if (n != null && int.TryParse(n.InnerText, out ivalue) && ivalue > 0)
+            if (n != null && float.TryParse(n.InnerText, out fvalue) && fvalue > 0.0f)
             {
-                ZoomStep = ivalue;
+                ZoomStep = fvalue;
             }
             else
             {
