@@ -564,15 +564,6 @@
             // 
             this.toolStripComboBoxZoom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.toolStripComboBoxZoom.Font = new System.Drawing.Font("Segoe UI", 15.75F);
-            this.toolStripComboBoxZoom.Items.AddRange(new object[] {
-            "25%",
-            "50%",
-            "75%",
-            "100%",
-            "125%",
-            "150%",
-            "200%",
-            "400%"});
             this.toolStripComboBoxZoom.Name = "toolStripComboBoxZoom";
             this.toolStripComboBoxZoom.Size = new System.Drawing.Size(80, 42);
             this.toolStripComboBoxZoom.Text = "100%";
@@ -677,6 +668,7 @@
             this.panelMain.Name = "panelMain";
             this.panelMain.Size = new System.Drawing.Size(1008, 639);
             this.panelMain.TabIndex = 4;
+            this.panelMain.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panelMain_Scroll);
             this.panelMain.DragDrop += new System.Windows.Forms.DragEventHandler(this.panelMain_DragDrop);
             this.panelMain.DragEnter += new System.Windows.Forms.DragEventHandler(this.panelMain_DragEnter);
             this.panelMain.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);

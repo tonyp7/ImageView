@@ -83,7 +83,7 @@ namespace ImageView
 
             Settings.Get.Load();
 
-            //Picture box stuff
+            // The custom picture box
             // 
             // pictureBox
             // 
@@ -92,7 +92,7 @@ namespace ImageView
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
             this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(556, 309);
+            this.pictureBox.Size = new System.Drawing.Size(480, 480);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             this.pictureBox.Click += new System.EventHandler(this.pictureBox_Click);
@@ -104,9 +104,17 @@ namespace ImageView
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             this.pictureBox.CheckeredPatternBackground = Settings.Get.Display.CheckeredPatternBackground;
             this.panelMain.Controls.Add(this.pictureBox);
-            this.MouseWheel += FrmMain_MouseWheel;
 
-            panelMain.MouseWheel += PanelMain_MouseWheel;
+            //Mouse wheel events for some reason can't be created using Visual Studio's designer
+            this.MouseWheel += FrmMain_MouseWheel;
+            this.panelMain.MouseWheel += PanelMain_MouseWheel;
+
+            //Zoom list
+            foreach(float f in ConfigDisplay.ZOOM_STEPS)
+            {
+                this.toolStripComboBoxZoom.Items.Add(String.Format("{0}%", f*100.0f));
+            }
+
 
             this.openFileDialog.Filter = Properties.Resources.SupportedImageFiles;
             workingData = new WorkingData();
@@ -779,8 +787,35 @@ namespace ImageView
 
                     Settings.Get.Display.SizeMode = ImageSizeMode.Zoom;
 
-
-                    float newZoom = Control.ModifierKeys != Keys.Alt ? workingData.calculatedZoom + Settings.Get.Display.ZoomStep : workingData.calculatedZoom - Settings.Get.Display.ZoomStep;
+                    //find nearest zoom step
+                    float newZoom = workingData.calculatedZoom;
+                    if (Control.ModifierKeys == Keys.Alt)
+                    {
+                        //find the next smaller zoom step
+                        for (int i = ConfigDisplay.ZOOM_STEPS.Length-1; i >= 0; i--)
+                        {
+                            if (ConfigDisplay.ZOOM_STEPS[i] < newZoom)
+                            {
+                                newZoom = ConfigDisplay.ZOOM_STEPS[i];
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //find next bigger zoom step
+                        if(newZoom < ConfigDisplay.MAX_ZOOM)
+                        {
+                            for (int i = 0; i < ConfigDisplay.ZOOM_STEPS.Length; i++)
+                            {
+                                if(ConfigDisplay.ZOOM_STEPS[i] > newZoom)
+                                {
+                                    newZoom = ConfigDisplay.ZOOM_STEPS[i];
+                                    break;
+                                }
+                            }
+                        }
+                    }
 
                     newZoom = Program.Clamp(newZoom, .01f, ConfigDisplay.MAX_ZOOM);
 
@@ -811,7 +846,7 @@ namespace ImageView
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
             //refresh pixel coord
-            double X, Y;
+            float X, Y;
             X = e.Location.X / workingData.calculatedZoom;
             Y = e.Location.Y / workingData.calculatedZoom;
             toolStripStatusLabelPixelPosition.Text = string.Format("{0:0},{1:0}", X, Y);
@@ -835,24 +870,24 @@ namespace ImageView
 
 
                 //REFRESH DRAWING PORTION
-                double zoom = workingData.calculatedZoom;
+                float zoom = workingData.calculatedZoom;
                 Size clientSize = panelMain.Size;
                 RectangleF srcRect = new RectangleF();
                 RectangleF dstRect = new RectangleF();
                 
-                dstRect.X = scroll.X;
-                dstRect.Y = scroll.Y;
+                dstRect.X = -panelMain.AutoScrollPosition.X;
+                dstRect.Y = -panelMain.AutoScrollPosition.Y;
                 dstRect.Width = clientSize.Width;
                 dstRect.Height = clientSize.Height;
 
-                srcRect.X = (float)Math.Round(((double)dstRect.X / zoom));
-                srcRect.Y = (float)Math.Round(((double)dstRect.Y / zoom));
-                srcRect.Width = (float)Math.Round(((double)dstRect.Width / zoom));
-                srcRect.Height = (float)Math.Round(((double)dstRect.Height / zoom));
+                srcRect.X = dstRect.X / zoom;
+                srcRect.Y = dstRect.Y / zoom;
+                srcRect.Width = dstRect.Width / zoom;
+                srcRect.Height = dstRect.Height / zoom;
                 pictureBox.SourceRectangle = srcRect;
                 pictureBox.TargetRectange = dstRect;
 
-                pictureBox.Invalidate(); //force redraw
+                //pictureBox.Refresh(); //force redraw
 
             }
 
@@ -986,14 +1021,13 @@ namespace ImageView
 
         private void panelMain_Scroll(object sender, ScrollEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("scroll");
+            refreshDrawingSurface();
         }
 
         private void PanelMain_MouseWheel(object sender, MouseEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("wheel");
+            refreshDrawingSurface();
         }
-
     }
 
 
