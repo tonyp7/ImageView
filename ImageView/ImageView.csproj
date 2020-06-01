@@ -266,6 +266,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="imageview.ico" />
+    <None Include="Resources\error.png" />
     <None Include="Resources\transparent16.png" />
     <None Include="Resources\fr.png" />
     <None Include="Resources\en.png" />

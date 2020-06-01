@@ -177,6 +177,13 @@
   <data name="en" xml:space="preserve">
     <value>English</value>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ErrorImageLoad" xml:space="preserve">
+    <value>ImageView was unable to load {0}.
+The image is corrupted or its format could not be recognized.</value>
+  </data>
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
   </data>

@@ -48,13 +48,14 @@ namespace ImageView
         public Bitmap bitmap = null;
         public MagickImage nativeImage = null;
         public IEntry activeEntry;
-        public IEntry[] entries;
+        public List<IEntry> entries;
         public int directoryIndex;
         public float calculatedZoom;
         public ArchiveFile archive;
 
         public WorkingData()
         {
+            entries = new List<IEntry>();
             reset();
         }
 
@@ -76,7 +77,7 @@ namespace ImageView
         {
             directoryIndex = -1;
             activeEntry = null;
-            entries = null;
+            entries.Clear();
             bitmap = null;
             calculatedZoom = -1.0f;
             if (archive != null)
@@ -243,8 +244,8 @@ namespace ImageView
                 //REFRESH DRAWING PORTION
                 float zoom = workingData.calculatedZoom;
                 Size clientSize = panelMain.Size;
-                RectangleF srcRect = new Rectangle();
-                RectangleF dstRect = new Rectangle();
+                RectangleF srcRect = new RectangleF();
+                RectangleF dstRect = new RectangleF();
                 dstRect.X = scroll.X;
                 dstRect.Y = scroll.Y;
                 dstRect.Width = clientSize.Width;
@@ -423,8 +424,8 @@ namespace ImageView
             if (Settings.Get.Display.SizeMode == ImageSizeMode.BestFit)
             {
                 panelMain.AutoScroll = false;
-                RectangleF srcRect = new Rectangle();
-                RectangleF dstRect = new Rectangle();
+                RectangleF srcRect = new RectangleF();
+                RectangleF dstRect = new RectangleF();
                 Rectangle rect = calculateAutoSize(i, ref workingData.calculatedZoom, ref srcRect, ref dstRect);
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
@@ -438,8 +439,8 @@ namespace ImageView
             else if(Settings.Get.Display.SizeMode == ImageSizeMode.FitToWidth)
             {
                 panelMain.AutoScroll = false;
-                RectangleF srcRect = new Rectangle();
-                RectangleF dstRect = new Rectangle();
+                RectangleF srcRect = new RectangleF();
+                RectangleF dstRect = new RectangleF();
                 Rectangle rect = calculateFitToWidth(i, ref workingData.calculatedZoom, ref srcRect, ref dstRect);
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
@@ -455,8 +456,8 @@ namespace ImageView
             else if (Settings.Get.Display.SizeMode == ImageSizeMode.FitToHeight)
             {
                 panelMain.AutoScroll = false;
-                RectangleF srcRect = new Rectangle();
-                RectangleF dstRect = new Rectangle();
+                RectangleF srcRect = new RectangleF();
+                RectangleF dstRect = new RectangleF();
                 Rectangle rect = calculateFitToHeight(i, ref workingData.calculatedZoom, ref srcRect, ref dstRect);
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
@@ -545,15 +546,8 @@ namespace ImageView
                 //The current zoom now becomes what was calculated
                 workingData.calculatedZoom = zoom;
 
-
                 //DRAW
                 refreshDrawingSurface();
-
-                //fixes an issue when the picturebox doesn't completely redraw when a new zoom is applied
-                if (newZoom != -1.0)
-                {
-                    this.pictureBox.Invalidate();
-                }
 
                 toolStripStatusLabelZoom.Visible = true;
                 toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(zoom*100.0f));
@@ -561,6 +555,8 @@ namespace ImageView
             }
 
             this.ResumeLayout();
+            this.pictureBox.Invalidate(); //force a redraw
+
         }
 
 
@@ -593,7 +589,7 @@ namespace ImageView
                 workingData.directoryIndex++;
 
                 //loop
-                if (workingData.directoryIndex >= workingData.entries.Length)
+                if (workingData.directoryIndex >= workingData.entries.Count)
                 {
                     workingData.directoryIndex = 0;
                 }
@@ -611,7 +607,7 @@ namespace ImageView
                 //loop
                 if (workingData.directoryIndex < 0)
                 {
-                    workingData.directoryIndex = workingData.entries.Length - 1;
+                    workingData.directoryIndex = workingData.entries.Count - 1;
                 }
 
                 IEntry entry = workingData.entries[workingData.directoryIndex];
@@ -667,7 +663,7 @@ namespace ImageView
                         if(index != -1)
                         {
                             workingData.directoryIndex = index;
-                            workingData.entries = imagesFiles.ToArray();
+                            workingData.entries = imagesFiles.ToList<IEntry>();
                             loadPicture(workingData.entries[index]);
                         }
                     }  
@@ -701,7 +697,7 @@ namespace ImageView
                         if(imagesFiles.Count > 0)
                         {
                             workingData.directoryIndex = 0;
-                            workingData.entries = imagesFiles.ToArray();
+                            workingData.entries = imagesFiles.ToList<IEntry>();
 
                             loadPicture(workingData.entries[0]);
                         }
@@ -727,7 +723,7 @@ namespace ImageView
                             var e = new FileEntry(s);
                             l.Add(e);
                         }
-                        workingData.entries = l.ToArray();
+                        workingData.entries = l;
                         workingData.directoryIndex = index;
                         loadPicture(workingData.entries[workingData.directoryIndex]);
                     }
@@ -758,7 +754,7 @@ namespace ImageView
                             }
 
                             workingData.directoryIndex = 0;
-                            workingData.entries = l.ToArray();
+                            workingData.entries = l;
 
                             loadPicture(workingData.entries[0]);
 
@@ -792,10 +788,17 @@ namespace ImageView
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 #endif
-            using (Stream stream = workingData.activeEntry.GetStream())
+            Stream stream = workingData.activeEntry.GetStream();
+            try
             {
                 workingData.nativeImage = new ImageMagick.MagickImage(stream);
             }
+            catch(Exception)
+            {
+                workingData.nativeImage = new MagickImage(Properties.Resources.error);
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            stream.Dispose();
 #if DEBUG
             stopWatch.Stop();
             System.Diagnostics.Debug.WriteLine(String.Format("Loading image in {0} ms", stopWatch.Elapsed.Milliseconds));
@@ -843,7 +846,7 @@ namespace ImageView
             toolStripStatusLabelImageInfo.Visible = true;
             toolStripStatusLabelFileSize.Text = NiceFileSize(workingData.activeEntry.Length);
             toolStripStatusLabelFileSize.Visible = true;
-            toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", workingData.directoryIndex + 1, workingData.entries.Length);
+            toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", workingData.directoryIndex + 1, workingData.entries.Count);
             toolStripStatusLabelImagePosition.Visible = true;
             this.Text = String.Format("{0} - {1}", workingData.activeEntry.FullName, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
             
@@ -1069,12 +1072,12 @@ namespace ImageView
                     //if there was only one image in the current working folder, then the app will close all
 
                     string nextFileToLoad = String.Empty;
-                    if (workingData.entries.Length > 1)
+                    if (workingData.entries.Count > 1)
                     {
                         //will try to move to the file
                         int moveToIndex = workingData.directoryIndex;
                         moveToIndex--;
-                        if (moveToIndex < 0) moveToIndex = workingData.entries.Length - 1; //auto loop to the end
+                        if (moveToIndex < 0) moveToIndex = workingData.entries.Count - 1; //auto loop to the end
                         IEntry entry = workingData.entries[moveToIndex];
                         nextFileToLoad = entry.FullName;
                     }
