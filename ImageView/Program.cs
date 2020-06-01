@@ -73,6 +73,13 @@ namespace ImageView
             return value < min ? min : (value > max ? max : value);
         }
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Clamp(float value, float min, float max)
+        {
+            return value < min ? min : (value > max ? max : value);
+        }
+
         public static string HumanReadablePixelFormat(System.Drawing.Imaging.PixelFormat pixfmt)
         {
             int bpp = System.Drawing.Image.GetPixelFormatSize(pixfmt);

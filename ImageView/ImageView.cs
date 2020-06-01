@@ -47,19 +47,10 @@ namespace ImageView
     {
         public Bitmap bitmap = null;
         public MagickImage nativeImage = null;
-
-
-        //public DirectoryInfo directoryInfo;
-        //public FileInfo fileInfo;
-        //public string[] directoryFiles;
         public IEntry activeEntry;
         public IEntry[] entries;
-
         public int directoryIndex;
-
-
-        //public PropertyItem[] propertyItems;
-        public double calculatedZoom;
+        public float calculatedZoom;
         public ArchiveFile archive;
 
         public WorkingData()
@@ -87,7 +78,7 @@ namespace ImageView
             activeEntry = null;
             entries = null;
             bitmap = null;
-            calculatedZoom = -1.0;
+            calculatedZoom = -1.0f;
             if (archive != null)
             {
                 archive.Dispose();
@@ -184,17 +175,18 @@ namespace ImageView
         /// <param name="i"></param>
         /// <param name="zoom"></param>
         /// <returns></returns>
-        private Rectangle calculateFitToWidth(Image i, ref double zoom)
+        private Rectangle calculateFitToWidth(Image i, ref float zoom, ref Rectangle srcRect, ref Rectangle dstRect)
         {
             Rectangle rect = Rectangle.Empty;
+            Size clientSize = panelMain.ClientSize;
 
             //the width is locked to be window width
             rect.X = 0;
-            rect.Width = panelMain.ClientSize.Width;
+            rect.Width = clientSize.Width;
 
             //height is simply a function of the zoom
-            zoom = rect.Width / (double)i.Width;
-            rect.Height = (int)Math.Round(zoom * (double)i.Height);
+            zoom = rect.Width / (float)i.Width;
+            rect.Height = (int)Math.Round(zoom * (float)i.Height);
 
 
 
@@ -204,9 +196,9 @@ namespace ImageView
             //of the bar since it's already accounted for in the panel ClientSize.
             if (rect.Height > panelMain.ClientSize.Height)
             {
-                rect.Width = panelMain.ClientSize.Width -  (panelMain.VerticalScroll.Visible?0:System.Windows.Forms.SystemInformation.VerticalScrollBarWidth);
-                zoom = rect.Width / (double)i.Width;
-                rect.Height = (int)Math.Round(zoom * (double)i.Height);
+                rect.Width = clientSize.Width -  (panelMain.VerticalScroll.Visible?0:System.Windows.Forms.SystemInformation.VerticalScrollBarWidth);
+                zoom = rect.Width / (float)i.Width;
+                rect.Height = (int)Math.Round(zoom * (float)i.Height);
             }
 
 
@@ -220,7 +212,52 @@ namespace ImageView
                 rect.Y = 0;
             }
 
+
+            //source portion of the image is locked to width of the image
+            srcRect.X = 0;
+            srcRect.Y = 0;
+            srcRect.Width = i.Width;
+            srcRect.Height = (int)Math.Round((   (float)clientSize.Height / zoom   ));
+
+            //target
+            dstRect.X = 0;
+            dstRect.Y = 0;
+            dstRect.Width = rect.Width;
+            dstRect.Height = clientSize.Height;
+
             return rect;
+        }
+
+
+        private void verticalScroll(int direction)
+        {
+            if (panelMain.VerticalScroll.Visible)
+            {
+                Point scroll = panelMain.AutoScrollPosition;
+
+                scroll.X *= -1;
+                scroll.Y = -scroll.Y + (panelMain.Height / 10) * direction;
+
+                panelMain.AutoScrollPosition = scroll;
+
+                //REFRESH DRAWING PORTION
+                float zoom = workingData.calculatedZoom;
+                Size clientSize = panelMain.Size;
+                RectangleF srcRect = new Rectangle();
+                RectangleF dstRect = new Rectangle();
+                dstRect.X = scroll.X;
+                dstRect.Y = scroll.Y;
+                dstRect.Width = clientSize.Width;
+                dstRect.Height = clientSize.Height;
+                srcRect.X = (((float)scroll.X / zoom));
+                srcRect.Y = (((float)scroll.Y / zoom));
+                srcRect.Width = (((float)clientSize.Width / zoom));
+                srcRect.Height = (((float)clientSize.Height / zoom));
+                pictureBox.SourceRectangle = srcRect;
+                pictureBox.TargetRectange = dstRect;
+            }
+
+ 
         }
 
 
@@ -231,7 +268,7 @@ namespace ImageView
         /// <param name="i"></param>
         /// <param name="zoom"></param>
         /// <returns></returns>
-        private Rectangle calculateFitToHeight(Image i, ref double zoom)
+        private Rectangle calculateFitToHeight(Image i, ref float zoom)
         {
             Rectangle rect = Rectangle.Empty;
 
@@ -240,15 +277,15 @@ namespace ImageView
             rect.Height = panelMain.ClientSize.Height;
 
             //width is simply a function of the zoom
-            zoom = rect.Height / (double)i.Height;
-            rect.Width = (int)Math.Round(zoom * (double)i.Width);
+            zoom = rect.Height / (float)i.Height;
+            rect.Width = (int)Math.Round(zoom * (float)i.Width);
 
             //if an horizontal scrollbar is going to appear, we need to recalculate the size to take into account the height lost by the scrollbar's thickness
             if (rect.Width > panelMain.ClientSize.Width)
             {
                 rect.Height = panelMain.ClientSize.Height - (panelMain.HorizontalScroll.Visible?0:System.Windows.Forms.SystemInformation.HorizontalScrollBarHeight);
-                zoom = rect.Height / (double)i.Height;
-                rect.Width = (int)Math.Round(zoom * (double)i.Width);
+                zoom = rect.Height / (float)i.Height;
+                rect.Width = (int)Math.Round(zoom * (float)i.Width);
 
             }
 
@@ -276,7 +313,7 @@ namespace ImageView
         /// <param name="i">The image</param>
         /// <param name="zoom">Returns calculated zoom ratio</param>
         /// <returns>Rectangle containing position and size of the image to display</returns>
-        private Rectangle calculateAutoSize(Image i, ref double zoom)
+        private Rectangle calculateAutoSize(Image i, ref float zoom)
         {
             Rectangle rect = Rectangle.Empty;
             
@@ -284,7 +321,7 @@ namespace ImageView
             //image can fit entirely on the screen so the display is actually normal
             if (panelMain.ClientSize.Width >= i.Width && panelMain.ClientSize.Height >= i.Height)
             {
-                zoom = 1.0;
+                zoom = 1.0f;
 
                 //pictureBox.SizeMode = PictureBoxSizeMode.Normal;
                 rect.Width = i.Width;
@@ -307,11 +344,11 @@ namespace ImageView
             {
                 //either the width or height becomes the limiting factor, 
                 //this is determined by the aspect ratio of the image and the aspect ratio of the panel containing said image
-                double aspec = (double)i.Width / (double)i.Height;
-                double windowAspec = (double)panelMain.ClientSize.Width / (double)panelMain.ClientSize.Height;
+                float aspec = (float)i.Width / (float)i.Height;
+                float windowAspec = (float)panelMain.ClientSize.Width / (float)panelMain.ClientSize.Height;
                 if (aspec > windowAspec)
                 {
-                    zoom = ((double)panelMain.ClientSize.Width / (double)i.Width);
+                    zoom = ((float)panelMain.ClientSize.Width / (float)i.Width);
                     rect.Width = panelMain.ClientSize.Width;
                     rect.Height = (int)Math.Round((rect.Width / aspec));
 
@@ -319,7 +356,7 @@ namespace ImageView
                 }
                 else
                 {
-                    zoom = ((double)panelMain.ClientSize.Height / (double)i.Height);
+                    zoom = ((float)panelMain.ClientSize.Height / (float)i.Height);
                     rect.Height = panelMain.ClientSize.Height;
                     rect.Width = (int)Math.Round((rect.Height * aspec));
 
@@ -330,7 +367,7 @@ namespace ImageView
             return rect;
         }
 
-        private void resizePictureBox(Point mouseCoord, double newZoom)
+        private void resizePictureBox(Point mouseCoord, float newZoom)
         {
             resizePictureBox(null, mouseCoord, newZoom);
         }
@@ -339,7 +376,7 @@ namespace ImageView
             resizePictureBox(null, Point.Empty, -1);
         }
 
-        private void resizePictureBox(Image i, Point mouseCoord, double newZoom)
+        private void resizePictureBox(Image i, Point mouseCoord, float newZoom)
         {
 
             this.SuspendLayout();
@@ -365,41 +402,42 @@ namespace ImageView
                 panelMain.AutoScroll = false;
 
                 Rectangle rect = calculateAutoSize(i, ref workingData.calculatedZoom);
-                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
                 
 
                 toolStripStatusLabelZoom.Visible = true;
-                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(workingData.calculatedZoom * 100.0));
-                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(workingData.calculatedZoom * 100.0)));
+                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(workingData.calculatedZoom * 100.0f));
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(workingData.calculatedZoom * 100.0f)));
             }
             else if(Settings.Get.Display.SizeMode == ImageSizeMode.FitToWidth)
             {
                 panelMain.AutoScroll = false;
-                Rectangle rect = calculateFitToWidth(i, ref workingData.calculatedZoom);
-                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                Rectangle srcRect = new Rectangle();
+                Rectangle dstRect = new Rectangle();
+                Rectangle rect = calculateFitToWidth(i, ref workingData.calculatedZoom, ref srcRect, ref dstRect);
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
+                pictureBox.SourceRectangle = srcRect;
+                pictureBox.TargetRectange = dstRect;
                 panelMain.AutoScroll = true;
 
                 toolStripStatusLabelZoom.Visible = true;
-                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(workingData.calculatedZoom * 100.0));
-                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(workingData.calculatedZoom * 100.0)));
+                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(workingData.calculatedZoom * 100.0f));
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(workingData.calculatedZoom * 100.0f)));
 
             }
             else if (Settings.Get.Display.SizeMode == ImageSizeMode.FitToHeight)
             {
                 panelMain.AutoScroll = false;
                 Rectangle rect = calculateFitToHeight(i, ref workingData.calculatedZoom);
-                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
                 pictureBox.Size = rect.Size;
                 pictureBox.Location = rect.Location;
                 panelMain.AutoScroll = true;
 
                 toolStripStatusLabelZoom.Visible = true;
-                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(workingData.calculatedZoom * 100.0));
-                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(workingData.calculatedZoom * 100.0)));
+                toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(workingData.calculatedZoom * 100.0f));
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(workingData.calculatedZoom * 100.0f)));
 
             }
             else if (Settings.Get.Display.SizeMode == ImageSizeMode.Zoom || Settings.Get.Display.SizeMode == ImageSizeMode.RealSize)
@@ -413,20 +451,30 @@ namespace ImageView
                 //for zoom we calculate new height and width but the code is otherwise the same than drawing the regular picture
                 if (Settings.Get.Display.SizeMode == ImageSizeMode.Zoom)
                 {
-
                     //calculate the previous height and width
-                    previousHeight = (int)Math.Round(((double)i.Width * workingData.calculatedZoom ));
-                    previousHeight = (int)Math.Round(((double)i.Height * workingData.calculatedZoom ));
+                    previousHeight = (int)Math.Round(((float)i.Width * workingData.calculatedZoom ));
+                    previousHeight = (int)Math.Round(((float)i.Height * workingData.calculatedZoom ));
 
                     //calculate new zoom
-                    double zoomf = newZoom == -1 ? Settings.Get.Display.Zoom  : newZoom ;
-                    newWidth = (int)Math.Round(((double)i.Width * zoomf));
-                    newHeight = (int)Math.Round(((double)i.Height * zoomf));
-                    pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                }
-                else
-                {
-                    pictureBox.SizeMode = PictureBoxSizeMode.Normal;
+                    float zoomf = newZoom == -1 ? Settings.Get.Display.Zoom  : newZoom ;
+                    newWidth = (int)Math.Round(((float)i.Width * zoomf));
+                    newHeight = (int)Math.Round(((float)i.Height * zoomf));
+
+                    
+                    //to rect
+                    Rectangle destRect = new Rectangle(-panelMain.AutoScrollPosition.X,
+                            -panelMain.AutoScrollPosition.Y,
+                            panelMain.ClientSize.Width +100,
+                            panelMain.ClientSize.Height +100);
+                    this.pictureBox.TargetRectange = destRect;
+
+                    Rectangle srcRect = new Rectangle();
+                    srcRect.Width = (int)((float)destRect.Width / zoomf);
+                    srcRect.Height = (int)((float)destRect.Height / zoomf);
+                    this.pictureBox.SourceRectangle = srcRect;
+
+
+
                 }
 
                 System.Diagnostics.Debug.WriteLine(String.Format("Previous: {0}x{1} // New: {2}x{3}", pictureBox.Width, pictureBox.Height, newWidth, newHeight));
@@ -453,10 +501,10 @@ namespace ImageView
                 panelMain.AutoScroll = true;
 
                 //save the new zoom state
-                double zoom;
+                float zoom;
                 if(newZoom == -1.0)
                 {
-                    zoom = Settings.Get.Display.SizeMode == ImageSizeMode.RealSize ? 1.0 : Settings.Get.Display.Zoom;
+                    zoom = Settings.Get.Display.SizeMode == ImageSizeMode.RealSize ? 1.0f : Settings.Get.Display.Zoom;
                 }
                 else
                 {
@@ -467,13 +515,13 @@ namespace ImageView
                 if (mouseCoord != Point.Empty)
                 {
                     //translate mouse position to pixel coords
-                    double Xpx, Ypx;
+                    float Xpx, Ypx;
                     Xpx = mouseCoord.X / workingData.calculatedZoom ;
                     Ypx = mouseCoord.Y / workingData.calculatedZoom ;
 
                     //translate these pixel coords to new coords
-                    Xpx = Xpx * (double)zoom ;
-                    Ypx = Ypx * (double)zoom ;
+                    Xpx = Xpx * zoom ;
+                    Ypx = Ypx * zoom ;
 
                     //center clicked ppoint
                     Point panelHalfSize = new Point(panelMain.Width >> 1, panelMain.Height >> 1);
@@ -481,11 +529,11 @@ namespace ImageView
                 }
 
                 //The current zoom now becomes what was calculated
-                workingData.calculatedZoom = (double)zoom;
+                workingData.calculatedZoom = zoom;
 
                 toolStripStatusLabelZoom.Visible = true;
-                toolStripStatusLabelZoom.Text = String.Format("{0} %", zoom*100.0);
-                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", zoom*100.0));
+                toolStripStatusLabelZoom.Text = String.Format("{0} %", zoom*100.0f);
+                toolStripComboBoxZoom_UpdateText(String.Format("{0}%", zoom*100.0f));
             }
 
             this.ResumeLayout();

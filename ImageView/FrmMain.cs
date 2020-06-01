@@ -105,6 +105,9 @@ namespace ImageView
             this.pictureBox.CheckeredPatternBackground = Settings.Get.Display.CheckeredPatternBackground;
             this.panelMain.Controls.Add(this.pictureBox);
             this.MouseWheel += FrmMain_MouseWheel;
+
+            panelMain.MouseWheel += PanelMain_MouseWheel;
+
             this.openFileDialog.Filter = Properties.Resources.SupportedImageFiles;
             workingData = new WorkingData();
 
@@ -132,6 +135,8 @@ namespace ImageView
                 this.panelMain.Resize += panelMain_Resize;
             }
         }
+
+
 
         public void InitalizeComponentsCultureAware()
         {
@@ -313,11 +318,11 @@ namespace ImageView
         /// </summary>
         private void zoom()
         {
-            double zoom = 1.0;
-            if (double.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
+            float zoom = 1.0f;
+            if (float.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
             {
-                zoom /= 100.0;
-                zoom = Program.Clamp(zoom, .01, ConfigDisplay.MAX_ZOOM);
+                zoom /= 100.0f;
+                zoom = Program.Clamp(zoom, .01f, ConfigDisplay.MAX_ZOOM);
                 Settings.Get.Display.SizeMode = ImageSizeMode.Zoom;
                 Settings.Get.Display.Zoom = zoom;
                 refreshImageSizeModeUI();
@@ -764,6 +769,7 @@ namespace ImageView
                 {
                     this.Cursor = Cursors.Default;
                 }
+
             }
             else if(e.Button == MouseButtons.Left)
             {
@@ -774,9 +780,9 @@ namespace ImageView
                     Settings.Get.Display.SizeMode = ImageSizeMode.Zoom;
 
 
-                    double newZoom = Control.ModifierKeys != Keys.Alt ? workingData.calculatedZoom + Settings.Get.Display.ZoomStep : workingData.calculatedZoom - Settings.Get.Display.ZoomStep;
+                    float newZoom = Control.ModifierKeys != Keys.Alt ? workingData.calculatedZoom + Settings.Get.Display.ZoomStep : workingData.calculatedZoom - Settings.Get.Display.ZoomStep;
 
-                    newZoom = Program.Clamp(newZoom, .01, ConfigDisplay.MAX_ZOOM);
+                    newZoom = Program.Clamp(newZoom, .01f, ConfigDisplay.MAX_ZOOM);
 
                     panelMain.Resize -= panelMain_Resize;
                     resizePictureBox(e.Location, newZoom);
@@ -824,8 +830,29 @@ namespace ImageView
                 {
                     changePoint.X = e.Location.X - mousePosition.X;
                 }
-                panelMain.AutoScrollPosition = new Point(-panelMain.AutoScrollPosition.X - changePoint.X,
-                                                      -panelMain.AutoScrollPosition.Y - changePoint.Y);
+                Point scroll = new Point(-panelMain.AutoScrollPosition.X - changePoint.X, -panelMain.AutoScrollPosition.Y - changePoint.Y);
+                panelMain.AutoScrollPosition = scroll;
+
+
+                //REFRESH DRAWING PORTION
+                double zoom = workingData.calculatedZoom;
+                Size clientSize = panelMain.Size;
+                RectangleF srcRect = new RectangleF();
+                RectangleF dstRect = new RectangleF();
+                
+                dstRect.X = scroll.X;
+                dstRect.Y = scroll.Y;
+                dstRect.Width = clientSize.Width;
+                dstRect.Height = clientSize.Height;
+
+                srcRect.X = (float)Math.Round(((double)dstRect.X / zoom));
+                srcRect.Y = (float)Math.Round(((double)dstRect.Y / zoom));
+                srcRect.Width = (float)Math.Round(((double)dstRect.Width / zoom));
+                srcRect.Height = (float)Math.Round(((double)dstRect.Height / zoom));
+                pictureBox.SourceRectangle = srcRect;
+                pictureBox.TargetRectange = dstRect;
+
+                pictureBox.Invalidate(); //force redraw
 
             }
 
@@ -945,18 +972,7 @@ namespace ImageView
         }
 
 
-        private void verticalScroll(int direction)
-        {
-            if (panelMain.VerticalScroll.Visible)
-            {
-                Point scroll = panelMain.AutoScrollPosition;
 
-                scroll.X *= -1;
-                scroll.Y = -scroll.Y + (panelMain.Height / 10)*direction;
-
-                panelMain.AutoScrollPosition = scroll;
-            }
-        }
 
         private void scrollDown()
         {
@@ -967,6 +983,17 @@ namespace ImageView
         {
             verticalScroll(-1);
         }
+
+        private void panelMain_Scroll(object sender, ScrollEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("scroll");
+        }
+
+        private void PanelMain_MouseWheel(object sender, MouseEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("wheel");
+        }
+
     }
 
 

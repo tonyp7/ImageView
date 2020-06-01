@@ -11,18 +11,18 @@ namespace ImageView.Configuration
     {
 
 
-        public double Zoom { get; set; }
+        public float Zoom { get; set; }
         public ImageSizeMode SizeMode { get; set; }
-        public double ZoomStep { get; set; }
+        public float ZoomStep { get; set; }
         public bool AutoRotate { get; set; }
         public bool CheckeredPatternBackground { get; set; }
 
 
         public ImageSizeMode SizeModeOnImageLoad { get; set; }
 
-        private static readonly double DEFAULT_ZOOM = 1.0;
-        private static readonly double DEFAULT_ZOOM_STEP = 0.25;
-        public static readonly double MAX_ZOOM = 4.0;
+        private static readonly float DEFAULT_ZOOM = 1.0f;
+        private static readonly float DEFAULT_ZOOM_STEP = 0.25f;
+        public static readonly float MAX_ZOOM = 4.0f;
         private static readonly bool DEFAULT_AUTO_ROTATE = true;
         private static readonly bool DEFAULT_CHECKERED_PATTERN_BACKGROUND = true;
         private static readonly ImageSizeMode DEFAULT_IMAGESIZEMODE = ImageSizeMode.BestFit;
@@ -41,7 +41,7 @@ namespace ImageView.Configuration
             XmlNode n;
             bool bvalue;
             //int ivalue;
-            double dvalue;
+            float fvalue;
 
 
             //Auto rotate
@@ -68,9 +68,9 @@ namespace ImageView.Configuration
 
             //zoom
             n = doc.SelectSingleNode("/Settings/Display/Zoom");
-            if (n != null && double.TryParse(n.InnerText, out dvalue) && dvalue > 0.0)
+            if (n != null && float.TryParse(n.InnerText, out fvalue) && fvalue > 0.0f)
             {
-                Zoom = dvalue;
+                Zoom = fvalue;
             }
             else
             {
@@ -80,9 +80,9 @@ namespace ImageView.Configuration
 
             //zoom step
             n = doc.SelectSingleNode("/Settings/Display/ZoomStep");
-            if (n != null && double.TryParse(n.InnerText, out dvalue) && dvalue > 0.0)
+            if (n != null && float.TryParse(n.InnerText, out fvalue) && fvalue > 0.0f)
             {
-                ZoomStep = dvalue;
+                ZoomStep = fvalue;
             }
             else
             {
