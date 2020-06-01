@@ -177,6 +177,13 @@
   <data name="en" xml:space="preserve">
     <value>Anglais</value>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="ErrorImageLoad" xml:space="preserve">
+    <value>ImageView n'est pas en mesure d'ouvrir {0}.
+Ce fichier est corrompu ou le format d'image n'est pas reconnu.</value>
+  </data>
   <data name="Exit" xml:space="preserve">
     <value>Quitter</value>
   </data>

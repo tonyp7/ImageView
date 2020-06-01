@@ -241,6 +241,25 @@ namespace ImageView.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ImageView was unable to load {0}.
+        ///The image is corrupted or its format could not be recognized..
+        /// </summary>
+        internal static string ErrorImageLoad {
+            get {
+                return ResourceManager.GetString("ErrorImageLoad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         internal static string Exit {
