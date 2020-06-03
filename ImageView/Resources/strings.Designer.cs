@@ -260,6 +260,16 @@ namespace ImageView.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ImageView was unable to find a path to the file {0}.
+        ///A directory has been moved or no longer exists..
+        /// </summary>
+        internal static string ErrorPathNotFound {
+            get {
+                return ResourceManager.GetString("ErrorPathNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         internal static string Exit {

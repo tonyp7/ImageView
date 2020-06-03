@@ -770,6 +770,10 @@ namespace ImageView
                     //it's not a file, but its not a directory either? it could be a file inside an archive
                     //TODO: support direct files inside archives
                 }
+                catch (DirectoryNotFoundException)
+                {
+                    MessageBox.Show(  String.Format(Settings.Get.General.GetString("ErrorPathNotFound"),fullname), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
 
 

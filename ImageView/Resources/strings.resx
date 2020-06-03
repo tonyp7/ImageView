@@ -184,6 +184,10 @@
     <value>ImageView was unable to load {0}.
 The image is corrupted or its format could not be recognized.</value>
   </data>
+  <data name="ErrorPathNotFound" xml:space="preserve">
+    <value>ImageView was unable to find a path to the file {0}.
+A directory has been moved or no longer exists.</value>
+  </data>
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
