@@ -925,7 +925,12 @@ namespace ImageView
 
             WinTaskbar.Hide();
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            panelMain.BorderStyle = BorderStyle.None;
+
+            //if the panel does not contain anything, setting the border to none completely breaks the layout for
+            //some odd reason. Seems to be a WinForms bug and this is the workaround
+            if(pictureBox.Image != null)
+                panelMain.BorderStyle = BorderStyle.None;
+
             this.TopMost = true;
 
             this.WindowState = FormWindowState.Normal;
@@ -935,9 +940,6 @@ namespace ImageView
             toolStrip.Visible = false;
             statusStrip.Visible = false;
             menuStrip.Visible = false;
-
-
-
             fullscreen = true;
         }
 
