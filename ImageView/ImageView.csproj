@@ -14,6 +14,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,11 +25,11 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>imageview.ico</ApplicationIcon>
@@ -41,7 +42,7 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -78,6 +79,15 @@
   <PropertyGroup>
     <ManifestTimestampUrl>
     </ManifestTimestampUrl>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Magick.NET-Q8-OpenMP-x64, Version=7.17.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
@@ -212,6 +222,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -266,7 +277,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="imageview.ico" />
-    <None Include="Resources\error.png" />
+    <EmbeddedResource Include="Resources\error.png" />
     <None Include="Resources\transparent16.png" />
     <None Include="Resources\fr.png" />
     <None Include="Resources\en.png" />
@@ -325,6 +336,6 @@
     <Error Condition="!Exists('..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets'))" />
   </Target>
   <Import Project="..\packages\SevenZipExtractor.1.0.15\build\SevenZipExtractor.targets" Condition="Exists('..\packages\SevenZipExtractor.1.0.15\build\SevenZipExtractor.targets')" />
-  <Import Project="..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets" Condition="Exists('..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets')" />
   <Import Project="MsBuildAL1073WarningWorkaround.targets" />
+  <Import Project="..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets" Condition="Exists('..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets')" />
 </Project>

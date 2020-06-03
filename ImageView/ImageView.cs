@@ -31,7 +31,6 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 using ImageMagick;
 using System.Diagnostics;
-
 using ImageView.Configuration;
 using SevenZipExtractor;
 using ImageView.ImageEntry;
