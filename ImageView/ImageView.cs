@@ -99,6 +99,7 @@ namespace ImageView
         private void close()
         {
             pictureBox.Image = null;
+            pictureBox.Visible = false;
 
             workingData.Dispose();
             workingData.reset();
@@ -769,10 +770,12 @@ namespace ImageView
                 {
                     //it's not a file, but its not a directory either? it could be a file inside an archive
                     //TODO: support direct files inside archives
+                    pictureBox.Visible = false;
                 }
                 catch (DirectoryNotFoundException)
                 {
                     MessageBox.Show(  String.Format(Settings.Get.General.GetString("ErrorPathNotFound"),fullname), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    pictureBox.Visible = false;
                 }
             }
 
@@ -829,6 +832,7 @@ namespace ImageView
             stopWatch.Start();
 #endif
             //Assign image to picture box then refresh sizing
+            pictureBox.Visible = true;
             pictureBox.Image = workingData.bitmap;
             panelMain.Resize -= panelMain_Resize;
             resizePictureBox();
