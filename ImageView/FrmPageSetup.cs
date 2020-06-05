@@ -77,29 +77,11 @@ namespace ImageView
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-
             //margins
-            uint ivalue;
-            if(uint.TryParse(txtMarginLeft.Text, out ivalue))
-            {
-                Margins.Left = (int)ivalue;
-            }
-
-            if (uint.TryParse(txtMarginBottom.Text, out ivalue))
-            {
-                Margins.Bottom = (int)ivalue;
-            }
-
-            if (uint.TryParse(txtMarginRight.Text, out ivalue))
-            {
-                Margins.Right = (int)ivalue;
-            }
-
-            if (uint.TryParse(txtMarginTop.Text, out ivalue))
-            {
-                Margins.Top = (int)ivalue;
-            }
-
+            Margins.Left = (int)txtMarginLeft.Tag;
+            Margins.Bottom = (int)txtMarginBottom.Tag;
+            Margins.Right = (int)txtMarginRight.Tag;
+            Margins.Top = (int)txtMarginTop.Tag;
             //paper size
             this.PaperSize = (PaperSize)cmbPaperSize.SelectedItem;
         }
