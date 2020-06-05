@@ -65,6 +65,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonPrintPreview = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSaveAs = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -391,6 +392,7 @@
             this.toolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonOpen,
+            this.toolStripButtonPrintPreview,
             this.toolStripButtonSaveAs,
             this.toolStripButtonDelete,
             this.toolStripSeparator2,
@@ -421,6 +423,16 @@
             this.toolStripButtonOpen.Size = new System.Drawing.Size(36, 39);
             this.toolStripButtonOpen.Text = "Open Image File";
             this.toolStripButtonOpen.Click += new System.EventHandler(this.toolStripButtonOpen_Click);
+            // 
+            // toolStripButtonPrintPreview
+            // 
+            this.toolStripButtonPrintPreview.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonPrintPreview.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonPrintPreview.Image")));
+            this.toolStripButtonPrintPreview.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonPrintPreview.Name = "toolStripButtonPrintPreview";
+            this.toolStripButtonPrintPreview.Size = new System.Drawing.Size(36, 39);
+            this.toolStripButtonPrintPreview.Text = "toolStripButton1";
+            this.toolStripButtonPrintPreview.Click += new System.EventHandler(this.toolStripButtonPrintPreview_Click);
             // 
             // toolStripButtonSaveAs
             // 
@@ -786,6 +798,7 @@
         private System.Windows.Forms.ToolStripMenuItem fitToHeightToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripReaderMode;
         private System.Windows.Forms.ToolStripMenuItem readerModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripButtonPrintPreview;
     }
 }
 

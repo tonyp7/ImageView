@@ -1028,6 +1028,16 @@ namespace ImageView
         {
             refreshDrawingSurface();
         }
+
+        private void toolStripButtonPrintPreview_Click(object sender, EventArgs e)
+        {
+            printPreview();
+        }
+
+        private void printPreview()
+        {
+            (new FrmPrintPreview((Bitmap)this.pictureBox.Image.Clone())).Show();
+        }
     }
 
 
