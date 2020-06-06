@@ -112,6 +112,9 @@
     <Compile Include="Components\ImageBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Components\NumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\ConfigDisplay.cs" />
     <Compile Include="Configuration\ConfigGeneral.cs" />
@@ -148,6 +151,18 @@
     </Compile>
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmPageSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmPageSetup.Designer.cs">
+      <DependentUpon>FrmPageSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmPrintPreview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmPrintPreview.Designer.cs">
+      <DependentUpon>FrmPrintPreview.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmSettings.cs">
       <SubType>Form</SubType>
@@ -191,6 +206,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmPageSetup.resx">
+      <DependentUpon>FrmPageSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmPrintPreview.resx">
+      <DependentUpon>FrmPrintPreview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmSettings.resx">
       <DependentUpon>FrmSettings.cs</DependentUpon>
@@ -277,6 +298,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="imageview.ico" />
+    <None Include="Resources\printer16.png" />
+    <None Include="Resources\margins32.png" />
+    <None Include="Resources\pagesetup32.png" />
+    <None Include="Resources\printer32.png" />
+    <None Include="Resources\doorout32.png" />
+    <None Include="Resources\landscape32.png" />
+    <None Include="Resources\portrait32.png" />
     <EmbeddedResource Include="Resources\error.png" />
     <None Include="Resources\transparent16.png" />
     <None Include="Resources\fr.png" />

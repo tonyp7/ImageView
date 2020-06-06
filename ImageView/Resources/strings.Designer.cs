@@ -178,6 +178,15 @@ namespace ImageView.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Centimeters.
+        /// </summary>
+        internal static string Centimeters {
+            get {
+                return ResourceManager.GetString("Centimeters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Check for Updates.
         /// </summary>
         internal static string CheckForUpdates {
@@ -360,6 +369,15 @@ namespace ImageView.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Inches.
+        /// </summary>
+        internal static string Inches {
+            get {
+                return ResourceManager.GetString("Inches", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Information.
         /// </summary>
         internal static string Information {
@@ -411,6 +429,42 @@ namespace ImageView.Resources {
         internal static string LicenseMain {
             get {
                 return ResourceManager.GetString("LicenseMain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom.
+        /// </summary>
+        internal static string MarginBottom {
+            get {
+                return ResourceManager.GetString("MarginBottom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left.
+        /// </summary>
+        internal static string MarginLeft {
+            get {
+                return ResourceManager.GetString("MarginLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right.
+        /// </summary>
+        internal static string MarginRight {
+            get {
+                return ResourceManager.GetString("MarginRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top.
+        /// </summary>
+        internal static string MarginTop {
+            get {
+                return ResourceManager.GetString("MarginTop", resourceCulture);
             }
         }
         
@@ -501,6 +555,87 @@ namespace ImageView.Resources {
         internal static string PreviousImage {
             get {
                 return ResourceManager.GetString("PreviousImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print.
+        /// </summary>
+        internal static string Print {
+            get {
+                return ResourceManager.GetString("Print", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Landscape.
+        /// </summary>
+        internal static string PrintLandscape {
+            get {
+                return ResourceManager.GetString("PrintLandscape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Margins.
+        /// </summary>
+        internal static string PrintMargins {
+            get {
+                return ResourceManager.GetString("PrintMargins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page Setup.
+        /// </summary>
+        internal static string PrintPageSetup {
+            get {
+                return ResourceManager.GetString("PrintPageSetup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paper Size.
+        /// </summary>
+        internal static string PrintPaperSize {
+            get {
+                return ResourceManager.GetString("PrintPaperSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Portrait.
+        /// </summary>
+        internal static string PrintPortrait {
+            get {
+                return ResourceManager.GetString("PrintPortrait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print Preview.
+        /// </summary>
+        internal static string PrintPreview {
+            get {
+                return ResourceManager.GetString("PrintPreview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print....
+        /// </summary>
+        internal static string PrintPreviewAlternate {
+            get {
+                return ResourceManager.GetString("PrintPreviewAlternate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close Print Preview.
+        /// </summary>
+        internal static string PrintPreviewClose {
+            get {
+                return ResourceManager.GetString("PrintPreviewClose", resourceCulture);
             }
         }
         

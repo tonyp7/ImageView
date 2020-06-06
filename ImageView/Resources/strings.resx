@@ -156,6 +156,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="Centimeters" xml:space="preserve">
+    <value>Centimeters</value>
+  </data>
   <data name="CheckForUpdates" xml:space="preserve">
     <value>Check for Updates</value>
   </data>
@@ -218,6 +221,9 @@ A directory has been moved or no longer exists.</value>
   <data name="ImageModeRestore" xml:space="preserve">
     <value>Same as last viewed image</value>
   </data>
+  <data name="Inches" xml:space="preserve">
+    <value>Inches</value>
+  </data>
   <data name="Information" xml:space="preserve">
     <value>Information</value>
   </data>
@@ -236,6 +242,18 @@ Please refer to https://getimageview.net</value>
   </data>
   <data name="LicenseMain" xml:space="preserve">
     <value>This software is licensed under the following license:</value>
+  </data>
+  <data name="MarginBottom" xml:space="preserve">
+    <value>Bottom</value>
+  </data>
+  <data name="MarginLeft" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="MarginRight" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="MarginTop" xml:space="preserve">
+    <value>Top</value>
   </data>
   <data name="MenuFile" xml:space="preserve">
     <value>&amp;File</value>
@@ -266,6 +284,33 @@ Please refer to https://getimageview.net</value>
   </data>
   <data name="PreviousImage" xml:space="preserve">
     <value>Previous Image</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="PrintLandscape" xml:space="preserve">
+    <value>Landscape</value>
+  </data>
+  <data name="PrintMargins" xml:space="preserve">
+    <value>Margins</value>
+  </data>
+  <data name="PrintPageSetup" xml:space="preserve">
+    <value>Page Setup</value>
+  </data>
+  <data name="PrintPaperSize" xml:space="preserve">
+    <value>Paper Size</value>
+  </data>
+  <data name="PrintPortrait" xml:space="preserve">
+    <value>Portrait</value>
+  </data>
+  <data name="PrintPreview" xml:space="preserve">
+    <value>Print Preview</value>
+  </data>
+  <data name="PrintPreviewAlternate" xml:space="preserve">
+    <value>Print...</value>
+  </data>
+  <data name="PrintPreviewClose" xml:space="preserve">
+    <value>Close Print Preview</value>
   </data>
   <data name="Property" xml:space="preserve">
     <value>Property</value>
