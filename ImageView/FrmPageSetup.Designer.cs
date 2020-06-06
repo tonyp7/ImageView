@@ -31,7 +31,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cmbPaperSize = new System.Windows.Forms.ComboBox();
             this.lblPaperSize = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.grpMargins = new System.Windows.Forms.GroupBox();
             this.radioCm = new System.Windows.Forms.RadioButton();
             this.radioInches = new System.Windows.Forms.RadioButton();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -48,7 +48,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnOK = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.grpMargins.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -84,26 +84,26 @@
             this.lblPaperSize.Text = "Paper Size";
             this.lblPaperSize.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // groupBox2
+            // grpMargins
             // 
-            this.groupBox2.Controls.Add(this.radioCm);
-            this.groupBox2.Controls.Add(this.radioInches);
-            this.groupBox2.Controls.Add(this.pictureBox1);
-            this.groupBox2.Controls.Add(this.txtMarginBottom);
-            this.groupBox2.Controls.Add(this.txtMarginRight);
-            this.groupBox2.Controls.Add(this.txtMarginLeft);
-            this.groupBox2.Controls.Add(this.txtMarginTop);
-            this.groupBox2.Controls.Add(this.lblBottom);
-            this.groupBox2.Controls.Add(this.lblTop);
-            this.groupBox2.Controls.Add(this.lblRight);
-            this.groupBox2.Controls.Add(this.lblLeft);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(0, 85);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(384, 193);
-            this.groupBox2.TabIndex = 2;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Margins";
+            this.grpMargins.Controls.Add(this.radioCm);
+            this.grpMargins.Controls.Add(this.radioInches);
+            this.grpMargins.Controls.Add(this.pictureBox1);
+            this.grpMargins.Controls.Add(this.txtMarginBottom);
+            this.grpMargins.Controls.Add(this.txtMarginRight);
+            this.grpMargins.Controls.Add(this.txtMarginLeft);
+            this.grpMargins.Controls.Add(this.txtMarginTop);
+            this.grpMargins.Controls.Add(this.lblBottom);
+            this.grpMargins.Controls.Add(this.lblTop);
+            this.grpMargins.Controls.Add(this.lblRight);
+            this.grpMargins.Controls.Add(this.lblLeft);
+            this.grpMargins.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grpMargins.Location = new System.Drawing.Point(0, 85);
+            this.grpMargins.Name = "grpMargins";
+            this.grpMargins.Size = new System.Drawing.Size(384, 193);
+            this.grpMargins.TabIndex = 2;
+            this.grpMargins.TabStop = false;
+            this.grpMargins.Text = "Margins";
             // 
             // radioCm
             // 
@@ -258,7 +258,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(384, 341);
-            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.grpMargins);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.MaximizeBox = false;
@@ -270,8 +270,8 @@
             this.Text = "Page Setup";
             this.Load += new System.EventHandler(this.FrmPageSetup_Load);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.grpMargins.ResumeLayout(false);
+            this.grpMargins.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -281,7 +281,7 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox grpMargins;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Panel panel2;

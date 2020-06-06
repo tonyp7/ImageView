@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageView.Components;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -20,27 +21,68 @@ namespace ImageView
         public PaperSize PaperSize { get; set; }
 
 
+        private NumericTextBox txtMarginLeftNumeric;
+        private NumericTextBox txtMarginRightNumeric;
+        private NumericTextBox txtMarginTopNumeric;
+        private NumericTextBox txtMarginBottomNumeric;
 
         public FrmPageSetup(ref PrintDocument printDocument)
         {
             InitializeComponent();
             this.printDocument = printDocument;
 
+            //Numerics textbox because Designer does not support controls in 64 bits so
+            //this is a copout to keep designers with normal textboxes that get replaced
+            //by numeric textboxes
+            txtMarginLeftNumeric = new NumericTextBox(false, true);
+            txtMarginLeftNumeric.Location = txtMarginLeft.Location;
+            txtMarginLeftNumeric.Name = "txtMarginsLeftNumeric";
+            txtMarginLeftNumeric.Size = txtMarginLeft.Size;
+            grpMargins.Controls.Remove(txtMarginLeft);
+            grpMargins.Controls.Add(txtMarginLeftNumeric);
+
+            txtMarginRightNumeric = new NumericTextBox(false, true);
+            txtMarginRightNumeric.Location = txtMarginRight.Location;
+            txtMarginRightNumeric.Name = "txtMarginsRightNumeric";
+            txtMarginRightNumeric.Size = txtMarginRight.Size;
+            grpMargins.Controls.Remove(txtMarginRight);
+            grpMargins.Controls.Add(txtMarginRightNumeric);
+
+            txtMarginTopNumeric = new NumericTextBox(false, true);
+            txtMarginTopNumeric.Location = txtMarginTop.Location;
+            txtMarginTopNumeric.Name = "txtMarginsTopNumeric";
+            txtMarginTopNumeric.Size = txtMarginRight.Size;
+            grpMargins.Controls.Remove(txtMarginTop);
+            grpMargins.Controls.Add(txtMarginTopNumeric);
+
+            txtMarginBottomNumeric = new NumericTextBox(false, true);
+            txtMarginBottomNumeric.Location = txtMarginBottom.Location;
+            txtMarginBottomNumeric.Name = "txtMarginsBottomNumeric";
+            txtMarginBottomNumeric.Size = txtMarginBottom.Size;
+            grpMargins.Controls.Remove(txtMarginBottom);
+            grpMargins.Controls.Add(txtMarginBottomNumeric);
+
+            txtMarginLeftNumeric.TextChanged += txtMargin_TextChanged;
+            txtMarginRightNumeric.TextChanged += txtMargin_TextChanged;
+            txtMarginTopNumeric.TextChanged += txtMargin_TextChanged;
+            txtMarginBottomNumeric.TextChanged += txtMargin_TextChanged;
+
+
             this.Margins = (Margins)this.printDocument.DefaultPageSettings.Margins;
             this.PaperSize = (PaperSize)this.printDocument.DefaultPageSettings.PaperSize;
 
             //margins
-            txtMarginBottom.Text = (Margins.Bottom / 100.0f).ToString();
-            txtMarginBottom.Tag = Margins.Bottom;
+            txtMarginBottomNumeric.Text = (Margins.Bottom / 100.0f).ToString();
+            txtMarginBottomNumeric.Tag = Margins.Bottom;
 
-            txtMarginLeft.Text = (Margins.Left / 100.0f).ToString();
-            txtMarginLeft.Tag = Margins.Left;
+            txtMarginLeftNumeric.Text = (Margins.Left / 100.0f).ToString();
+            txtMarginLeftNumeric.Tag = Margins.Left;
 
-            txtMarginRight.Text = (Margins.Right / 100.0f).ToString();
-            txtMarginRight.Tag = Margins.Right;
+            txtMarginRightNumeric.Text = (Margins.Right / 100.0f).ToString();
+            txtMarginRightNumeric.Tag = Margins.Right;
 
-            txtMarginTop.Text = (Margins.Top / 100.0f).ToString();
-            txtMarginTop.Tag = Margins.Top;
+            txtMarginTopNumeric.Text = (Margins.Top / 100.0f).ToString();
+            txtMarginTopNumeric.Tag = Margins.Top;
 
             //paper size
             var paperSizes = printDocument.PrinterSettings.PaperSizes.Cast<PaperSize>().ToList();
@@ -57,6 +99,22 @@ namespace ImageView
                     cmbPaperSize.SelectedItem = p;
                 }
             }
+        }
+
+        private void txtMargin_TextChanged(object sender, EventArgs e)
+        {
+            NumericTextBox txt = (NumericTextBox)sender;
+            decimal d = txt.Value;
+
+            if (radioInches.Checked)
+            {
+                txt.Tag = (int)(d * 100m);
+            }
+            else
+            {
+                txt.Tag = (int)(d * 100m / 2.54m);
+            }
+
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -78,10 +136,10 @@ namespace ImageView
         private void btnOK_Click(object sender, EventArgs e)
         {
             //margins
-            Margins.Left = (int)txtMarginLeft.Tag;
-            Margins.Bottom = (int)txtMarginBottom.Tag;
-            Margins.Right = (int)txtMarginRight.Tag;
-            Margins.Top = (int)txtMarginTop.Tag;
+            Margins.Left = (int)txtMarginLeftNumeric.Tag;
+            Margins.Bottom = (int)txtMarginBottomNumeric.Tag;
+            Margins.Right = (int)txtMarginRightNumeric.Tag;
+            Margins.Top = (int)txtMarginTopNumeric.Tag;
             //paper size
             this.PaperSize = (PaperSize)cmbPaperSize.SelectedItem;
         }
@@ -103,17 +161,17 @@ namespace ImageView
         {
             if (radioInches.Checked)
             {
-                convertToInches(txtMarginBottom);
-                convertToInches(txtMarginLeft);
-                convertToInches(txtMarginRight);
-                convertToInches(txtMarginTop);
+                convertToInches(txtMarginBottomNumeric);
+                convertToInches(txtMarginLeftNumeric);
+                convertToInches(txtMarginRightNumeric);
+                convertToInches(txtMarginTopNumeric);
             }
             else
             {
-                convertToCm(txtMarginBottom);
-                convertToCm(txtMarginLeft);
-                convertToCm(txtMarginRight);
-                convertToCm(txtMarginTop);
+                convertToCm(txtMarginBottomNumeric);
+                convertToCm(txtMarginLeftNumeric);
+                convertToCm(txtMarginRightNumeric);
+                convertToCm(txtMarginTopNumeric);
             }
         }
     }
