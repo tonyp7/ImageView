@@ -20,6 +20,11 @@ namespace ImageView
         {
             this.bitmap = bitmap;
             InitializeComponent();
+            this.Icon = Properties.Resources.imageview;
+            printDocument.DefaultPageSettings.Margins.Bottom = 50;
+            printDocument.DefaultPageSettings.Margins.Top = 50;
+            printDocument.DefaultPageSettings.Margins.Left = 50;
+            printDocument.DefaultPageSettings.Margins.Right = 50;
             refreshLandscapePortraitUI();
         }
 
@@ -57,7 +62,30 @@ namespace ImageView
 
             if(area.Width > 0 && area.Height > 0)
             {
-                e.Graphics.DrawImage(bitmap, area);
+                //BestFit sizing and center to image
+                RectangleF dstRect = new RectangleF();
+                float aspec = (float)bitmap.Width / (float)bitmap.Height;
+                float pageAspect = (float)area.Width / (float)area.Height;
+                float zoom;
+
+                if (aspec > pageAspect)
+                {
+                    zoom = (area.Width / (float)bitmap.Width);
+                    dstRect.Width = area.Width;
+                    dstRect.X = area.X;
+                    dstRect.Height = (float)Math.Round((dstRect.Width / aspec));
+                    dstRect.Y = (printDocument.DefaultPageSettings.PrintableArea.Height - dstRect.Height) / 2.0f;
+                }
+                else
+                {
+                    zoom = ((float)area.Height / (float)bitmap.Height);
+                    dstRect.Height = area.Height;
+                    dstRect.Y = area.Y;
+                    dstRect.Width = (float)Math.Round((dstRect.Height * aspec));
+                    dstRect.X = (printDocument.DefaultPageSettings.PrintableArea.Width - dstRect.Width) / 2.0f;
+                }
+
+                e.Graphics.DrawImage(bitmap, dstRect);
             }
 
 

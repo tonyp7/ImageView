@@ -154,6 +154,7 @@
             this.Controls.Add(this.printPreviewControl);
             this.Controls.Add(this.toolStrip);
             this.Name = "FrmPrintPreview";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Print Preview";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmPrintPreview_FormClosing);
             this.Load += new System.EventHandler(this.FrmPrintPreview_Load);
