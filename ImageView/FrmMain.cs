@@ -202,6 +202,7 @@ namespace ImageView
             this.toolStripStatusLabelZoom.Text = String.Empty;
             this.toolStripStatusLabelFileSize.Text = String.Empty;
             this.toolStripStatusLabelPixelPosition.Text = String.Empty;
+            this.printToolStripMenuItem.Text = Settings.Get.General.GetString("PrintPreviewAlternate");
 
             toolStripDropDownButtonDisplayType.ToolTipText = Settings.Get.General.GetString("PickImageSizeMode");
 
@@ -1036,7 +1037,10 @@ namespace ImageView
 
         private void printPreview()
         {
-            (new FrmPrintPreview((Bitmap)this.pictureBox.Image.Clone())).Show();
+            if(workingData.bitmap != null)
+            {
+                (new FrmPrintPreview((Bitmap)workingData.bitmap.Clone())).Show();
+            }    
         }
 
         private void printToolStripMenuItem_Click(object sender, EventArgs e)
