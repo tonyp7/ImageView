@@ -298,6 +298,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="imageview.ico" />
+    <None Include="Resources\printer16.png" />
     <None Include="Resources\margins32.png" />
     <None Include="Resources\pagesetup32.png" />
     <None Include="Resources\printer32.png" />
