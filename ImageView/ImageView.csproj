@@ -112,6 +112,9 @@
     <Compile Include="Components\ImageBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Components\NumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\ConfigDisplay.cs" />
     <Compile Include="Configuration\ConfigGeneral.cs" />
