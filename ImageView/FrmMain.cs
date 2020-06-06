@@ -1038,6 +1038,11 @@ namespace ImageView
         {
             (new FrmPrintPreview((Bitmap)this.pictureBox.Image.Clone())).Show();
         }
+
+        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            printPreview();
+        }
     }
 
 
