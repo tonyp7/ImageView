@@ -1,4 +1,5 @@
 ﻿using ImageView.Components;
+using ImageView.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,6 +30,8 @@ namespace ImageView
         public FrmPageSetup(ref PrintDocument printDocument)
         {
             InitializeComponent();
+            InitalizeComponentsCultureAware();
+
             this.printDocument = printDocument;
 
             //Numerics textbox because Designer does not support controls in 64 bits so
@@ -99,6 +102,29 @@ namespace ImageView
                     cmbPaperSize.SelectedItem = p;
                 }
             }
+        }
+
+
+        public void InitalizeComponentsCultureAware()
+        {
+            var lang = Settings.Get.General;
+
+            this.Text = lang.GetString("PrintPageSetup");
+
+            grpPaperSize.Text = lang.GetString("PrintPaperSize");
+            lblPaperSize.Text = lang.GetString("PrintPaperSize");
+
+            grpMargins.Text = lang.GetString("PrintMargins");
+            lblTop.Text = lang.GetString("MarginTop");
+            lblBottom.Text = lang.GetString("MarginBottom");
+            lblLeft.Text = lang.GetString("MarginLeft");
+            lblRight.Text = lang.GetString("MarginRight");
+
+            radioInches.Text = lang.GetString("Inches");
+            radioCm.Text = lang.GetString("Centimeters");
+
+            btnCancel.Text = lang.GetString("Cancel");
+            btnOK.Text = lang.GetString("OK");
         }
 
         private void txtMargin_TextChanged(object sender, EventArgs e)

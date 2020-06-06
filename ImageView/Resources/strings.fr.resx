@@ -156,6 +156,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Annuler</value>
   </data>
+  <data name="Centimeters" xml:space="preserve">
+    <value>Centimètres</value>
+  </data>
   <data name="CheckForUpdates" xml:space="preserve">
     <value>Vérifier les mises a jour</value>
   </data>
@@ -218,6 +221,9 @@ Un répertoire a été déplacé ou n'existe plus.</value>
   <data name="ImageModeRestore" xml:space="preserve">
     <value>Utiliser le mode actuel</value>
   </data>
+  <data name="Inches" xml:space="preserve">
+    <value>Pouces</value>
+  </data>
   <data name="Information" xml:space="preserve">
     <value>Information</value>
   </data>
@@ -236,6 +242,18 @@ Merci de vous référer à https://getimageview.net pour plus d'information.</va
   </data>
   <data name="LicenseMain" xml:space="preserve">
     <value>Ce logiciel est mis à disposition sous la license suivante:</value>
+  </data>
+  <data name="MarginBottom" xml:space="preserve">
+    <value>Basse</value>
+  </data>
+  <data name="MarginLeft" xml:space="preserve">
+    <value>Gauche</value>
+  </data>
+  <data name="MarginRight" xml:space="preserve">
+    <value>Droite</value>
+  </data>
+  <data name="MarginTop" xml:space="preserve">
+    <value>Haute</value>
   </data>
   <data name="MenuFile" xml:space="preserve">
     <value>&amp;Fichier</value>
@@ -266,6 +284,33 @@ Merci de vous référer à https://getimageview.net pour plus d'information.</va
   </data>
   <data name="PreviousImage" xml:space="preserve">
     <value>Image précédente</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Imprimer</value>
+  </data>
+  <data name="PrintLandscape" xml:space="preserve">
+    <value>Paysage</value>
+  </data>
+  <data name="PrintMargins" xml:space="preserve">
+    <value>Marges</value>
+  </data>
+  <data name="PrintPageSetup" xml:space="preserve">
+    <value>Paramètres de page</value>
+  </data>
+  <data name="PrintPaperSize" xml:space="preserve">
+    <value>Taille de papier</value>
+  </data>
+  <data name="PrintPortrait" xml:space="preserve">
+    <value>Portrait</value>
+  </data>
+  <data name="PrintPreview" xml:space="preserve">
+    <value>Aperçu avant impression</value>
+  </data>
+  <data name="PrintPreviewAlternate" xml:space="preserve">
+    <value>Imprimer...</value>
+  </data>
+  <data name="PrintPreviewClose" xml:space="preserve">
+    <value>Fermer l'aperçu avant impression</value>
   </data>
   <data name="Property" xml:space="preserve">
     <value>Attribut</value>
@@ -320,7 +365,7 @@ Si vous utilisez la version portable d'ImageView, vous devrez la relancer avec u
     <value>Historique</value>
   </data>
   <data name="SettingsHistoryExplanation" xml:space="preserve">
-    <value>Une valeur de 0 desactive la fonction historique. La valeur maximale est 100.</value>
+    <value>Une valeur de 0 désactive la fonction historique. La valeur maximale est 100.</value>
   </data>
   <data name="SettingsHistoryMaxSize" xml:space="preserve">
     <value>Nombre maximum d'articles à conserver:</value>

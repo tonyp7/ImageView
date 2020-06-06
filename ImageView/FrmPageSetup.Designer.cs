@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpPaperSize = new System.Windows.Forms.GroupBox();
             this.cmbPaperSize = new System.Windows.Forms.ComboBox();
             this.lblPaperSize = new System.Windows.Forms.Label();
             this.grpMargins = new System.Windows.Forms.GroupBox();
@@ -47,23 +47,23 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnOK = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.grpPaperSize.SuspendLayout();
             this.grpMargins.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grpPaperSize
             // 
-            this.groupBox1.Controls.Add(this.cmbPaperSize);
-            this.groupBox1.Controls.Add(this.lblPaperSize);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox1.Location = new System.Drawing.Point(0, 0);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(384, 85);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Paper Size";
+            this.grpPaperSize.Controls.Add(this.cmbPaperSize);
+            this.grpPaperSize.Controls.Add(this.lblPaperSize);
+            this.grpPaperSize.Dock = System.Windows.Forms.DockStyle.Top;
+            this.grpPaperSize.Location = new System.Drawing.Point(0, 0);
+            this.grpPaperSize.Name = "grpPaperSize";
+            this.grpPaperSize.Size = new System.Drawing.Size(384, 85);
+            this.grpPaperSize.TabIndex = 0;
+            this.grpPaperSize.TabStop = false;
+            this.grpPaperSize.Text = "Paper Size";
             // 
             // cmbPaperSize
             // 
@@ -132,7 +132,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::ImageView.Properties.Resources.margins32;
-            this.pictureBox1.Location = new System.Drawing.Point(122, 82);
+            this.pictureBox1.Location = new System.Drawing.Point(130, 82);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(32, 32);
@@ -141,7 +141,7 @@
             // 
             // txtMarginBottom
             // 
-            this.txtMarginBottom.Location = new System.Drawing.Point(118, 137);
+            this.txtMarginBottom.Location = new System.Drawing.Point(126, 137);
             this.txtMarginBottom.Name = "txtMarginBottom";
             this.txtMarginBottom.Size = new System.Drawing.Size(40, 20);
             this.txtMarginBottom.TabIndex = 7;
@@ -149,7 +149,7 @@
             // 
             // txtMarginRight
             // 
-            this.txtMarginRight.Location = new System.Drawing.Point(217, 89);
+            this.txtMarginRight.Location = new System.Drawing.Point(225, 89);
             this.txtMarginRight.Name = "txtMarginRight";
             this.txtMarginRight.Size = new System.Drawing.Size(40, 20);
             this.txtMarginRight.TabIndex = 6;
@@ -157,7 +157,7 @@
             // 
             // txtMarginLeft
             // 
-            this.txtMarginLeft.Location = new System.Drawing.Point(49, 89);
+            this.txtMarginLeft.Location = new System.Drawing.Point(57, 89);
             this.txtMarginLeft.Name = "txtMarginLeft";
             this.txtMarginLeft.Size = new System.Drawing.Size(40, 20);
             this.txtMarginLeft.TabIndex = 5;
@@ -165,7 +165,7 @@
             // 
             // txtMarginTop
             // 
-            this.txtMarginTop.Location = new System.Drawing.Point(118, 48);
+            this.txtMarginTop.Location = new System.Drawing.Point(126, 48);
             this.txtMarginTop.Name = "txtMarginTop";
             this.txtMarginTop.Size = new System.Drawing.Size(40, 20);
             this.txtMarginTop.TabIndex = 4;
@@ -173,7 +173,7 @@
             // 
             // lblBottom
             // 
-            this.lblBottom.Location = new System.Drawing.Point(-42, 140);
+            this.lblBottom.Location = new System.Drawing.Point(-34, 140);
             this.lblBottom.Name = "lblBottom";
             this.lblBottom.Size = new System.Drawing.Size(154, 13);
             this.lblBottom.TabIndex = 3;
@@ -182,7 +182,7 @@
             // 
             // lblTop
             // 
-            this.lblTop.Location = new System.Drawing.Point(39, 51);
+            this.lblTop.Location = new System.Drawing.Point(47, 51);
             this.lblTop.Name = "lblTop";
             this.lblTop.Size = new System.Drawing.Size(73, 13);
             this.lblTop.TabIndex = 2;
@@ -191,7 +191,7 @@
             // 
             // lblRight
             // 
-            this.lblRight.Location = new System.Drawing.Point(115, 92);
+            this.lblRight.Location = new System.Drawing.Point(123, 92);
             this.lblRight.Name = "lblRight";
             this.lblRight.Size = new System.Drawing.Size(96, 13);
             this.lblRight.TabIndex = 1;
@@ -200,7 +200,7 @@
             // 
             // lblLeft
             // 
-            this.lblLeft.Location = new System.Drawing.Point(-57, 92);
+            this.lblLeft.Location = new System.Drawing.Point(-49, 92);
             this.lblLeft.Name = "lblLeft";
             this.lblLeft.Size = new System.Drawing.Size(100, 19);
             this.lblLeft.TabIndex = 0;
@@ -260,7 +260,7 @@
             this.ClientSize = new System.Drawing.Size(384, 341);
             this.Controls.Add(this.grpMargins);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.grpPaperSize);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmPageSetup";
@@ -269,7 +269,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Page Setup";
             this.Load += new System.EventHandler(this.FrmPageSetup_Load);
-            this.groupBox1.ResumeLayout(false);
+            this.grpPaperSize.ResumeLayout(false);
             this.grpMargins.ResumeLayout(false);
             this.grpMargins.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -280,7 +280,7 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox grpPaperSize;
         private System.Windows.Forms.GroupBox grpMargins;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnCancel;

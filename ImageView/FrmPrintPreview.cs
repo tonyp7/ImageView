@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageView.Configuration;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,14 +19,28 @@ namespace ImageView
 
         public FrmPrintPreview(Bitmap bitmap)
         {
-            this.bitmap = bitmap;
+            
             InitializeComponent();
+            InitalizeComponentsCultureAware();
             this.Icon = Properties.Resources.imageview;
+            this.bitmap = bitmap;
             printDocument.DefaultPageSettings.Margins.Bottom = 50;
             printDocument.DefaultPageSettings.Margins.Top = 50;
             printDocument.DefaultPageSettings.Margins.Left = 50;
             printDocument.DefaultPageSettings.Margins.Right = 50;
             refreshLandscapePortraitUI();
+        }
+
+        public void InitalizeComponentsCultureAware()
+        {
+            var lang = Settings.Get.General;
+
+            this.Text = lang.GetString("PrintPreview");
+            toolStripButtonPrint.Text = lang.GetString("Print");
+            toolStripButtonPageSetup.Text = lang.GetString("PrintPageSetup");
+            toolStripButtonPortrait.Text = lang.GetString("PrintPortrait");
+            toolStripButtonLandscape.Text = lang.GetString("PrintLandscape");
+            toolStripButtonClose.Text = lang.GetString("PrintPreviewClose");
         }
 
 
