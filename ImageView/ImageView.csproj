@@ -354,7 +354,12 @@
     <None Include="Resources\verticalflip16.png" />
     <None Include="Resources\imageview.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PictureBox\PictureBox.csproj">
+      <Project>{482eda84-092a-49a7-9633-5cd38a1406d7}</Project>
+      <Name>PictureBox</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
