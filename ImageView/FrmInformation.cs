@@ -41,12 +41,10 @@ namespace ImageView
 {
     public partial class FrmInformation : Form
     {
-        private WorkingData workingData;
-        public FrmInformation(WorkingData workingData)
+        public FrmInformation()
         {
             InitializeComponent(); 
             InitalizeComponentsCultureAware();
-            this.workingData = workingData;
         }
 
 
@@ -66,25 +64,26 @@ namespace ImageView
         private void FrmInformation_Load(object sender, EventArgs e)
         {
 
+            var state = Program.State;
 
             //file
-            dgvFile.Rows.Add("Name", workingData.activeEntry.Name);
+            dgvFile.Rows.Add("Name", state.ActiveEntry.Name);
 
             //image relation
-            dgvFile.Rows.Add("Dimensions", String.Format("{0} x {1}", workingData.nativeImage.BaseWidth, workingData.nativeImage.BaseHeight));
-            dgvFile.Rows.Add("Format", workingData.nativeImage.Format.ToString());
-            dgvFile.Rows.Add("Color Space", workingData.nativeImage.ColorSpace.ToString()  );
-            dgvFile.Rows.Add("Color Type", workingData.nativeImage.ColorType.ToString() );
+            dgvFile.Rows.Add("Dimensions", String.Format("{0} x {1}", state.NativeImage.BaseWidth, state.NativeImage.BaseHeight));
+            dgvFile.Rows.Add("Format", state.NativeImage.Format.ToString());
+            dgvFile.Rows.Add("Color Space", state.NativeImage.ColorSpace.ToString()  );
+            dgvFile.Rows.Add("Color Type", state.NativeImage.ColorType.ToString() );
             //dgvFile.Rows.Add("Unique colors", workingData.nativeImage.TotalColors.ToString() );  //very slow
 
 
             //file related
-            dgvFile.Rows.Add("Size (bytes)", workingData.activeEntry.Length.ToString());
-            dgvFile.Rows.Add("Created", workingData.activeEntry.CreationTime.ToString());
-            dgvFile.Rows.Add("Last Written", workingData.activeEntry.LastWriteTime.ToString());
-            dgvFile.Rows.Add("Path", workingData.activeEntry.DirectoryName);
+            dgvFile.Rows.Add("Size (bytes)", state.ActiveEntry.Length.ToString());
+            dgvFile.Rows.Add("Created", state.ActiveEntry.CreationTime.ToString());
+            dgvFile.Rows.Add("Last Written", state.ActiveEntry.LastWriteTime.ToString());
+            dgvFile.Rows.Add("Path", state.ActiveEntry.DirectoryName);
             
-            IExifProfile profile = workingData.nativeImage.GetExifProfile();
+            IExifProfile profile = state.NativeImage.GetExifProfile();
             if (profile != null)
             {
                 foreach (IExifValue value in profile.Values)

@@ -89,6 +89,14 @@
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Magick.NET-Q8-OpenMP-x64, Version=7.17.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
       <HintPath>..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\lib\net40\Magick.NET-Q8-OpenMP-x64.dll</HintPath>
@@ -181,7 +189,9 @@
     <Compile Include="ImageEntry\IEntry.cs" />
     <Compile Include="ImageEntry\TextRepresentationEntry.cs" />
     <Compile Include="ImageProperties.cs" />
-    <Compile Include="ImageView.cs" />
+    <Compile Include="ImageView.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ImageFormats\IImage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -190,6 +200,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="State.cs" />
     <Compile Include="WinTaskbar.cs" />
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>

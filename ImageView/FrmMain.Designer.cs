@@ -93,10 +93,10 @@
             this.toolStripStatusLabelFileSize = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelSpring = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelPixelPosition = new System.Windows.Forms.ToolStripStatusLabel();
-            this.panelMain = new System.Windows.Forms.Panel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.timerSlideShow = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.pictureBox = new ImageView.PictureBox();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -686,24 +686,6 @@
             this.toolStripStatusLabelPixelPosition.Text = "PixelPosition";
             this.toolStripStatusLabelPixelPosition.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             // 
-            // panelMain
-            // 
-            this.panelMain.AllowDrop = true;
-            this.panelMain.AutoScroll = true;
-            this.panelMain.BackColor = System.Drawing.Color.Black;
-            this.panelMain.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.panelMain.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMain.Location = new System.Drawing.Point(0, 66);
-            this.panelMain.Name = "panelMain";
-            this.panelMain.Size = new System.Drawing.Size(1008, 639);
-            this.panelMain.TabIndex = 4;
-            this.panelMain.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panelMain_Scroll);
-            this.panelMain.DragDrop += new System.Windows.Forms.DragEventHandler(this.panelMain_DragDrop);
-            this.panelMain.DragEnter += new System.Windows.Forms.DragEventHandler(this.panelMain_DragEnter);
-            this.panelMain.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
-            this.panelMain.Resize += new System.EventHandler(this.panelMain_Resize);
-            // 
             // openFileDialog
             // 
             this.openFileDialog.Title = "Open Image";
@@ -718,12 +700,34 @@
             this.contextMenuStrip.Name = "contextMenuStrip";
             this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
             // 
+            // pictureBox
+            // 
+            this.pictureBox.BackColor = System.Drawing.Color.Black;
+            this.pictureBox.Bitmap = null;
+            this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox.DragCursor = null;
+            this.pictureBox.DragMouseButton = System.Windows.Forms.MouseButtons.Middle;
+            this.pictureBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Default;
+            this.pictureBox.Location = new System.Drawing.Point(0, 66);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(1008, 639);
+            this.pictureBox.SizeMode = ImageView.SizeMode.BestFit;
+            this.pictureBox.TabIndex = 4;
+            this.pictureBox.UseBackgroundBrush = false;
+            this.pictureBox.UseZoomCursors = true;
+            this.pictureBox.WheelScrollLock = false;
+            this.pictureBox.Zoom = 1F;
+            this.pictureBox.ZoomInCursor = null;
+            this.pictureBox.ZoomMouseButton = System.Windows.Forms.MouseButtons.Left;
+            this.pictureBox.ZoomOutCursor = null;
+            this.pictureBox.ZoomOutModifier = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Menu)));
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
-            this.Controls.Add(this.panelMain);
+            this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.menuStrip);
@@ -754,7 +758,6 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.StatusStrip statusStrip;
-        private System.Windows.Forms.Panel panelMain;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemOpen;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
@@ -819,6 +822,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonPrintPreview;
         private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
+        private PictureBox pictureBox;
     }
 }
 

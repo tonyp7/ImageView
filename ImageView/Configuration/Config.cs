@@ -224,25 +224,25 @@ namespace ImageView.Configuration
     }
 
 
-    public enum ImageSizeMode
+    public enum ImageSizeMode : int
     {
         [Description("Best Fit")]
-        BestFit,
+        BestFit = 0,
 
         [Description("Real Size")]
-        RealSize,
+        RealSize = 3,
 
         [Description("Zoom")]
-        Zoom,
+        Zoom = 5,
 
         [Description("FitToWidth")]
-        FitToWidth,
+        FitToWidth = 1,
 
         [Description("FitToHeight")]
-        FitToHeight,
+        FitToHeight = 2,
 
         [Description("Restore")]
-        Restore
+        Restore = -1
     };
 
     public enum ViewingMode

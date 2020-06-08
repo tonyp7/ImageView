@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace ImageView
 {
@@ -166,6 +167,15 @@ namespace ImageView
 
 
         [Category("Appearance"),
+        Description("Use a specific background for transparent image")]
+        public bool UseBackgroundBrush
+        {
+            get;
+            set;
+        }
+
+
+        [Category("Appearance"),
         Description("Use zoom cursors when mouse is hovering over image")]
         public bool UseZoomCursors
         {
@@ -177,16 +187,16 @@ namespace ImageView
         Description("Mouse button used for zooming. Use 'None' to disable.")]
         public MouseButtons ZoomMouseButton
         {
-            get;
-            set;
+            get { return zoomMouseButton; }
+            set { zoomMouseButton = value; }
         }
 
         [Category("Behavior"),
         Description("Mouse button used for dragging. Use 'None' to disable.")]
         public MouseButtons DragMouseButton
         {
-            get;
-            set;
+            get { return dragMouseButton; }
+            set { dragMouseButton = value; }
         }
 
         [Category("Appearance"),
@@ -306,6 +316,8 @@ namespace ImageView
         private PointF pixelCoordinates;
         private Point mousePosition;
         private Cursor defaultCursor;
+        private MouseButtons dragMouseButton = MouseButtons.None;
+        private MouseButtons zoomMouseButton = MouseButtons.None;
 
 
         #endregion
@@ -328,6 +340,17 @@ namespace ImageView
             }
 
         }
+
+        public void DisableResizeEvent()
+        {
+            this.panelMain.Resize -= panelMain_Resize;
+        }
+
+        public void EnableResizeEvent()
+        {
+            this.panelMain.Resize += panelMain_Resize;
+        }
+
         #endregion
 
         #region Private methods
@@ -366,6 +389,7 @@ namespace ImageView
         private void calcZoom(Point mouseCoord, float newZoom)
         {
 
+            System.Diagnostics.Debug.WriteLine("calcZoom");
             panelMain.AutoScroll = false;
             Size clientSize = panelMain.ClientSize;
             float oldZoom = this.zoom;
@@ -615,6 +639,7 @@ namespace ImageView
 
         private void PanelMain_MouseWheel(object sender, MouseEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("PanelMain_MouseWheel");
             if (!WheelScrollLock)
             {
                 refreshDrawingRect();
@@ -628,6 +653,7 @@ namespace ImageView
 
         private void panelPicture_Paint(object sender, PaintEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("panelPicture_Paint");
             if (bitmap != null)
             {
                 Graphics g = e.Graphics;
@@ -642,7 +668,7 @@ namespace ImageView
         private void panelMain_Resize(object sender, EventArgs e)
         {
             calculateRect();
-            this.panelPicture.Invalidate();
+            draw();
         }
 
 
@@ -778,7 +804,7 @@ namespace ImageView
         {
             if (UseZoomCursors && ZoomMouseButton != MouseButtons.None && ZoomInCursor != null && ZoomOutCursor != null)
             {
-                this.Cursor = new Cursor(ZoomInCursor.Handle);
+               this.Cursor = new Cursor(ZoomInCursor.Handle);
             }
         }
 
@@ -786,6 +812,8 @@ namespace ImageView
         {
             if (this.Cursor != defaultCursor)
                 this.Cursor = defaultCursor;
+
+            OnPixelCoordinatesChanged(new CoordinatesEventArgs(true));
         }
 
         private void panelPicture_MouseMove(object sender, MouseEventArgs e)
@@ -795,7 +823,7 @@ namespace ImageView
             pixelCoordinates.Y = e.Location.Y / zoom;
             OnPixelCoordinatesChanged(new CoordinatesEventArgs(pixelCoordinates));
 
-            if (e.Button == DragMouseButton)
+            if (DragMouseButton != MouseButtons.None && e.Button == DragMouseButton)
             {
                 Point changePoint = Point.Empty;
                 if (panelMain.VerticalScroll.Visible)
@@ -860,7 +888,7 @@ namespace ImageView
 
         #endregion
 
-            #region Event Args
+        #region Event Args
         public class ZoomEventArgs : EventArgs
         {
             private float zoom;
@@ -877,12 +905,22 @@ namespace ImageView
         public class CoordinatesEventArgs : EventArgs
         {
             private PointF coord;
+            private bool outOfBounds;
 
             public PointF PixelCoordinates { get { return coord; } }
+            public bool OutOfBounds { get { return outOfBounds; } }
 
             public CoordinatesEventArgs(PointF coord)
             {
                 this.coord = coord;
+                this.outOfBounds = false;
+            }
+
+            public CoordinatesEventArgs(bool outOfBounds)
+            {
+                this.outOfBounds = outOfBounds;
+                this.coord = PointF.Empty;
+
             }
 
         }
@@ -901,14 +939,14 @@ namespace ImageView
         In,
         Out
     }
-    public enum SizeMode
+    public enum SizeMode : int
     {
-        BestFit,
-        FitToWidth,
-        FitToHeight,
-        Normal,
-        Stretch,
-        Zoom
+        BestFit = 0,
+        FitToWidth = 1,
+        FitToHeight = 2,
+        Normal = 3,
+        Stretch = 4,
+        Zoom = 5
     }
 
     #endregion

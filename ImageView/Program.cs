@@ -39,9 +39,22 @@ namespace ImageView
         [STAThread]
         static void Main(string[] args)
         {
+            state = new State();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FrmMain());
+        }
+
+
+        
+        private static State state;
+        
+        /// <summary>
+        /// Represents the program current state and methods to act on it
+        /// </summary>
+        public static State State
+        {
+            get { return state; }
         }
 
         public static void LaunchURL(string url)
@@ -78,6 +91,24 @@ namespace ImageView
         public static float Clamp(float value, float min, float max)
         {
             return value < min ? min : (value > max ? max : value);
+        }
+
+        public static string NiceFileSize(long len)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            double lend = (double)len;
+            int order = 0;
+            while (lend >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                lend /= 1024;
+            }
+
+            // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
+            // show a single decimal place, and no space.
+            string result = String.Format("{0:0.##} {1}", lend, sizes[order]);
+
+            return result;
         }
 
         public static string HumanReadablePixelFormat(System.Drawing.Imaging.PixelFormat pixfmt)

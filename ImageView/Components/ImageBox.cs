@@ -43,7 +43,7 @@ namespace ImageView.Components
 
         public ImageBox()
         {
-            textureBrush = new TextureBrush(ImageView.Properties.Resources.transparent16);
+            textureBrush = new TextureBrush(Properties.Resources.transparent16);
             textureBrush.WrapMode = WrapMode.Tile;
             this.DoubleBuffered = true;
         }
