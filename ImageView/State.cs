@@ -193,23 +193,24 @@ namespace ImageView
 
         private bool loadPicture(IEntry entry)
         {
-            //clean up previously used memory (if any)
-            Dispose();
-            activeEntry = entry;
+
+            this.Dispose();
+            this.activeEntry = entry;
+
 
             //load image
 #if DEBUG
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 #endif
-            Stream stream = activeEntry.GetStream();
+            Stream stream = entry.GetStream();
             try
             {
-                nativeImage = new ImageMagick.MagickImage(stream);
+                this.nativeImage = new ImageMagick.MagickImage(stream);
             }
             catch (Exception)
             {
-                nativeImage = new MagickImage(Properties.Resources.error);
+                this.nativeImage = new MagickImage(Properties.Resources.error);
                 //MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             stream.Dispose();
