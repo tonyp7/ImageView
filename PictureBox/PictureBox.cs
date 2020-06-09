@@ -124,6 +124,7 @@ namespace ImageView
 
         #region Properties
 
+
         /// <summary>
         /// The bitmap to be drawn inside the picture box
         /// </summary>
@@ -134,13 +135,20 @@ namespace ImageView
             get { return bitmap; }
             set 
             {
-                this.bitmap = value;
+                this.SuspendLayout();
+                this.panelPicture.SuspendLayout();
+                this.panelPicture.Visible = false;
                 panelMain.Resize -= panelMain_Resize;
+                this.bitmap = value;
                 calculateRect();
                 panelMain.Resize += panelMain_Resize;
+                this.panelPicture.Visible = true;
+                this.ResumeLayout();
+                this.panelPicture.ResumeLayout();
                 draw();
             } 
         }
+
 
         [Category("Behavior"),
         Description("Ordered list of valid zoom levels")]
@@ -366,6 +374,7 @@ namespace ImageView
         }
         private void calculateRect(Point mouseCoord, float newZoom)
         {
+
             if (bitmap != null)
             {
                 switch (sizeMode)
@@ -385,6 +394,7 @@ namespace ImageView
                         break;
                 }
             }
+
         }
         private void calcZoom(Point mouseCoord, float newZoom)
         {
@@ -616,8 +626,9 @@ namespace ImageView
 
 
             //position picture box
-            panelPicture.Size = boxRect.Size;
             panelPicture.Location = boxRect.Location;
+            panelPicture.Size = boxRect.Size;
+            
 
             //calculate rects for drawing
             dstRect.X = 0.0f;
@@ -653,6 +664,7 @@ namespace ImageView
 
         private void panelPicture_Paint(object sender, PaintEventArgs e)
         {
+
             System.Diagnostics.Debug.WriteLine("panelPicture_Paint");
             if (bitmap != null)
             {
@@ -662,13 +674,17 @@ namespace ImageView
                 g.InterpolationMode = this.interpolationMode == InterpolationMode.Invalid ? InterpolationMode.Default : this.interpolationMode;
                 g.DrawImage(bitmap, dstRect, srcRect, GraphicsUnit.Pixel);
             }
-
         }
 
         private void panelMain_Resize(object sender, EventArgs e)
         {
-            calculateRect();
-            draw();
+            System.Diagnostics.Debug.WriteLine("panelMain_Resize");
+            if(this.bitmap != null)
+            {
+                calculateRect();
+                draw();
+            }
+
         }
 
 
@@ -748,6 +764,29 @@ namespace ImageView
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Allows catching arrows key as part of the WM_KEYDOWN message
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        protected override bool IsInputKey(Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Right:
+                case Keys.Left:
+                case Keys.Up:
+                case Keys.Down:
+                    return true;
+                case Keys.Shift | Keys.Right:
+                case Keys.Shift | Keys.Left:
+                case Keys.Shift | Keys.Up:
+                case Keys.Shift | Keys.Down:
+                    return true;
+            }
+            return base.IsInputKey(keyData);
         }
 
         private void panelPicture_MouseDown(object sender, MouseEventArgs e)
