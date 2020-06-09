@@ -415,9 +415,7 @@ namespace ImageView
             boxRect.X = 0;
             boxRect.Y = 0;
 
-
             //center image if possible
-
             if (clientSize.Width > boxRect.Width)
             {
                 boxRect.X = (clientSize.Width - boxRect.Width) >> 1;
@@ -583,6 +581,9 @@ namespace ImageView
             Size clientSize = panelMain.ClientSize;
 
             float zoom = 1.0f;
+
+            boxRect.X = 0;
+            boxRect.Y = 0;
 
             //image can fit entirely on the screen
             if (clientSize.Width >= bitmap.Width && clientSize.Height >= bitmap.Height)

@@ -105,7 +105,9 @@ namespace ImageView
             close();
 
             //restore history
-            toolStripComboBoxNavigation.Items.AddRange(Settings.Get.History.Get().ToArray() );
+            toolStripComboBoxNavigation.SelectedIndexChanged -= toolStripComboBoxNavigation_SelectedIndexChanged;
+            toolStripComboBoxNavigation.ComboBox.DataSource = Settings.Get.History.Get();
+            toolStripComboBoxNavigation.SelectedIndexChanged += toolStripComboBoxNavigation_SelectedIndexChanged;
 
             //set check mark on the type of image view
             refreshImageSizeModeUI();
@@ -359,8 +361,10 @@ namespace ImageView
 
         private void toolStripComboBoxNavigation_SelectedIndexChanged(object sender, EventArgs e)
         {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("toolStripComboBoxNavigation_SelectedIndexChanged" + sender.ToString());
+#endif
             TextRepresentationEntry tre = (TextRepresentationEntry)toolStripComboBoxNavigation.SelectedItem;
-
             this.ActiveControl = null;
             if (Program.State.LoadPicture(tre))
             {
@@ -371,6 +375,7 @@ namespace ImageView
             toolStripComboBoxNavigation.Select(0, 0);
             toolStripComboBoxNavigation.Invalidate();
             toolStripComboBoxNavigation.Select(0, 0);
+
         }
 
         private void toolStripComboBoxZoom_SelectedIndexChanged(object sender, EventArgs e)
@@ -403,7 +408,17 @@ namespace ImageView
             pictureBox.Bitmap = state.Bitmap;
 
             //peripheral UI elements
+
+
+            //force refresh history. If this isnt done the new history order doesnt get refreshed
+            toolStripComboBoxNavigation.SelectedIndexChanged -= toolStripComboBoxNavigation_SelectedIndexChanged;
+            toolStripComboBoxNavigation.ComboBox.DataSource = null;
+            toolStripComboBoxNavigation.Items.Clear();
+            toolStripComboBoxNavigation.ComboBox.DataSource = Settings.Get.History.Get();
+            toolStripComboBoxNavigation.SelectedIndexChanged += toolStripComboBoxNavigation_SelectedIndexChanged;
+
             toolStripComboBoxNavigation_UpdateText(state.ActiveEntry.FullName);
+
             toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} - {2} {3}", state.NativeImage.BaseWidth, state.NativeImage.BaseHeight, state.NativeImage.ColorSpace, state.NativeImage.ColorType);
             toolStripStatusLabelImageInfo.Visible = true;
             toolStripStatusLabelFileSize.Text = Program.NiceFileSize(state.ActiveEntry.Length);
