@@ -721,6 +721,9 @@
             this.pictureBox.ZoomMouseButton = System.Windows.Forms.MouseButtons.Left;
             this.pictureBox.ZoomOutCursor = null;
             this.pictureBox.ZoomOutModifier = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Menu)));
+            this.pictureBox.ZoomChanged += new System.EventHandler<ImageView.PictureBox.ZoomEventArgs>(this.pictureBox_ZoomChanged);
+            this.pictureBox.PixelCoordinatesChanged += new System.EventHandler<ImageView.PictureBox.CoordinatesEventArgs>(this.pictureBox_PixelCoordinatesChanged);
+            this.pictureBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.pictureBox_KeyDown);
             // 
             // FrmMain
             // 
@@ -739,7 +742,6 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmMain_FormClosed);
             this.Load += new System.EventHandler(this.FrmMain_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmMain_KeyDown);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FrmMain_KeyUp);
             this.Resize += new System.EventHandler(this.FrmMain_Resize);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
