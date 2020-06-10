@@ -115,12 +115,10 @@ namespace ImageView
             //restore window size
             if (Settings.Get.Window.Width != 0 && Settings.Get.Window.Height != 0)
             {
-                this.pictureBox.DisableResizeEvent();
                 this.Location = new Point(Settings.Get.Window.X, Settings.Get.Window.Y);
                 this.Width = Settings.Get.Window.Width;
                 this.Height = Settings.Get.Window.Height;
                 this.WindowState = Settings.Get.Window.State;
-                this.pictureBox.EnableResizeEvent();
             }
         }
 
@@ -211,8 +209,29 @@ namespace ImageView
                 previous();
             }
         }
-        #endregion
 
+        //TODO: FIXME with new picture box
+        private void pictureBox_DoubleClick(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            //prevents a fullscreen trigger when trying to zoom on the picture
+            if (activeTool != Tool.Zoom)
+            {
+                if (me.Button == MouseButtons.Left)
+                {
+                    if (fullscreen)
+                    {
+                        exitFullScreen();
+                    }
+                    else
+                    {
+                        enterFullScreen();
+                    }
+                }
+            }
+        }
+        #endregion
 
         #region Events - Form
         private void FrmMain_Load(object sender, EventArgs e)
@@ -232,6 +251,41 @@ namespace ImageView
                     loadPictureUI();
                 }
             }
+        }
+
+        private void FrmMain_Resize(object sender, EventArgs e)
+        {
+            resizeNavigationBar();
+            pictureBox.Refresh();
+        }
+
+
+        /// <summary>
+        /// Saves the current window state to be able to restore it on next launch
+        /// <seealso cref="FrmMain_FormClosed(object, FormClosedEventArgs)"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //Save last window size and position
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                Settings.Get.Window.X = this.RestoreBounds.X;
+                Settings.Get.Window.Y = this.RestoreBounds.Y;
+                Settings.Get.Window.Width = this.RestoreBounds.Width;
+                Settings.Get.Window.Height = this.RestoreBounds.Height;
+                Settings.Get.Window.State = this.WindowState;
+            }
+            else
+            {
+                Settings.Get.Window.X = this.Location.X;
+                Settings.Get.Window.Y = this.Location.Y;
+                Settings.Get.Window.Width = this.Width;
+                Settings.Get.Window.Height = this.Height;
+                Settings.Get.Window.State = this.WindowState;
+            }
+
         }
 
 
@@ -313,6 +367,97 @@ namespace ImageView
 
         #region Events - Menu
 
+        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            printPreview();
+        }
+
+        private void readerModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleReaderMode();
+        }
+
+        private void bestFitStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.BestFit);
+        }
+        private void realSizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.RealSize);
+        }
+
+        private void fitToWidthToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.FitToWidth);
+        }
+
+        private void fitToHeightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.FitToHeight);
+        }
+        private void licenseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FrmLicense().ShowDialog();
+        }
+        private void rotateLeftToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotateLeft();
+        }
+
+        private void rotateRightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotateRight();
+        }
+
+
+        private void verticalFlipToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            verticalFlip();
+        }
+
+        private void horizontalFlipToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            horizontalFlip();
+        }
+
+        private void zoomToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleZoomTool();
+        }
+        private void informationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showInformation();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            copy();
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            delete();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showSettings();
+        }
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmAbout a = new FrmAbout();
+            a.ShowDialog();
+        }
+
+        private void slideshowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //enterSlideshow();
+            setViewMode(ViewingMode.Slideshow);
+        }
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             close();
@@ -333,8 +478,26 @@ namespace ImageView
         #endregion
 
         #region Events - Toolbar
+        private void toolStripButtonPrintPreview_Click(object sender, EventArgs e)
+        {
+            printPreview();
+        }
 
 
+        private void toolStripReaderMode_Click(object sender, EventArgs e)
+        {
+            toggleReaderMode();
+        }
+        private void toolStripButtonSettings_Click(object sender, EventArgs e)
+        {
+            showSettings();
+        }
+
+        private void toolStripButtonSlideShow_Click(object sender, EventArgs e)
+        {
+            //enterSlideshow();
+            setViewMode(ViewingMode.Slideshow);
+        }
 
         private void toolStripButtonOpen_Click(object sender, EventArgs e)
         {
@@ -394,6 +557,79 @@ namespace ImageView
 
         #endregion
 
+        #region Events - Others
+
+        private void timerSlideShow_Tick(object sender, EventArgs e)
+        {
+            next();
+        }
+
+        #endregion
+
+        #region Events - Picturebox
+
+        private void pictureBox_ZoomChanged(object sender, PictureBox.ZoomEventArgs e)
+        {
+            toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(pictureBox.Zoom * 100.0f));
+            toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(pictureBox.Zoom * 100.0f)));
+        }
+
+        private void pictureBox_PixelCoordinatesChanged(object sender, PictureBox.CoordinatesEventArgs e)
+        {
+            if (e.OutOfBounds)
+            {
+                toolStripStatusLabelPixelPosition.Visible = false;
+                toolStripStatusLabelPixelPosition.Text = String.Empty;
+            }
+            else
+            {
+                toolStripStatusLabelPixelPosition.Visible = true;
+                toolStripStatusLabelPixelPosition.Text = string.Format("{0:0},{1:0}", e.PixelCoordinates.X, e.PixelCoordinates.Y);
+            }
+        }
+
+        private void pictureBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            FrmMain_KeyDown(sender, e);
+        }
+
+        private void pictureBox_DragEnter(object sender, DragEventArgs e)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("pictureBox_DragEnter");
+#endif
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+                var settings = Settings.Get;
+                if (s != null & s.Count() > 0)
+                {
+                    if (Config.ExtensionFilter.Any(x => s[0].ToLower().EndsWith(x)))
+                    {
+                        e.Effect = DragDropEffects.All;
+                        return;
+                    }
+                }
+            }
+
+            e.Effect = DragDropEffects.None;
+        }
+
+        private void pictureBox_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            if (s != null & s.Count() > 0)
+            {
+                if (Program.State.LoadPicture(s[0]))
+                {
+                    loadPictureUI();
+                }
+            }
+
+        }
+
+        #endregion
+
         #region UI Updates
 
 
@@ -403,6 +639,15 @@ namespace ImageView
         private void loadPictureUI()
         {
             var state = Program.State;
+            var settings = Settings.Get;
+
+            pictureBox.Bitmap = null;
+
+            //set proper image size mode before loading the bitmap.
+            if (settings.Display.SizeModeOnImageLoad != ImageSizeMode.Restore &&  (int)settings.Display.SizeModeOnImageLoad != (int)pictureBox.SizeMode)
+            {
+                setImageSizeMode(settings.Display.SizeModeOnImageLoad);
+            }
 
             //bitmap to picturebox!
             pictureBox.Bitmap = state.Bitmap;
@@ -411,11 +656,7 @@ namespace ImageView
 
 
             //force refresh history. If this isnt done the new history order doesnt get refreshed
-            toolStripComboBoxNavigation.SelectedIndexChanged -= toolStripComboBoxNavigation_SelectedIndexChanged;
-            toolStripComboBoxNavigation.ComboBox.DataSource = null;
-            toolStripComboBoxNavigation.Items.Clear();
-            toolStripComboBoxNavigation.ComboBox.DataSource = Settings.Get.History.Get();
-            toolStripComboBoxNavigation.SelectedIndexChanged += toolStripComboBoxNavigation_SelectedIndexChanged;
+            RefreshHistoryList();
 
             toolStripComboBoxNavigation_UpdateText(state.ActiveEntry.FullName);
 
@@ -460,9 +701,120 @@ namespace ImageView
 
         #endregion
 
-
-
         #region private methods
+
+        /// <summary>
+        /// Change image size mode, refresh UI elements and resize the picture box
+        /// </summary>
+        /// <param name="sz">New image size mode to be set</param>
+        private void setImageSizeMode(ImageSizeMode sz)
+        {
+            Settings.Get.Display.SizeMode = sz;
+            refreshImageSizeModeUI();
+            pictureBox.SizeMode = (ImageView.SizeMode)sz;
+        }
+
+
+
+        private void enterReader()
+        {
+            setImageSizeMode(Settings.Get.Reader.SizeMode);
+            toolStripReaderMode.BackColor = SystemColors.MenuHighlight;
+        }
+
+        private void exitReader()
+        {
+            if (Settings.Get.Display.SizeModeOnImageLoad != ImageSizeMode.Restore)
+            {
+                setImageSizeMode(Settings.Get.Display.SizeModeOnImageLoad);
+            }
+            toolStripReaderMode.BackColor = SystemColors.Control;
+        }
+
+        private void refreshImageSizeModeUI()
+        {
+            switch (Settings.Get.Display.SizeMode)
+            {
+                case ImageSizeMode.BestFit:
+                    BestFitToolStripMenuItem.Image = Properties.Resources.expand_arrows_tick16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
+                    break;
+                case ImageSizeMode.RealSize:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid_tick16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
+                    break;
+                case ImageSizeMode.FitToWidth:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith_tick16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
+                    break;
+                case ImageSizeMode.FitToHeight:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv_tick16;
+                    break;
+                default:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
+                    break;
+            }
+
+        }
+
+        private void enterZoomTool()
+        {
+            activeTool = Tool.Zoom;
+
+            var coord = pictureBox.PointToClient(Cursor.Position);
+            if (pictureBox.DisplayRectangle.Contains(coord))
+            {
+                this.Cursor = new Cursor(Properties.Resources.zoomin.Handle);
+            }
+        }
+
+        private void exitZoomTool()
+        {
+            activeTool = Tool.None;
+            if (this.Cursor != Cursors.Default)
+                this.Cursor = Cursors.Default;
+        }
+
+        private void toggleZoomTool()
+        {
+            if (activeTool != Tool.Zoom)
+            {
+                enterZoomTool();
+            }
+            else
+            {
+                exitZoomTool();
+            }
+        }
+        private void showSettings()
+        {
+            FrmSettings f = new FrmSettings(this);
+            f.ShowDialog();
+        }
+        private void resizeNavigationBar()
+        {
+            toolStripComboBoxNavigation.Width = (int)(0.5f * this.Width);
+        }
+        private void printPreview()
+        {
+            var state = Program.State;
+            if (state.Bitmap != null)
+            {
+                (new FrmPrintPreview((Bitmap)state.Bitmap.Clone())).Show();
+            }
+        }
 
         /// <summary>
         /// This function parses the value of the zoom box and assign the zoom to the picture
@@ -474,11 +826,11 @@ namespace ImageView
             {
                 zoom /= 100.0f;
                 zoom = Program.Clamp(zoom, .01f, ConfigDisplay.MAX_ZOOM);
-                Settings.Get.Display.SizeMode = ImageSizeMode.Zoom;
                 Settings.Get.Display.Zoom = zoom;
-                refreshImageSizeModeUI();
                 pictureBox.Zoom = zoom;
 
+                setImageSizeMode(Settings.Get.Display.SizeMode = ImageSizeMode.Zoom);
+                
                 //remove focus from the textbox so that user can navigate with arrow keys etc.
                 this.ActiveControl = null;
             }
@@ -726,8 +1078,9 @@ namespace ImageView
         }
         private void enterSlideshow()
         {
-            Settings.Get.Display.SizeMode = Settings.Get.Slideshow.SizeMode;
-            refreshImageSizeModeUI();
+
+            setImageSizeMode(Settings.Get.Slideshow.SizeMode);
+
             enterFullScreen();
             timerSlideShow.Interval = Settings.Get.Slideshow.Timer;
             timerSlideShow.Start();
@@ -877,8 +1230,6 @@ namespace ImageView
 
         #endregion
 
-
-
         #region override
         /// <summary>
         /// Allows catching arrows key as part of the WM_KEYDOWN message
@@ -924,14 +1275,19 @@ namespace ImageView
         }
         #endregion
 
+        #region Public methods
 
-
-
-
-
-
-
-
+        /// <summary>
+        /// Forces a refresh of the history box
+        /// </summary>
+        public void RefreshHistoryList()
+        {
+            toolStripComboBoxNavigation.SelectedIndexChanged -= toolStripComboBoxNavigation_SelectedIndexChanged;
+            toolStripComboBoxNavigation.ComboBox.DataSource = null;
+            toolStripComboBoxNavigation.Items.Clear();
+            toolStripComboBoxNavigation.ComboBox.DataSource = Settings.Get.History.Get();
+            toolStripComboBoxNavigation.SelectedIndexChanged += toolStripComboBoxNavigation_SelectedIndexChanged;
+        }
 
 
         public void setCheckeredPatternBackground(bool b)
@@ -939,344 +1295,10 @@ namespace ImageView
             if (this.pictureBox.UseBackgroundBrush != b)
             {
                 this.pictureBox.UseBackgroundBrush = b;
-                //this.pictureBox.Invalidate();
             }
         }
 
-
-
-
-        internal void SetHistoryList(List<TextRepresentationEntry> list)
-        {
-            toolStripComboBoxNavigation.Items.Clear();
-            toolStripComboBoxNavigation.Items.AddRange(Settings.Get.History.Get().ToArray());
-        }
-
-        private void pictureBox_DoubleClick(object sender, EventArgs e)
-        {
-            MouseEventArgs me = (MouseEventArgs)e;
-
-            //prevents a fullscreen trigger when trying to zoom on the picture
-            if (activeTool != Tool.Zoom) 
-            {
-                if (me.Button == MouseButtons.Left)
-                {
-                    if (fullscreen)
-                    {
-                        exitFullScreen();
-                    }
-                    else
-                    {
-                        enterFullScreen();
-                    }
-                }
-            }
-
-        }
-
-
-        private void timerSlideShow_Tick(object sender, EventArgs e)
-        {
-            next();
-        }
-
-
-        private void slideshowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //enterSlideshow();
-            setViewMode(ViewingMode.Slideshow);
-        }
-
-        private void toolStripButtonSlideShow_Click(object sender, EventArgs e)
-        {
-            //enterSlideshow();
-            setViewMode(ViewingMode.Slideshow);
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FrmAbout a = new FrmAbout();
-            a.ShowDialog();
-        }
-
-        private void resizeNavigationBar()
-        {
-            toolStripComboBoxNavigation.Width = (int)(0.5f * this.Width);
-        }
-        private void FrmMain_Resize(object sender, EventArgs e)
-        {
-            resizeNavigationBar();
-        }
-
-
-
-
-        private void toolStripDropDownButtonDisplayType_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripComboBoxZoom_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripButtonSettings_Click(object sender, EventArgs e)
-        {
-            showSettings();
-        }
-
-        private void showSettings()
-        {
-            FrmSettings f = new FrmSettings(this);
-            f.ShowDialog();
-        }
-
-        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            showSettings();
-        }
-
-        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            //Save last window size and position
-            if (this.WindowState == FormWindowState.Maximized)
-            {
-                Settings.Get.Window.X = this.RestoreBounds.X;
-                Settings.Get.Window.Y = this.RestoreBounds.Y;
-                Settings.Get.Window.Width = this.RestoreBounds.Width;
-                Settings.Get.Window.Height = this.RestoreBounds.Height;
-                Settings.Get.Window.State = this.WindowState;
-            }
-            else
-            {
-                Settings.Get.Window.X = this.Location.X;
-                Settings.Get.Window.Y = this.Location.Y;
-                Settings.Get.Window.Width = this.Width;
-                Settings.Get.Window.Height = this.Height;
-                Settings.Get.Window.State = this.WindowState;
-            }
-            
-        }
-
-        private void informationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            showInformation();
-        }
-
-        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            copy();
-        }
-
-        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            delete();
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void panelMain_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.All;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
-            }
-        }
-
-        private void panelMain_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-            if(s != null & s.Count() > 0)
-            {
-                if (Program.State.LoadPicture(s[0]))
-                {
-                    loadPictureUI();
-                }
-            }
-
-        }
-
-        private void rotateLeftToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            rotateLeft();
-        }
-
-        private void rotateRightToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            rotateRight();
-        }
-
-
-        private void verticalFlipToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            verticalFlip();
-        }
-
-        private void horizontalFlipToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            horizontalFlip();
-        }
-
-        private void zoomToolToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            toggleZoomTool();
-        }
-
-
-        private void pictureBox_Click(object sender, EventArgs ea)
-        {
-
-        }
-
-
-        private void enterZoomTool()
-        {
-            activeTool = Tool.Zoom;
-
-            var coord = pictureBox.PointToClient(Cursor.Position);
-            if (pictureBox.DisplayRectangle.Contains(coord))
-            {
-                this.Cursor = new Cursor(Properties.Resources.zoomin.Handle);
-            }
-        }
-
-        private void exitZoomTool()
-        {
-            activeTool = Tool.None;
-            if (this.Cursor != Cursors.Default)
-                this.Cursor = Cursors.Default;
-        }
-
-        private void toggleZoomTool()
-        {
-            if(activeTool != Tool.Zoom)
-            {
-                enterZoomTool();
-            }
-            else
-            {
-                exitZoomTool();
-            }
-        }
-
-
-        private void refreshImageSizeModeUI()
-        {
-            switch (Settings.Get.Display.SizeMode)
-            {
-                case ImageSizeMode.BestFit:
-                    BestFitToolStripMenuItem.Image = Properties.Resources.expand_arrows_tick16;
-                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
-                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
-                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
-                    break;
-                case ImageSizeMode.RealSize:
-                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
-                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid_tick16;
-                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
-                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
-                    break;
-                case ImageSizeMode.FitToWidth:
-                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
-                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
-                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith_tick16;
-                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
-                    break;
-                case ImageSizeMode.FitToHeight:
-                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
-                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
-                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
-                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv_tick16;
-                    break;
-                default:
-                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
-                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
-                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
-                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
-                    break;
-            }
-
-        }
-
-        private void licenseToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new FrmLicense().ShowDialog();
-        }
-
-
-        /// <summary>
-        /// Change image size mode, refresh UI elements and resize the picture box
-        /// </summary>
-        /// <param name="sz">New image size mode to be set</param>
-        private void setImageSizeMode(ImageSizeMode sz)
-        {
-            Settings.Get.Display.SizeMode = sz;
-            refreshImageSizeModeUI();
-
-            //TODO: UPDATE
-            pictureBox.SizeMode = (ImageView.SizeMode)sz;
-        }
-
-        
-
-        private void enterReader()
-        {
-            setImageSizeMode(Settings.Get.Reader.SizeMode);
-            toolStripReaderMode.BackColor = SystemColors.MenuHighlight;
-        }
-
-        private void exitReader()
-        {
-            if(Settings.Get.Display.SizeModeOnImageLoad != ImageSizeMode.Restore)
-            {
-                setImageSizeMode(Settings.Get.Display.SizeModeOnImageLoad);
-            }
-            toolStripReaderMode.BackColor = SystemColors.Control;
-        }
-
-        private void BestFitStripMenuItem_Click(object sender, EventArgs e)
-        {
-            setImageSizeMode(ImageSizeMode.BestFit);
-        }
-        private void realSizeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            setImageSizeMode(ImageSizeMode.RealSize);
-        }
-
-        private void fitToWidthToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            setImageSizeMode(ImageSizeMode.FitToWidth);
-        }
-
-        private void fitToHeightToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            setImageSizeMode(ImageSizeMode.FitToHeight);
-        }
-
-        private void toolStripReaderMode_Click(object sender, EventArgs e)
-        {
-            toggleReaderMode();
-        }
-
-        private void readerModeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            toggleReaderMode();
-        }
-
-
+        #endregion
 
 
         private void scrollDown()
@@ -1291,49 +1313,7 @@ namespace ImageView
 
 
 
-        private void toolStripButtonPrintPreview_Click(object sender, EventArgs e)
-        {
-            printPreview();
-        }
 
-        private void printPreview()
-        {
-            var state = Program.State;
-            if(state.Bitmap != null)
-            {
-                (new FrmPrintPreview((Bitmap)state.Bitmap.Clone())).Show();
-            }    
-        }
-
-        private void printToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            printPreview();
-        }
-
-        private void pictureBox_ZoomChanged(object sender, PictureBox.ZoomEventArgs e)
-        {
-            toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(pictureBox.Zoom * 100.0f));
-            toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(pictureBox.Zoom * 100.0f)));
-        }
-
-        private void pictureBox_PixelCoordinatesChanged(object sender, PictureBox.CoordinatesEventArgs e)
-        {
-            if (e.OutOfBounds)
-            {
-                toolStripStatusLabelPixelPosition.Visible = false;
-                toolStripStatusLabelPixelPosition.Text = String.Empty;
-            }
-            else
-            {
-                toolStripStatusLabelPixelPosition.Visible = true;
-                toolStripStatusLabelPixelPosition.Text = string.Format("{0:0},{1:0}", e.PixelCoordinates.X, e.PixelCoordinates.Y);
-            }
-        }
-
-        private void pictureBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            FrmMain_KeyDown(sender, e);
-        }
     }
 
 

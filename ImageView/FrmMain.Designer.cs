@@ -131,7 +131,6 @@
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
-            this.fileToolStripMenuItem.Click += new System.EventHandler(this.fileToolStripMenuItem_Click);
             // 
             // toolStripMenuItemOpen
             // 
@@ -556,7 +555,6 @@
             this.toolStripDropDownButtonDisplayType.Name = "toolStripDropDownButtonDisplayType";
             this.toolStripDropDownButtonDisplayType.Size = new System.Drawing.Size(45, 39);
             this.toolStripDropDownButtonDisplayType.ToolTipText = "Pick Image Sizing";
-            this.toolStripDropDownButtonDisplayType.Click += new System.EventHandler(this.toolStripDropDownButtonDisplayType_Click);
             // 
             // realSizeToolStripMenuItem
             // 
@@ -572,7 +570,7 @@
             this.BestFitToolStripMenuItem.Name = "BestFitToolStripMenuItem";
             this.BestFitToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.BestFitToolStripMenuItem.Text = "Best Fit";
-            this.BestFitToolStripMenuItem.Click += new System.EventHandler(this.BestFitStripMenuItem_Click);
+            this.BestFitToolStripMenuItem.Click += new System.EventHandler(this.bestFitStripMenuItem_Click);
             // 
             // fitToWidthToolStripMenuItem
             // 
@@ -600,7 +598,6 @@
             this.toolStripComboBoxZoom.ToolTipText = "Zoom";
             this.toolStripComboBoxZoom.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxZoom_SelectedIndexChanged);
             this.toolStripComboBoxZoom.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.toolStripComboBoxZoom_KeyPress);
-            this.toolStripComboBoxZoom.Click += new System.EventHandler(this.toolStripComboBoxZoom_Click);
             // 
             // toolStripSeparator6
             // 
@@ -702,6 +699,7 @@
             // 
             // pictureBox
             // 
+            this.pictureBox.AllowDrop = true;
             this.pictureBox.BackColor = System.Drawing.Color.Black;
             this.pictureBox.Bitmap = null;
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -723,6 +721,9 @@
             this.pictureBox.ZoomOutModifier = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Menu)));
             this.pictureBox.ZoomChanged += new System.EventHandler<ImageView.PictureBox.ZoomEventArgs>(this.pictureBox_ZoomChanged);
             this.pictureBox.PixelCoordinatesChanged += new System.EventHandler<ImageView.PictureBox.CoordinatesEventArgs>(this.pictureBox_PixelCoordinatesChanged);
+            this.pictureBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBox_DragDrop);
+            this.pictureBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBox_DragEnter);
+            this.pictureBox.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
             this.pictureBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.pictureBox_KeyDown);
             // 
             // FrmMain
@@ -752,6 +753,11 @@
             this.ResumeLayout(false);
             this.PerformLayout();
 
+        }
+
+        private void PictureBox_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
+        {
+            throw new System.NotImplementedException();
         }
 
         #endregion
