@@ -272,12 +272,6 @@ namespace ImageView
                 if (value != SizeMode)
                 {
                     this.sizeMode = value;
-
-                    if (sizeMode == SizeMode.Normal)
-                    {
-                        zoom = 1.0f;
-                    }
-
                     calculateRect();
                     draw();
                 }
@@ -388,6 +382,12 @@ namespace ImageView
             panelMain.AutoScroll = false;
             Size clientSize = panelMain.ClientSize;
             float oldZoom = this.zoom;
+
+            if(SizeMode == SizeMode.Normal && this.zoom != 1.0f) 
+            {
+                this.zoom = 1.0f;
+                OnZoomChanged(new ZoomEventArgs(this.zoom));
+            }
             if (newZoom != -1.0f && newZoom != oldZoom)
             {
                 this.zoom = newZoom;
@@ -494,11 +494,13 @@ namespace ImageView
 
             panelMain.AutoScroll = true;
 
-            if(this.zoom != zoom)
+            if (this.zoom != zoom)
             {
                 this.zoom = zoom;
                 OnZoomChanged(new ZoomEventArgs(zoom));
             }
+
+
         }
         private void calcFitToWidth()
         {
