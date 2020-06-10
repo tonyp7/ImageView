@@ -138,10 +138,8 @@ namespace ImageView
                 this.SuspendLayout();
                 this.panelPicture.SuspendLayout();
                 this.panelPicture.Visible = false;
-                panelMain.Resize -= panelMain_Resize;
                 this.bitmap = value;
                 calculateRect();
-                panelMain.Resize += panelMain_Resize;
                 this.panelPicture.Visible = true;
                 this.ResumeLayout();
                 this.panelPicture.ResumeLayout();
@@ -280,10 +278,8 @@ namespace ImageView
                         zoom = 1.0f;
                     }
 
-                    panelMain.Resize -= panelMain_Resize;
                     calculateRect();
                     draw();
-                    panelMain.Resize += panelMain_Resize;
                 }
             }
         }
@@ -299,12 +295,10 @@ namespace ImageView
                 {
                     if (value != zoom)
                     {
-                        panelMain.Resize -= panelMain_Resize;
                         this.sizeMode = SizeMode.Zoom;
                         this.zoom = value;
                         calculateRect();
                         draw();
-                        panelMain.Resize += panelMain_Resize;
                     }
                 }
             }
@@ -349,15 +343,6 @@ namespace ImageView
 
         }
 
-        public void DisableResizeEvent()
-        {
-            this.panelMain.Resize -= panelMain_Resize;
-        }
-
-        public void EnableResizeEvent()
-        {
-            this.panelMain.Resize += panelMain_Resize;
-        }
 
         #endregion
 
@@ -677,15 +662,16 @@ namespace ImageView
             }
         }
 
-        private void panelMain_Resize(object sender, EventArgs e)
+        public override void Refresh()
         {
-            System.Diagnostics.Debug.WriteLine("panelMain_Resize");
-            if(this.bitmap != null)
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("PictureBox.Refresh()");
+#endif
+            if (this.bitmap != null)
             {
                 calculateRect();
                 draw();
             }
-
         }
 
 
@@ -822,9 +808,7 @@ namespace ImageView
                 }
 
                 sizeMode = SizeMode.Zoom;
-                panelMain.Resize -= panelMain_Resize;
                 calculateRect(e.Location, newZoom);
-                panelMain.Resize += panelMain_Resize;
                 this.panelPicture.Invalidate();
             }
             else if(e.Button == DragMouseButton)

@@ -44,7 +44,6 @@ namespace ImageView
             this.panelMain.ScrollLock = false;
             this.panelMain.Size = new System.Drawing.Size(224, 246);
             this.panelMain.TabIndex = 0;
-            this.panelMain.Resize += new System.EventHandler(this.panelMain_Resize);
             // 
             // panelPicture
             // 
