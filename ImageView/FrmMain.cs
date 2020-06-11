@@ -45,46 +45,23 @@ namespace ImageView
     public partial class FrmMain : Form
     {
 
-        class FullScreenSaveState
-        {
-            public FormWindowState WindowState;
-            public Point Location;
-            public Size Size;
-
-            public FullScreenSaveState()
-            {
-                WindowState = FormWindowState.Normal;
-                Location = new Point();
-                Size = new Size();
-            }
-        }
-
-
-
-        public enum Tool
-        {
-            None,
-            Zoom
-        }
-
-
+        #region private members
         private bool fullscreen = false;
         private FullScreenSaveState fullScreenSaveState = new FullScreenSaveState();
         private Tool activeTool = Tool.None;
         private ViewingMode viewingMode = ViewingMode.Normal;
+        #endregion
 
 
+        #region Constructor
         public FrmMain()
         {
             InitializeComponent();
 
             Settings.Get.Load();
 
-            // The custom picture box
-            // 
-            // pictureBox
-            // 
-            //this.pictureBox.CheckeredPatternBackground = Settings.Get.Display.CheckeredPatternBackground;
+            // Picturebox config
+            setCheckeredPatternBackground(Settings.Get.Display.CheckeredPatternBackground);
             this.pictureBox.DragCursor = Properties.Resources.move;
             this.pictureBox.ZoomInCursor = Properties.Resources.zoomin;
             this.pictureBox.ZoomOutCursor = Properties.Resources.zoomout;
@@ -121,80 +98,7 @@ namespace ImageView
                 this.WindowState = Settings.Get.Window.State;
             }
         }
-
-
-
-        public void InitalizeComponentsCultureAware()
-        {
-
-            this.SuspendLayout();
-            this.menuStrip.SuspendLayout();
-            this.toolStrip.SuspendLayout();
-            this.statusStrip.SuspendLayout();
-
-            this.menuStrip.Text = String.Empty;
-            this.fileToolStripMenuItem.Text = Settings.Get.General.GetString("MenuFile");
-            this.toolStripMenuItemOpen.Text = Settings.Get.General.GetString("Open");
-            this.closeToolStripMenuItem.Text = Settings.Get.General.GetString("Close");
-            this.deleteToolStripMenuItem.Text = Settings.Get.General.GetString("Delete");
-            this.exitToolStripMenuItem.Text = Settings.Get.General.GetString("Exit");
-            this.editToolStripMenuItem.Text = Settings.Get.General.GetString("Edit");
-            this.copyToolStripMenuItem.Text = Settings.Get.General.GetString("Copy");
-            this.imageToolStripMenuItem.Text = Settings.Get.General.GetString("Image");
-            this.informationToolStripMenuItem.Text = Settings.Get.General.GetString("Information");
-            this.rotateLeftToolStripMenuItem.Text = Settings.Get.General.GetString("RotateLeft");
-            this.rotateRightToolStripMenuItem.Text = Settings.Get.General.GetString("RotateRight");
-            this.verticalFlipToolStripMenuItem.Text = Settings.Get.General.GetString("VerticalFlip");
-            this.horizontalFlipToolStripMenuItem.Text = Settings.Get.General.GetString("HorizontalFlip");
-            this.viewToolStripMenuItem.Text = Settings.Get.General.GetString("View");
-            this.fullscreenToolStripMenuItem.Text = Settings.Get.General.GetString("Fullscreen");
-            this.slideshowToolStripMenuItem.Text = Settings.Get.General.GetString("Slideshow");
-            this.readerModeToolStripMenuItem.Text = Settings.Get.General.GetString("ReaderMode");
-            this.previousToolStripMenuItem.Text = Settings.Get.General.GetString("Previous");
-            this.nextToolStripMenuItem.Text = Settings.Get.General.GetString("Next");
-            this.zoomToolToolStripMenuItem.Text = Settings.Get.General.GetString("ZoomTool");
-            this.optionsToolStripMenuItem.Text = Settings.Get.General.GetString("Options");
-            this.settingsToolStripMenuItem.Text = Settings.Get.General.GetString("Settings");
-            this.helpToolStripMenuItem.Text = Settings.Get.General.GetString("Help");
-            this.checkForUpdatesToolStripMenuItem.Text = Settings.Get.General.GetString("CheckForUpdates");
-            this.licenseToolStripMenuItem.Text = Settings.Get.General.GetString("License");
-            this.aboutToolStripMenuItem.Text = Settings.Get.General.GetString("About");
-            this.toolStrip.Text = String.Empty;
-            this.toolStripButtonOpen.Text = Settings.Get.General.GetString("OpenImageFile");
-            this.toolStripButtonSaveAs.Text = Settings.Get.General.GetString("SaveImageCopyAs");
-            this.toolStripButtonDelete.Text = Settings.Get.General.GetString("DeleteImage");
-            this.toolStripButtonSlideShow.Text = Settings.Get.General.GetString("Slideshow");
-            this.toolStripReaderMode.Text = Settings.Get.General.GetString("ReaderMode");
-            this.toolStripButtonPrevious.Text = Settings.Get.General.GetString("PreviousImage");
-            this.toolStripButtonNext.Text = Settings.Get.General.GetString("NextImage");
-            this.realSizeToolStripMenuItem.Text = Settings.Get.General.GetString("RealSize");
-            this.BestFitToolStripMenuItem.Text = Settings.Get.General.GetString("BestFit");
-            this.fitToWidthToolStripMenuItem.Text = Settings.Get.General.GetString("FitToWidth");
-            this.fitToHeightToolStripMenuItem.Text = Settings.Get.General.GetString("FitToHeight");
-            this.toolStripComboBoxZoom.Text = String.Empty;
-            this.toolStripButtonSettings.Text = Settings.Get.General.GetString("Settings");
-            this.statusStrip.Text = String.Empty;
-            this.toolStripStatusLabelImageInfo.Text = Settings.Get.General.GetString("WelcomeStatus");
-            this.toolStripStatusLabelImagePosition.Text = String.Empty;
-            this.toolStripStatusLabelZoom.Text = String.Empty;
-            this.toolStripStatusLabelFileSize.Text = String.Empty;
-            this.toolStripStatusLabelPixelPosition.Text = String.Empty;
-            this.printToolStripMenuItem.Text = Settings.Get.General.GetString("PrintPreviewAlternate");
-
-            toolStripDropDownButtonDisplayType.ToolTipText = Settings.Get.General.GetString("PickImageSizeMode");
-
-            this.menuStrip.ResumeLayout(false);
-            this.menuStrip.PerformLayout();
-            this.toolStrip.ResumeLayout(false);
-            this.toolStrip.PerformLayout();
-            this.statusStrip.ResumeLayout(false);
-            this.statusStrip.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
-        }
-
-
+        #endregion
 
         #region Events - Mouse
 
@@ -210,9 +114,12 @@ namespace ImageView
             }
         }
 
-        //TODO: FIXME with new picture box
+
         private void pictureBox_DoubleClick(object sender, EventArgs e)
         {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("pictureBox_DoubleClick");
+#endif
             MouseEventArgs me = (MouseEventArgs)e;
 
             //prevents a fullscreen trigger when trying to zoom on the picture
@@ -231,6 +138,7 @@ namespace ImageView
                 }
             }
         }
+
         #endregion
 
         #region Events - Form
@@ -772,19 +680,13 @@ namespace ImageView
         private void enterZoomTool()
         {
             activeTool = Tool.Zoom;
-
-            var coord = pictureBox.PointToClient(Cursor.Position);
-            if (pictureBox.DisplayRectangle.Contains(coord))
-            {
-                this.Cursor = new Cursor(Properties.Resources.zoomin.Handle);
-            }
+            this.pictureBox.ZoomMouseButton = MouseButtons.Left;
         }
 
         private void exitZoomTool()
         {
+            this.pictureBox.ZoomMouseButton = MouseButtons.None;
             activeTool = Tool.None;
-            if (this.Cursor != Cursors.Default)
-                this.Cursor = Cursors.Default;
         }
 
         private void toggleZoomTool()
@@ -848,89 +750,19 @@ namespace ImageView
             }
         }
 
-
-
-        private void verticalScroll(int direction)
-        {
-            //TODO: REDO
-            //if (panelMain.VerticalScroll.Visible)
-            //{
-            //    Point scroll = panelMain.AutoScrollPosition;
-
-            //    scroll.X *= -1;
-            //    scroll.Y = -scroll.Y + (panelMain.Height / 10) * direction;
-
-            //    panelMain.AutoScrollPosition = scroll;
-
-            //    //REFRESH DRAWING PORTION
-            //    float zoom = workingData.calculatedZoom;
-            //    Size clientSize = panelMain.Size;
-            //    RectangleF srcRect = new RectangleF();
-            //    RectangleF dstRect = new RectangleF();
-            //    dstRect.X = scroll.X;
-            //    dstRect.Y = scroll.Y;
-            //    dstRect.Width = clientSize.Width;
-            //    dstRect.Height = clientSize.Height;
-            //    srcRect.X = (((float)scroll.X / zoom));
-            //    srcRect.Y = (((float)scroll.Y / zoom));
-            //    srcRect.Width = (((float)clientSize.Width / zoom));
-            //    srcRect.Height = (((float)clientSize.Height / zoom));
-            //    pictureBox.SourceRectangle = srcRect;
-            //    pictureBox.TargetRectange = dstRect;
-            //}
-
-
-        }
-
-
-
-        /// <summary>
-        /// TODO: find the next existing file. If a file doesnt exist force a reload of the folder structure. apply the same to previous
-        /// </summary>
         private void next()
         {
             if (Program.State.Next())
             {
-
                 loadPictureUI();
-
             }
-            //    if (workingData.directoryIndex != -1)
-            //    {
-            //        workingData.directoryIndex++;
-
-            //        //loop
-            //        if (workingData.directoryIndex >= workingData.entries.Count)
-            //        {
-            //            workingData.directoryIndex = 0;
-            //        }
-
-            //        IEntry entry = workingData.entries[workingData.directoryIndex];
-            //        loadPicture(entry);
-            //    }
         }
         private void previous()
         {
-
             if (Program.State.Previous())
             {
                 loadPictureUI();
             }
-
-            //if (workingData.directoryIndex != -1)
-            //{
-            //    workingData.directoryIndex--;
-
-            //    //loop
-            //    if (workingData.directoryIndex < 0)
-            //    {
-            //        workingData.directoryIndex = workingData.entries.Count - 1;
-            //    }
-
-            //    IEntry entry = workingData.entries[workingData.directoryIndex];
-            //    loadPicture(entry);
-            //}
-
         }
 
 
@@ -1009,6 +841,8 @@ namespace ImageView
             statusStrip.Visible = false;
             menuStrip.Visible = false;
             fullscreen = true;
+
+            pictureBox.Refresh();
         }
 
 
@@ -1093,11 +927,6 @@ namespace ImageView
             {
                 pictureBox.Bitmap = Program.State.Bitmap;
             }
-            //if (workingData.bitmap != null)
-            //{
-            //    workingData.bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            //    pictureBox.Bitmap = workingData.bitmap;
-            //}
         }
 
         private void verticalFlip()
@@ -1106,11 +935,6 @@ namespace ImageView
             {
                 pictureBox.Bitmap = Program.State.Bitmap;
             }
-            //if (workingData.bitmap != null)
-            //{
-            //    workingData.bitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
-            //    pictureBox.Bitmap = workingData.bitmap;
-            //}
         }
 
         private void rotateRight()
@@ -1119,11 +943,6 @@ namespace ImageView
             {
                 pictureBox.Bitmap = Program.State.Bitmap;
             }
-            //if (workingData.bitmap != null)
-            //{
-            //    workingData.bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            //    pictureBox.Bitmap = workingData.bitmap;
-            //}
         }
 
         private void rotateLeft()
@@ -1132,11 +951,6 @@ namespace ImageView
             {
                 pictureBox.Bitmap = Program.State.Bitmap;
             }
-            //if (workingData.bitmap != null)
-            //{
-            //    workingData.bitmap.RotateFlip(RotateFlipType.Rotate270FlipNone);
-            //    pictureBox.Bitmap = workingData.bitmap;
-            //}
         }
 
 
@@ -1228,6 +1042,16 @@ namespace ImageView
             toolStripStatusLabelPixelPosition.Text = String.Empty;
         }
 
+        private void scrollDown()
+        {
+            pictureBox.ScrollVertically(ScrollDirection.Down);
+        }
+
+        private void scrollUp()
+        {
+            pictureBox.ScrollVertically(ScrollDirection.Up);
+        }
+
         #endregion
 
         #region override
@@ -1277,6 +1101,80 @@ namespace ImageView
 
         #region Public methods
 
+
+
+        public void InitalizeComponentsCultureAware()
+        {
+
+            this.SuspendLayout();
+            this.menuStrip.SuspendLayout();
+            this.toolStrip.SuspendLayout();
+            this.statusStrip.SuspendLayout();
+
+            this.menuStrip.Text = String.Empty;
+            this.fileToolStripMenuItem.Text = Settings.Get.General.GetString("MenuFile");
+            this.toolStripMenuItemOpen.Text = Settings.Get.General.GetString("Open");
+            this.closeToolStripMenuItem.Text = Settings.Get.General.GetString("Close");
+            this.deleteToolStripMenuItem.Text = Settings.Get.General.GetString("Delete");
+            this.exitToolStripMenuItem.Text = Settings.Get.General.GetString("Exit");
+            this.editToolStripMenuItem.Text = Settings.Get.General.GetString("Edit");
+            this.copyToolStripMenuItem.Text = Settings.Get.General.GetString("Copy");
+            this.imageToolStripMenuItem.Text = Settings.Get.General.GetString("Image");
+            this.informationToolStripMenuItem.Text = Settings.Get.General.GetString("Information");
+            this.rotateLeftToolStripMenuItem.Text = Settings.Get.General.GetString("RotateLeft");
+            this.rotateRightToolStripMenuItem.Text = Settings.Get.General.GetString("RotateRight");
+            this.verticalFlipToolStripMenuItem.Text = Settings.Get.General.GetString("VerticalFlip");
+            this.horizontalFlipToolStripMenuItem.Text = Settings.Get.General.GetString("HorizontalFlip");
+            this.viewToolStripMenuItem.Text = Settings.Get.General.GetString("View");
+            this.fullscreenToolStripMenuItem.Text = Settings.Get.General.GetString("Fullscreen");
+            this.slideshowToolStripMenuItem.Text = Settings.Get.General.GetString("Slideshow");
+            this.readerModeToolStripMenuItem.Text = Settings.Get.General.GetString("ReaderMode");
+            this.previousToolStripMenuItem.Text = Settings.Get.General.GetString("Previous");
+            this.nextToolStripMenuItem.Text = Settings.Get.General.GetString("Next");
+            this.zoomToolToolStripMenuItem.Text = Settings.Get.General.GetString("ZoomTool");
+            this.optionsToolStripMenuItem.Text = Settings.Get.General.GetString("Options");
+            this.settingsToolStripMenuItem.Text = Settings.Get.General.GetString("Settings");
+            this.helpToolStripMenuItem.Text = Settings.Get.General.GetString("Help");
+            this.checkForUpdatesToolStripMenuItem.Text = Settings.Get.General.GetString("CheckForUpdates");
+            this.licenseToolStripMenuItem.Text = Settings.Get.General.GetString("License");
+            this.aboutToolStripMenuItem.Text = Settings.Get.General.GetString("About");
+            this.toolStrip.Text = String.Empty;
+            this.toolStripButtonOpen.Text = Settings.Get.General.GetString("OpenImageFile");
+            this.toolStripButtonSaveAs.Text = Settings.Get.General.GetString("SaveImageCopyAs");
+            this.toolStripButtonDelete.Text = Settings.Get.General.GetString("DeleteImage");
+            this.toolStripButtonSlideShow.Text = Settings.Get.General.GetString("Slideshow");
+            this.toolStripReaderMode.Text = Settings.Get.General.GetString("ReaderMode");
+            this.toolStripButtonPrevious.Text = Settings.Get.General.GetString("PreviousImage");
+            this.toolStripButtonNext.Text = Settings.Get.General.GetString("NextImage");
+            this.realSizeToolStripMenuItem.Text = Settings.Get.General.GetString("RealSize");
+            this.BestFitToolStripMenuItem.Text = Settings.Get.General.GetString("BestFit");
+            this.fitToWidthToolStripMenuItem.Text = Settings.Get.General.GetString("FitToWidth");
+            this.fitToHeightToolStripMenuItem.Text = Settings.Get.General.GetString("FitToHeight");
+            this.toolStripComboBoxZoom.Text = String.Empty;
+            this.toolStripButtonSettings.Text = Settings.Get.General.GetString("Settings");
+            this.statusStrip.Text = String.Empty;
+            this.toolStripStatusLabelImageInfo.Text = Settings.Get.General.GetString("WelcomeStatus");
+            this.toolStripStatusLabelImagePosition.Text = String.Empty;
+            this.toolStripStatusLabelZoom.Text = String.Empty;
+            this.toolStripStatusLabelFileSize.Text = String.Empty;
+            this.toolStripStatusLabelPixelPosition.Text = String.Empty;
+            this.printToolStripMenuItem.Text = Settings.Get.General.GetString("PrintPreviewAlternate");
+
+            toolStripDropDownButtonDisplayType.ToolTipText = Settings.Get.General.GetString("PickImageSizeMode");
+
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+
+
         /// <summary>
         /// Forces a refresh of the history box
         /// </summary>
@@ -1292,24 +1190,46 @@ namespace ImageView
 
         public void setCheckeredPatternBackground(bool b)
         {
-            if (this.pictureBox.UseBackgroundBrush != b)
+            if (b)
             {
-                this.pictureBox.UseBackgroundBrush = b;
+                this.pictureBox.TransparentBackground = Properties.Resources.transparent16;
+            }
+            else
+            {
+                this.pictureBox.TransparentBackground = null;
             }
         }
 
         #endregion
 
-
-        private void scrollDown()
+        #region private Class
+        class FullScreenSaveState
         {
-            verticalScroll(1);
+            public FormWindowState WindowState;
+            public Point Location;
+            public Size Size;
+
+            public FullScreenSaveState()
+            {
+                WindowState = FormWindowState.Normal;
+                Location = new Point();
+                Size = new Size();
+            }
+        }
+        #endregion
+
+
+
+        public enum Tool
+        {
+            None,
+            Zoom
         }
 
-        private void scrollUp()
-        {
-            verticalScroll(-1);
-        }
+
+
+        //todo: scroll for next pictures
+        //deletion
 
 
 
