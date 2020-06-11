@@ -68,7 +68,7 @@ namespace ImageView.Configuration
         public ConfigSlideshow Slideshow;
         public ConfigReader Reader;
 
-        public static readonly string[] ExtensionFilter = new string[]{ ".jpg", ".jpeg", ".png", ".bmp", "*.dib", ".tiff", ".tif", ".gif", ".webp", ".cr2", ".dng", ".jp2", ".psd", ".svg", ".tga" };
+        public static readonly string[] ExtensionFilter = new string[]{ ".jpg", ".jpeg", ".png", ".bmp", "*.dib", ".tiff", ".tif", ".gif", ".webp", ".cr2", ".dng", ".jp2", ".psd", ".svg", ".tga", ".heic" };
         public static readonly string[] ArchiveFilter = new string[] { ".cbz", ".cbr", ".cb7", ".cba", ".cbt", ".7z", ".zip", ".rar" };
 
         public object Clone()
