@@ -711,19 +711,21 @@
             this.pictureBox.Size = new System.Drawing.Size(1008, 639);
             this.pictureBox.SizeMode = ImageView.SizeMode.BestFit;
             this.pictureBox.TabIndex = 4;
+            this.pictureBox.TransparentBackground = null;
             this.pictureBox.UseBackgroundBrush = false;
             this.pictureBox.UseZoomCursors = true;
+            this.pictureBox.VerticallScrollStep = 1F;
             this.pictureBox.WheelScrollLock = false;
             this.pictureBox.Zoom = 1F;
             this.pictureBox.ZoomInCursor = null;
-            this.pictureBox.ZoomMouseButton = System.Windows.Forms.MouseButtons.Left;
+            this.pictureBox.ZoomMouseButton = System.Windows.Forms.MouseButtons.None;
             this.pictureBox.ZoomOutCursor = null;
             this.pictureBox.ZoomOutModifier = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Menu)));
             this.pictureBox.ZoomChanged += new System.EventHandler<ImageView.PictureBox.ZoomEventArgs>(this.pictureBox_ZoomChanged);
             this.pictureBox.PixelCoordinatesChanged += new System.EventHandler<ImageView.PictureBox.CoordinatesEventArgs>(this.pictureBox_PixelCoordinatesChanged);
+            this.pictureBox.DoubleClick += new System.EventHandler<System.EventArgs>(this.pictureBox_DoubleClick);
             this.pictureBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBox_DragDrop);
             this.pictureBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBox_DragEnter);
-            this.pictureBox.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
             this.pictureBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.pictureBox_KeyDown);
             // 
             // FrmMain
