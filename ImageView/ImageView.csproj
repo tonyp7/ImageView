@@ -117,9 +117,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\ImageBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Components\NumericTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
