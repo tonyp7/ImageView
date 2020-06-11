@@ -52,6 +52,8 @@ namespace ImageView
         Description("Occurs whenever the cursor hovers over the image")]
         public event EventHandler<CoordinatesEventArgs> PixelCoordinatesChanged;
 
+        public new event EventHandler<EventArgs> DoubleClick;
+
         #endregion
 
         #region Hidden inherited properties
@@ -118,6 +120,19 @@ namespace ImageView
                 handler(this, e);
         }
 
+        /// <summary>
+        /// For some odd reason the double click event doesn't trigger on the control the picturebox is placed in\
+        /// so this forces a doubleclick event raise.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void panelPicture_DoubleClick(object sender, EventArgs e)
+        {
+            EventHandler<EventArgs> handler = DoubleClick;
+            if (handler != null)
+                handler(this, e);
+        }
+
 
 
         #endregion
@@ -147,12 +162,49 @@ namespace ImageView
             } 
         }
 
+        [Category("Appearance"),
+        Description("Bitmap used as a background with transparent images")]
+        public Bitmap TransparentBackground
+        {
+            get { return transparentBackground; }
+            set
+            {
+                if(value != transparentBackground)
+                {
+                    transparentBackground = value;
+                    draw();
+                }
+            }
+        }
+
 
         [Category("Behavior"),
         Description("Ordered list of valid zoom levels")]
         public List<float> ZoomSteps
         {
             get { return zoomSteps; }
+        }
+
+        [Category("Behavior"),
+        Description("Value in % of total height that the scrollbars should go up or down using keys. Default is 10% (0.1f)")]
+        public float VerticallScrollStep
+        {
+            get { return verticalScrollSep; }
+            set 
+            {
+                if (value < 0.0f)
+                {
+                    verticalScrollSep = 0;
+                }
+                else if(value > 1.0f)
+                {
+                    verticalScrollSep = 1.0f;
+                }
+                else
+                {
+                    verticalScrollSep = 1.0f;
+                }
+            }
         }
 
         [Category("Behavior"),
@@ -194,7 +246,14 @@ namespace ImageView
         public MouseButtons ZoomMouseButton
         {
             get { return zoomMouseButton; }
-            set { zoomMouseButton = value; }
+            set 
+            {
+                if(UseZoomCursors && this.Cursor != this.DefaultCursor && value == MouseButtons.None)
+                {
+                    this.Cursor = this.DefaultCursor;
+                }
+                zoomMouseButton = value; 
+            }
         }
 
         [Category("Behavior"),
@@ -308,10 +367,12 @@ namespace ImageView
         private RectangleF dstRect;
         private Rectangle boxRect;
         private Bitmap bitmap;
+        private Bitmap transparentBackground;
         private SizeMode sizeMode;
         private PointF pixelCoordinates;
         private Point mousePosition;
         private Cursor defaultCursor;
+        private float verticalScrollSep;
         private MouseButtons dragMouseButton = MouseButtons.None;
         private MouseButtons zoomMouseButton = MouseButtons.None;
 
@@ -320,11 +381,23 @@ namespace ImageView
 
         #region Public methods
 
+        public override void Refresh()
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("PictureBox.Refresh()");
+#endif
+            if (this.bitmap != null)
+            {
+                calculateRect();
+                draw();
+            }
+        }
+
         /// <summary>
         /// Adds a value to the zoom steps, and re-sorts the list. Duplicated values are automatically ignored.
         /// </summary>
         /// <param name="value">The new value to be added</param>
-        public void addZoomStep(float value)
+        public void AddZoomStep(float value)
         {
             if (value > 0)
             {
@@ -337,6 +410,23 @@ namespace ImageView
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="direction"></param>
+        public void ScrollVertically(ScrollDirection direction)
+        {
+            if (panelMain.VerticalScroll.Visible)
+            {
+                Point scroll = panelMain.AutoScrollPosition;
+                scroll.X *= -1;
+                scroll.Y = -scroll.Y + ((int)((float)panelMain.Height * verticalScrollSep)) *  (direction == ScrollDirection.Up ? -1:1) ;
+                panelMain.AutoScrollPosition = scroll;
+
+                refreshDrawingRect();
+                draw();
+            }
+        }
 
         #endregion
 
@@ -345,8 +435,6 @@ namespace ImageView
         {
             this.panelPicture.Invalidate();
         }
-
-
         private void calculateRect()
         {
             calculateRect(Point.Empty, -1.0f);
@@ -635,7 +723,6 @@ namespace ImageView
                 OnZoomChanged(new ZoomEventArgs(zoom));
             }
         }
-
         private void PanelMain_MouseWheel(object sender, MouseEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("PanelMain_MouseWheel");
@@ -644,40 +731,33 @@ namespace ImageView
                 refreshDrawingRect();
             }
         }
-
         private void PanelMain_Scroll(object sender, ScrollEventArgs e)
         {
             refreshDrawingRect();
         }
-
         private void panelPicture_Paint(object sender, PaintEventArgs e)
         {
-
+#if DEBUG
             System.Diagnostics.Debug.WriteLine("panelPicture_Paint");
+#endif 
             if (bitmap != null)
             {
                 Graphics g = e.Graphics;
+
+                if(transparentBackground != null && Image.IsAlphaPixelFormat(bitmap.PixelFormat))
+                {
+                    g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                    using(TextureBrush textureBrush = new TextureBrush(transparentBackground, WrapMode.Tile))
+                    {
+                        g.FillRectangle(textureBrush, dstRect);
+                    }
+                }
 
                 g.PixelOffsetMode = PixelOffsetMode.None;
                 g.InterpolationMode = this.interpolationMode == InterpolationMode.Invalid ? InterpolationMode.Default : this.interpolationMode;
                 g.DrawImage(bitmap, dstRect, srcRect, GraphicsUnit.Pixel);
             }
         }
-
-        public override void Refresh()
-        {
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("PictureBox.Refresh()");
-#endif
-            if (this.bitmap != null)
-            {
-                calculateRect();
-                draw();
-            }
-        }
-
-
-
         private float getNextZoomValue(ZoomMode zoomMode)
         {
             float newZoom = zoom;
@@ -718,7 +798,6 @@ namespace ImageView
             return newZoom;
 
         }
-
         private void PictureBox_KeyUp(object sender, KeyEventArgs e)
         {
             if(UseZoomCursors && this.ZoomInCursor != null && ZoomMouseButton != MouseButtons.None)
@@ -777,7 +856,6 @@ namespace ImageView
             }
             return base.IsInputKey(keyData);
         }
-
         private void panelPicture_MouseDown(object sender, MouseEventArgs e)
         {
             this.Focus();
@@ -825,7 +903,6 @@ namespace ImageView
                 }
             }
         }
-
         private void panelPicture_MouseEnter(object sender, EventArgs e)
         {
             if (UseZoomCursors && ZoomMouseButton != MouseButtons.None && ZoomInCursor != null && ZoomOutCursor != null)
@@ -833,7 +910,6 @@ namespace ImageView
                this.Cursor = new Cursor(ZoomInCursor.Handle);
             }
         }
-
         private void panelPicture_MouseLeave(object sender, EventArgs e)
         {
             if (this.Cursor != defaultCursor)
@@ -841,7 +917,6 @@ namespace ImageView
 
             OnPixelCoordinatesChanged(new CoordinatesEventArgs(true));
         }
-
         private void panelPicture_MouseMove(object sender, MouseEventArgs e)
         {
             //pixel coords
@@ -887,7 +962,9 @@ namespace ImageView
             this.panelMain.Scroll += PanelMain_Scroll;
             this.panelMain.MouseWheel += PanelMain_MouseWheel;
             this.Bitmap = null;
+            this.transparentBackground = null;
             this.zoom = 1.0f;
+            this.verticalScrollSep = 0.1f; //10% is default scroll step
             this.srcRect = new RectangleF();
             this.dstRect = new RectangleF();
             this.boxRect = new Rectangle();
@@ -953,8 +1030,8 @@ namespace ImageView
 
 
 
-        #endregion
 
+        #endregion
 
     }
 
@@ -965,6 +1042,13 @@ namespace ImageView
         In,
         Out
     }
+
+    public enum ScrollDirection
+    {
+        Up,
+        Down
+    }
+
     public enum SizeMode : int
     {
         BestFit = 0,

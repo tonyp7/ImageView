@@ -53,6 +53,7 @@ namespace ImageView
             this.panelPicture.Size = new System.Drawing.Size(189, 213);
             this.panelPicture.TabIndex = 0;
             this.panelPicture.Paint += new System.Windows.Forms.PaintEventHandler(this.panelPicture_Paint);
+            this.panelPicture.DoubleClick += new System.EventHandler(this.panelPicture_DoubleClick);
             this.panelPicture.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelPicture_MouseDown);
             this.panelPicture.MouseEnter += new System.EventHandler(this.panelPicture_MouseEnter);
             this.panelPicture.MouseLeave += new System.EventHandler(this.panelPicture_MouseLeave);
