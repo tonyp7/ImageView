@@ -97,6 +97,7 @@
             this.timerSlideShow = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.pictureBox = new ImageView.PictureBox();
+            this.toolStripStatusLabelWelcome = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -618,6 +619,7 @@
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabelWelcome,
             this.toolStripStatusLabelImageInfo,
             this.toolStripStatusLabelImagePosition,
             this.toolStripStatusLabelZoom,
@@ -637,8 +639,8 @@
             | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
             this.toolStripStatusLabelImageInfo.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
             this.toolStripStatusLabelImageInfo.Name = "toolStripStatusLabelImageInfo";
-            this.toolStripStatusLabelImageInfo.Size = new System.Drawing.Size(269, 19);
-            this.toolStripStatusLabelImageInfo.Text = "Welcome! Open an image file to begin browsing.";
+            this.toolStripStatusLabelImageInfo.Size = new System.Drawing.Size(65, 19);
+            this.toolStripStatusLabelImageInfo.Text = "ImageInfo";
             // 
             // toolStripStatusLabelImagePosition
             // 
@@ -673,7 +675,7 @@
             // toolStripStatusLabelSpring
             // 
             this.toolStripStatusLabelSpring.Name = "toolStripStatusLabelSpring";
-            this.toolStripStatusLabelSpring.Size = new System.Drawing.Size(470, 19);
+            this.toolStripStatusLabelSpring.Size = new System.Drawing.Size(378, 19);
             this.toolStripStatusLabelSpring.Spring = true;
             // 
             // toolStripStatusLabelPixelPosition
@@ -727,6 +729,12 @@
             this.pictureBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBox_DragDrop);
             this.pictureBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBox_DragEnter);
             this.pictureBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.pictureBox_KeyDown);
+            // 
+            // toolStripStatusLabelWelcome
+            // 
+            this.toolStripStatusLabelWelcome.Name = "toolStripStatusLabelWelcome";
+            this.toolStripStatusLabelWelcome.Size = new System.Drawing.Size(265, 19);
+            this.toolStripStatusLabelWelcome.Text = "Welcome! Open an image file to begin browsing.";
             // 
             // FrmMain
             // 
@@ -833,6 +841,7 @@
         private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private PictureBox pictureBox;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelWelcome;
     }
 }
 
