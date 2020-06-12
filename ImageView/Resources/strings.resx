@@ -165,6 +165,13 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="ConfirmFileDeletion" xml:space="preserve">
+    <value>The file {0} will be permanently deleted.
+Are you sure you want to continue?</value>
+  </data>
+  <data name="ConfirmFileDeletionTitle" xml:space="preserve">
+    <value>Delete file?</value>
+  </data>
   <data name="Copy" xml:space="preserve">
     <value>Copy</value>
   </data>
@@ -182,6 +189,25 @@
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="ErrorArchiveFile" xml:space="preserve">
+    <value>This image file is contained inside an archive file.
+It cannot be deleted.</value>
+  </data>
+  <data name="ErrorFileDeletionGeneric" xml:space="preserve">
+    <value>Could not delete file {0}.</value>
+  </data>
+  <data name="ErrorFileDeletionPrivilege" xml:space="preserve">
+    <value>Error wile deleting file.
+Insufficient user privilege.
+Please restart the app as an administrator.</value>
+  </data>
+  <data name="ErrorFileDeletionTitle" xml:space="preserve">
+    <value>Could not delete file</value>
+  </data>
+  <data name="ErrorFileNotFound" xml:space="preserve">
+    <value>ImageView was unable to load {0}.
+This file does not exist.</value>
   </data>
   <data name="ErrorImageLoad" xml:space="preserve">
     <value>ImageView was unable to load {0}.

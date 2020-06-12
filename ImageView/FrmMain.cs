@@ -39,110 +39,1129 @@ using System.Globalization;
 using System.Threading;
 using System.Resources;
 using ImageView.Components;
+using ImageView.Exceptions;
 
 namespace ImageView
 {
     public partial class FrmMain : Form
     {
 
-        class FullScreenSaveState
-        {
-            public FormWindowState WindowState;
-            public Point Location;
-            public Size Size;
-
-            public FullScreenSaveState()
-            {
-                WindowState = FormWindowState.Normal;
-                Location = new Point();
-                Size = new Size();
-            }
-        }
-
-        public enum Tool
-        {
-            None,
-            Zoom
-        }
-
-
+        #region private members
         private bool fullscreen = false;
-
-        private Point mousePosition = new Point();
-        private Point mousePositionOnMouseDown = new Point();
-
         private FullScreenSaveState fullScreenSaveState = new FullScreenSaveState();
-
         private Tool activeTool = Tool.None;
         private ViewingMode viewingMode = ViewingMode.Normal;
+        #endregion
 
-        private ImageBox pictureBox;
+
+        #region Constructor
         public FrmMain()
         {
             InitializeComponent();
 
             Settings.Get.Load();
 
-            // The custom picture box
-            // 
-            // pictureBox
-            // 
-            this.pictureBox = new ImageBox();
-            this.pictureBox.InitialImage = null;
-            this.pictureBox.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(480, 480);
-            this.pictureBox.TabIndex = 0;
-            this.pictureBox.TabStop = false;
-            this.pictureBox.Click += new System.EventHandler(this.pictureBox_Click);
-            this.pictureBox.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
-            this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
-            this.pictureBox.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
-            this.pictureBox.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
-            this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
-            this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
-            this.pictureBox.CheckeredPatternBackground = Settings.Get.Display.CheckeredPatternBackground;
-            this.panelMain.Controls.Add(this.pictureBox);
+            // Picturebox config
+            setCheckeredPatternBackground(Settings.Get.Display.CheckeredPatternBackground);
+            this.pictureBox.DragCursor = Properties.Resources.move;
+            this.pictureBox.ZoomInCursor = Properties.Resources.zoomin;
+            this.pictureBox.ZoomOutCursor = Properties.Resources.zoomout;
+            this.pictureBox.MouseWheel += PictureBox_MouseWheel;
 
-            //Mouse wheel events for some reason can't be created using Visual Studio's designer
-            this.MouseWheel += FrmMain_MouseWheel;
-            this.panelMain.MouseWheel += PanelMain_MouseWheel;
 
             //Zoom list
-            foreach(float f in ConfigDisplay.ZOOM_STEPS)
+            foreach (float f in ConfigDisplay.ZOOM_STEPS)
             {
                 this.toolStripComboBoxZoom.Items.Add(String.Format("{0}%", f*100.0f));
             }
 
-
             this.openFileDialog.Filter = Properties.Resources.SupportedImageFiles;
-            workingData = new WorkingData();
-
-            
 
             //multilingual settings
             InitalizeComponentsCultureAware();
 
+            //restore history
+            toolStripComboBoxNavigation.SelectedIndexChanged -= toolStripComboBoxNavigation_SelectedIndexChanged;
+            toolStripComboBoxNavigation.ComboBox.DataSource = Settings.Get.History.Get();
+            toolStripComboBoxNavigation.SelectedIndexChanged += toolStripComboBoxNavigation_SelectedIndexChanged;
+
+            //initial conditions
             close();
 
-            //restore history
-            toolStripComboBoxNavigation.Items.AddRange(Settings.Get.History.Get().ToArray() );
-
             //set check mark on the type of image view
-            refreshImageSizeModeUI();
+            setImageSizeMode(Settings.Get.Display.SizeModeOnImageLoad);
 
             //restore window size
             if (Settings.Get.Window.Width != 0 && Settings.Get.Window.Height != 0)
             {
-                this.panelMain.Resize -= panelMain_Resize;
                 this.Location = new Point(Settings.Get.Window.X, Settings.Get.Window.Y);
                 this.Width = Settings.Get.Window.Width;
                 this.Height = Settings.Get.Window.Height;
                 this.WindowState = Settings.Get.Window.State;
-                this.panelMain.Resize += panelMain_Resize;
             }
         }
+
+
+        #endregion
+
+        #region Events - Mouse
+
+
+        private void PictureBox_MouseWheel(object sender, MouseEventArgs e)
+        {
+            FrmMain_MouseWheel(sender, e);
+        }
+        private void FrmMain_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta < 0) //scroll down
+            {
+                next();
+            }
+            else
+            {
+                previous();
+            }
+        }
+
+
+        private void pictureBox_DoubleClick(object sender, EventArgs e)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("pictureBox_DoubleClick");
+#endif
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            //prevents a fullscreen trigger when trying to zoom on the picture
+            if (activeTool != Tool.Zoom)
+            {
+                if (me.Button == MouseButtons.Left)
+                {
+                    if (fullscreen)
+                    {
+                        exitFullScreen();
+                    }
+                    else
+                    {
+                        enterFullScreen();
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Events - Form
+        private void FrmMain_Load(object sender, EventArgs e)
+        {
+            if (Settings.Get.General.FirstLaunch)
+            {
+                new FrmSplashScreen(this).ShowDialog();
+            }
+
+            resizeNavigationBar();
+
+            toolStripComboBoxNavigation_UpdateText(String.Empty);
+
+            string[] args = Environment.GetCommandLineArgs();
+            if (args != null && args.Length >= 2)
+            {
+                loadPicture(args[1]);
+            }
+        }
+
+        private void FrmMain_Resize(object sender, EventArgs e)
+        {
+            resizeNavigationBar();
+            pictureBox.Refresh();
+        }
+
+
+        /// <summary>
+        /// Saves the current window state to be able to restore it on next launch
+        /// <seealso cref="FrmMain_FormClosed(object, FormClosedEventArgs)"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //Save last window size and position
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                Settings.Get.Window.X = this.RestoreBounds.X;
+                Settings.Get.Window.Y = this.RestoreBounds.Y;
+                Settings.Get.Window.Width = this.RestoreBounds.Width;
+                Settings.Get.Window.Height = this.RestoreBounds.Height;
+                Settings.Get.Window.State = this.WindowState;
+            }
+            else
+            {
+                Settings.Get.Window.X = this.Location.X;
+                Settings.Get.Window.Y = this.Location.Y;
+                Settings.Get.Window.Width = this.Width;
+                Settings.Get.Window.Height = this.Height;
+                Settings.Get.Window.State = this.WindowState;
+            }
+
+        }
+
+
+        /// <summary>
+        /// At form closure there's a silent attempt to save the current configuration
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FrmMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Settings.Get.Save();
+        }
+
+
+        /// <summary>
+        /// Implements a lot of shortcut keys when Windows Forms does not natively support the shortcuts. For instance, single key shortcuts are invalid for winforms
+        /// so this method contains many single key shortcuts
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FrmMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Left:
+                case Keys.PageUp:
+                    previous();
+                    break;
+                case Keys.Right:
+                case Keys.PageDown:
+                    next();
+                    break;
+                case Keys.Down:
+                    scrollDown();
+                    break;
+                case Keys.Up:
+                    scrollUp();
+                    break;
+                case Keys.P:
+                    showSettings();
+                    break;
+                case Keys.I:
+                    showInformation();
+                    break;
+                case Keys.F:
+                    toggleFullScreen();
+                    break;
+                case Keys.L:
+                    rotateLeft();
+                    break;
+                case Keys.R:
+                    rotateRight();
+                    break;
+                case Keys.V:
+                    verticalFlip();
+                    break;
+                case Keys.H:
+                    horizontalFlip();
+                    break;
+                case Keys.Z:
+                    toggleZoomTool();
+                    break;
+                case Keys.Escape:
+                    if (activeTool == Tool.Zoom)
+                    {
+                        exitZoomTool();
+                    }
+                    else if (fullscreen)
+                    {
+                        exitFullScreen();
+                        timerSlideShow.Stop();
+                    }
+                    break;
+            }
+        }
+
+
+        #endregion
+
+        #region Events - Menu
+
+        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            printPreview();
+        }
+
+        private void readerModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleReaderMode();
+        }
+
+        private void bestFitStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.BestFit);
+        }
+        private void realSizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.RealSize);
+        }
+
+        private void fitToWidthToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.FitToWidth);
+        }
+
+        private void fitToHeightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setImageSizeMode(ImageSizeMode.FitToHeight);
+        }
+        private void licenseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FrmLicense().ShowDialog();
+        }
+        private void rotateLeftToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotateLeft();
+        }
+
+        private void rotateRightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotateRight();
+        }
+
+
+        private void verticalFlipToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            verticalFlip();
+        }
+
+        private void horizontalFlipToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            horizontalFlip();
+        }
+
+        private void zoomToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleZoomTool();
+        }
+        private void informationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showInformation();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            copy();
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            delete();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showSettings();
+        }
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmAbout a = new FrmAbout();
+            a.ShowDialog();
+        }
+
+        private void slideshowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //enterSlideshow();
+            setViewMode(ViewingMode.Slideshow);
+        }
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            close();
+        }
+
+
+        private void toolStripMenuItemOpen_Click(object sender, EventArgs e)
+        {
+            openFile();
+        }
+
+        private void fullscreenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleFullScreen();
+        }
+
+
+        #endregion
+
+        #region Events - Toolbar
+        private void toolStripButtonPrintPreview_Click(object sender, EventArgs e)
+        {
+            printPreview();
+        }
+
+
+        private void toolStripReaderMode_Click(object sender, EventArgs e)
+        {
+            toggleReaderMode();
+        }
+        private void toolStripButtonSettings_Click(object sender, EventArgs e)
+        {
+            showSettings();
+        }
+
+        private void toolStripButtonSlideShow_Click(object sender, EventArgs e)
+        {
+            //enterSlideshow();
+            setViewMode(ViewingMode.Slideshow);
+        }
+
+        private void toolStripButtonOpen_Click(object sender, EventArgs e)
+        {
+            openFile();
+        }
+        private void toolStripButtonDelete_Click(object sender, EventArgs e)
+        {
+            delete();
+        }
+
+        private void toolStripButtonNext_Click(object sender, EventArgs e)
+        {
+            next();
+        }
+
+        private void toolStripButtonPrevious_Click(object sender, EventArgs e)
+        {
+            previous();
+        }
+        private void toolStripComboBoxNavigation_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripComboBoxNavigation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("toolStripComboBoxNavigation_SelectedIndexChanged" + sender.ToString());
+#endif
+            TextRepresentationEntry tre = (TextRepresentationEntry)toolStripComboBoxNavigation.SelectedItem;
+            this.ActiveControl = null;
+
+            loadPicture(tre);
+
+            //This fixes a weird refresh issue where the button to expand the dropdown stays focused after the selection change
+            toolStripComboBoxNavigation.Select(0, 0);
+            toolStripComboBoxNavigation.Invalidate();
+            toolStripComboBoxNavigation.Select(0, 0);
+
+        }
+
+        private void toolStripComboBoxZoom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            zoom();
+        }
+
+        private void toolStripComboBoxZoom_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '\r')
+            {
+                zoom();
+                e.Handled = true;
+            }
+        }
+
+        #endregion
+
+        #region Events - Others
+
+        private void timerSlideShow_Tick(object sender, EventArgs e)
+        {
+            next();
+        }
+
+        #endregion
+
+        #region Events - Picturebox
+
+        private void pictureBox_ZoomChanged(object sender, PictureBox.ZoomEventArgs e)
+        {
+            if (!toolStripStatusLabelZoom.Visible) toolStripStatusLabelZoom.Visible = true;
+
+            toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(pictureBox.Zoom * 100.0f));
+            toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(pictureBox.Zoom * 100.0f)));
+        }
+
+        private void pictureBox_PixelCoordinatesChanged(object sender, PictureBox.CoordinatesEventArgs e)
+        {
+            if (e.OutOfBounds)
+            {
+                toolStripStatusLabelPixelPosition.Visible = false;
+                toolStripStatusLabelPixelPosition.Text = String.Empty;
+            }
+            else
+            {
+                toolStripStatusLabelPixelPosition.Visible = true;
+                toolStripStatusLabelPixelPosition.Text = string.Format("{0:0},{1:0}", e.PixelCoordinates.X, e.PixelCoordinates.Y);
+            }
+        }
+
+        private void pictureBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            FrmMain_KeyDown(sender, e);
+        }
+
+        private void pictureBox_DragEnter(object sender, DragEventArgs e)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("pictureBox_DragEnter");
+#endif
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+                var settings = Settings.Get;
+                if (s != null & s.Count() > 0)
+                {
+                    if (Config.ExtensionFilter.Any(x => s[0].ToLower().EndsWith(x)))
+                    {
+                        e.Effect = DragDropEffects.All;
+                        return;
+                    }
+                }
+            }
+
+            e.Effect = DragDropEffects.None;
+        }
+
+        private void pictureBox_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            if (s != null & s.Count() > 0)
+            {
+                loadPicture(s[0]);
+            }
+
+        }
+
+        #endregion
+
+        #region UI Updates
+
+
+        /// <summary>
+        /// This is a key function that actually display the loaded image on screen
+        /// </summary>
+        private void loadPictureUI()
+        {
+            var state = Program.State;
+            var settings = Settings.Get;
+
+            pictureBox.Bitmap = null;
+
+            //set proper image size mode before loading the bitmap.
+            if (settings.Display.SizeModeOnImageLoad != ImageSizeMode.Restore &&  (int)settings.Display.SizeModeOnImageLoad != (int)pictureBox.SizeMode)
+            {
+                setImageSizeMode(settings.Display.SizeModeOnImageLoad);
+            }
+
+            //bitmap to picturebox!
+            pictureBox.Bitmap = state.Bitmap;
+
+            //peripheral UI elements
+
+
+            //force refresh history. If this isnt done the new history order doesnt get refreshed
+            RefreshHistoryList();
+
+            toolStripComboBoxNavigation_UpdateText(state.ActiveEntry.FullName);
+
+            toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} - {2} {3}", state.NativeImage.BaseWidth, state.NativeImage.BaseHeight, state.NativeImage.ColorSpace, state.NativeImage.ColorType);
+            toolStripStatusLabelImageInfo.Visible = true;
+            toolStripStatusLabelFileSize.Text = Program.NiceFileSize(state.ActiveEntry.Length);
+            toolStripStatusLabelFileSize.Visible = true;
+            toolStripStatusLabelImagePosition.Text = String.Format("{0} / {1}", state.ActiveEntryIndex + 1, state.Entries.Count);
+            toolStripStatusLabelImagePosition.Visible = true;
+            this.Text = String.Format("{0} - {1}", state.ActiveEntry.FullName, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
+        }
+
+        /// <summary>
+        /// Prevents a useless picture reload if the image is already in history. See also: toolStripComboBoxZoom_UpdateText
+        /// </summary>
+        /// <param name="value"></param>
+        private void toolStripComboBoxNavigation_UpdateText(string value)
+        {
+            toolStripComboBoxNavigation.SelectedIndexChanged -= toolStripComboBoxNavigation_SelectedIndexChanged;
+            toolStripComboBoxNavigation.Text = value;
+            toolStripComboBoxNavigation.SelectedIndexChanged += toolStripComboBoxNavigation_SelectedIndexChanged;
+        }
+
+        /// <summary>
+        /// In case the calculated zoom level matches exactly a zoom preset (like 50%), the event SelectedIndexChanged is fired.
+        /// In order to programmatically change the combo box without firing the event, we:
+        ///     - Unbind the SelectedIndexChanged
+        ///     - Update the text
+        ///     - Rebind the SelectedIndexChanged event
+        /// An alternative is to check for the control focus on the SelectedIndexChanged event. as in:
+        ///     ToolStripComboBox cb = (ToolStripComboBox)sender;
+        ///     if (!cb.Focused) return;
+        /// Both methods have merits, but it is preferred here not to mess with focuses
+        /// </summary>
+        /// <param name="value">New value to assign the combo box .Text property</param>
+        private void toolStripComboBoxZoom_UpdateText(string value)
+        {
+            toolStripComboBoxZoom.SelectedIndexChanged -= toolStripComboBoxZoom_SelectedIndexChanged;
+            toolStripComboBoxZoom.Text = value;
+            toolStripComboBoxZoom.SelectedIndexChanged += toolStripComboBoxZoom_SelectedIndexChanged;
+        }
+
+        #endregion
+
+        #region private methods
+
+        /// <summary>
+        /// Change image size mode, refresh UI elements and resize the picture box
+        /// </summary>
+        /// <param name="sz">New image size mode to be set</param>
+        private void setImageSizeMode(ImageSizeMode sz)
+        {
+            if(sz == ImageSizeMode.Restore)
+            {
+                sz = Settings.Get.Display.SizeMode;
+            }
+            Settings.Get.Display.SizeMode = sz;
+            refreshImageSizeModeUI(sz);
+            pictureBox.SizeMode = (ImageView.SizeMode)sz;
+        }
+
+
+
+        private void enterReader()
+        {
+            setImageSizeMode(Settings.Get.Reader.SizeMode);
+            toolStripReaderMode.BackColor = SystemColors.MenuHighlight;
+        }
+
+        private void exitReader()
+        {
+            if (Settings.Get.Display.SizeModeOnImageLoad != ImageSizeMode.Restore)
+            {
+                setImageSizeMode(Settings.Get.Display.SizeModeOnImageLoad);
+            }
+            toolStripReaderMode.BackColor = SystemColors.Control;
+        }
+
+        private void refreshImageSizeModeUI(ImageSizeMode sizeMode)
+        {
+
+            switch (sizeMode)
+            {
+                case ImageSizeMode.BestFit:
+                    BestFitToolStripMenuItem.Image = Properties.Resources.expand_arrows_tick16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
+                    break;
+                case ImageSizeMode.RealSize:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid_tick16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
+                    break;
+                case ImageSizeMode.FitToWidth:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith_tick16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
+                    break;
+                case ImageSizeMode.FitToHeight:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv_tick16;
+                    break;
+                default:
+                    BestFitToolStripMenuItem.Image = ImageView.Properties.Resources.expand_arrows16;
+                    realSizeToolStripMenuItem.Image = ImageView.Properties.Resources.expand_solid16;
+                    fitToWidthToolStripMenuItem.Image = ImageView.Properties.Resources.fith16;
+                    fitToHeightToolStripMenuItem.Image = ImageView.Properties.Resources.fitv16;
+                    break;
+            }
+
+        }
+
+        private void enterZoomTool()
+        {
+            activeTool = Tool.Zoom;
+            this.pictureBox.ZoomMouseButton = MouseButtons.Left;
+        }
+
+        private void exitZoomTool()
+        {
+            this.pictureBox.ZoomMouseButton = MouseButtons.None;
+            activeTool = Tool.None;
+        }
+
+        private void toggleZoomTool()
+        {
+            if (activeTool != Tool.Zoom)
+            {
+                enterZoomTool();
+            }
+            else
+            {
+                exitZoomTool();
+            }
+        }
+        private void showSettings()
+        {
+            FrmSettings f = new FrmSettings(this);
+            f.ShowDialog();
+        }
+        private void resizeNavigationBar()
+        {
+            toolStripComboBoxNavigation.Width = (int)(0.5f * this.Width);
+        }
+        private void printPreview()
+        {
+            var state = Program.State;
+            if (state.Bitmap != null)
+            {
+                (new FrmPrintPreview((Bitmap)state.Bitmap.Clone())).Show();
+            }
+        }
+
+        /// <summary>
+        /// This function parses the value of the zoom box and assign the zoom to the picture
+        /// </summary>
+        private void zoom()
+        {
+            float zoom = 1.0f;
+            if (float.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
+            {
+                zoom /= 100.0f;
+                zoom = Program.Clamp(zoom, .01f, ConfigDisplay.MAX_ZOOM);
+                Settings.Get.Display.Zoom = zoom;
+                pictureBox.Zoom = zoom;
+
+                setImageSizeMode(Settings.Get.Display.SizeMode = ImageSizeMode.Zoom);
+                
+                //remove focus from the textbox so that user can navigate with arrow keys etc.
+                this.ActiveControl = null;
+            }
+        }
+
+        private void openFile()
+        {
+            DialogResult dr = openFileDialog.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                loadPicture(openFileDialog.FileName);
+            }
+        }
+
+        private void loadPicture(string filename)
+        {
+            bool success = false;
+            try
+            {
+                success = Program.State.LoadPicture(filename);
+            }
+            catch (ImageViewLoadException e)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (success)
+                {
+                    loadPictureUI();
+                }
+
+            }
+
+        }
+
+        private void loadPicture(TextRepresentationEntry tre)
+        {
+
+            bool success = false;
+            try
+            {
+                success = Program.State.LoadPicture(tre);
+            }
+            catch (ImageViewLoadException e)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (FileNotFoundException notfounde)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorFileNotFound"), notfounde.FileName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (DirectoryNotFoundException notfounde)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorPathNotFound"), (string)notfounde.Data["fullname"]), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (success)
+                {
+                    loadPictureUI();
+                }
+            }
+        }
+
+        private void next()
+        {
+            bool success = false;
+            try
+            {
+                success = Program.State.Next();
+            }
+            catch (ImageViewLoadException e)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (success)
+                {
+                    loadPictureUI();
+                }
+                
+            }
+
+        }
+        private void previous()
+        {
+            bool success = false;
+            try
+            {
+                success = Program.State.Previous();
+            }
+            catch (ImageViewLoadException e)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (success)
+                {
+                    loadPictureUI();
+                }
+            }
+        }
+
+
+        private void copy()
+        {
+            if (Program.State.Bitmap != null)
+            {
+                Clipboard.SetImage(Program.State.Bitmap);
+            }
+        }
+
+        private void showInformation()
+        {
+            if (Program.State.ActiveEntry != null)
+            {
+                FrmInformation f = new FrmInformation();
+                f.ShowDialog();
+            }
+        }
+
+
+        private void exitFullScreen()
+        {
+
+            WinTaskbar.Show();
+            toolStrip.Visible = true;
+            statusStrip.Visible = true;
+            menuStrip.Visible = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.TopMost = false;
+            pictureBox.BorderStyle = BorderStyle.Fixed3D;
+
+            //restore window state
+            this.WindowState = fullScreenSaveState.WindowState;
+            this.Location = fullScreenSaveState.Location;
+            this.Size = fullScreenSaveState.Size;
+
+            //if slideshow was on we disable it
+            if (timerSlideShow.Enabled) timerSlideShow.Stop();
+
+            fullscreen = false;
+        }
+        private void enterFullScreen()
+        {
+
+
+            //save window state before entering full screen so that it can be restored when exiting
+            fullScreenSaveState.WindowState = this.WindowState;
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                fullScreenSaveState.Location = this.RestoreBounds.Location;
+                fullScreenSaveState.Size = this.RestoreBounds.Size;
+            }
+            else
+            {
+                fullScreenSaveState.Location = this.Location;
+                fullScreenSaveState.Size = this.Size;
+            }
+
+
+            WinTaskbar.Hide();
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+
+            //if the panel does not contain anything, setting the border to none completely breaks the layout for
+            //some odd reason. Seems to be a WinForms bug and this is the workaround
+            if (pictureBox.Bitmap != null)
+                pictureBox.BorderStyle = BorderStyle.None;
+
+            this.TopMost = true;
+
+            this.WindowState = FormWindowState.Normal;
+            this.Location = new Point(0, 0);
+            this.Size = new Size(Screen.PrimaryScreen.Bounds.Size.Width, Screen.PrimaryScreen.Bounds.Size.Height);
+
+            toolStrip.Visible = false;
+            statusStrip.Visible = false;
+            menuStrip.Visible = false;
+            fullscreen = true;
+
+            pictureBox.Refresh();
+        }
+
+
+        private void toggleFullScreen()
+        {
+            if (fullscreen)
+            {
+                exitFullScreen();
+            }
+            else
+            {
+                enterFullScreen();
+            }
+        }
+
+
+        private void toggleReaderMode()
+        {
+            if (viewingMode == ViewingMode.Reader)
+            {
+                setViewMode(ViewingMode.Normal);
+            }
+            else
+            {
+                setViewMode(ViewingMode.Reader);
+            }
+        }
+
+        private void setViewMode(ViewingMode vm)
+        {
+
+            if (vm != viewingMode)
+            {
+                switch (viewingMode)
+                {
+                    case ViewingMode.Slideshow:
+                        exitSlideshow();
+                        break;
+                    case ViewingMode.Reader:
+                        exitReader();
+                        break;
+                }
+            }
+
+            switch (vm)
+            {
+                case ViewingMode.Slideshow:
+                    enterSlideshow();
+                    break;
+                case ViewingMode.Reader:
+                    if (timerSlideShow.Enabled) timerSlideShow.Stop();
+                    enterReader();
+                    break;
+                case ViewingMode.Normal:
+                    if (timerSlideShow.Enabled) timerSlideShow.Stop();
+                    break;
+            }
+
+            viewingMode = vm;
+        }
+
+
+
+        private void exitSlideshow()
+        {
+            exitFullScreen();
+        }
+        private void enterSlideshow()
+        {
+
+            setImageSizeMode(Settings.Get.Slideshow.SizeMode);
+
+            enterFullScreen();
+            timerSlideShow.Interval = Settings.Get.Slideshow.Timer;
+            timerSlideShow.Start();
+        }
+
+
+        private void horizontalFlip()
+        {
+            if (Program.State.HorizontalFlip())
+            {
+                pictureBox.Bitmap = Program.State.Bitmap;
+            }
+        }
+
+        private void verticalFlip()
+        {
+            if (Program.State.VerticalFlip())
+            {
+                pictureBox.Bitmap = Program.State.Bitmap;
+            }
+        }
+
+        private void rotateRight()
+        {
+            if (Program.State.RotateRight())
+            {
+                pictureBox.Bitmap = Program.State.Bitmap;
+            }
+        }
+
+        private void rotateLeft()
+        {
+            if (Program.State.RotateLeft())
+            {
+                pictureBox.Bitmap = Program.State.Bitmap;
+            }
+        }
+
+
+        /// <summary>
+        /// Deletes the file currently being viewed. 
+        /// TODO: add a switch based on the configuration to move to recycle bin by default instead of deleting.
+        /// TODO: In case of AunauthorizedAccessException prompt user to restart the app in admin mode
+        /// </summary>
+        private void delete()
+        {
+
+            var lang = Settings.Get.General;
+
+            if (MessageBox.Show(String.Format(lang.GetString("ConfirmFileDeletion"), Program.State.ActiveEntry.Name), lang.GetString("ConfirmFileDeletionTitle"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                try
+                {
+                    Program.State.Delete();
+                }
+                catch(ArchiveFileDeletionException)
+                {
+                    MessageBox.Show(lang.GetString("ErrorArchiveFile"), lang.GetString("ErrorFileDeletionTitle"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                catch (UnauthorizedAccessException uaex)
+                {
+                    MessageBox.Show(lang.GetString("ErrorFileDeletionPrivilege") + "\n\n" + uaex.Message, lang.GetString("ErrorFileDeletionTitle"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    
+                }
+                catch (NoFileToLoadException)
+                {
+                    close();
+                }
+                catch (Exception e)
+                {
+                    string msg = string.Format(lang.GetString("ErrorFileDeletionGeneric"), Program.State.ActiveEntry.Name);
+                    msg += "\n\n" + e.Message;
+
+                    MessageBox.Show(msg, lang.GetString("ErrorFileDeletionTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    
+                }
+            }
+        }
+
+        /// <summary>
+        /// Restore the app to default conditions
+        /// </summary>
+        private void close()
+        {
+            var lang = Settings.Get.General;
+
+            pictureBox.Bitmap = null;
+
+            Program.State.Close();
+
+
+            toolStripStatusLabelImageInfo.Text = lang.GetString("WelcomeStatus");
+            this.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+
+            toolStripComboBoxNavigation_UpdateText(String.Empty);
+            toolStripStatusLabelImagePosition.Visible = false;
+            toolStripStatusLabelImagePosition.Text = String.Empty;
+            toolStripStatusLabelZoom.Visible = false;
+            toolStripStatusLabelZoom.Text = String.Empty;
+            toolStripStatusLabelFileSize.Visible = false;
+            toolStripStatusLabelFileSize.Text = String.Empty;
+            toolStripStatusLabelPixelPosition.Visible = false;
+            toolStripStatusLabelPixelPosition.Text = String.Empty;
+        }
+
+        private void scrollDown()
+        {
+            pictureBox.ScrollVertically(ScrollDirection.Down);
+        }
+
+        private void scrollUp()
+        {
+            pictureBox.ScrollVertically(ScrollDirection.Up);
+        }
+
+        #endregion
+
+        #region override
+        /// <summary>
+        /// Allows catching arrows key as part of the WM_KEYDOWN message
+        /// </summary>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        protected override bool IsInputKey(Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Right:
+                case Keys.Left:
+                case Keys.Up:
+                case Keys.Down:
+                    return true;
+                case Keys.Shift | Keys.Right:
+                case Keys.Shift | Keys.Left:
+                case Keys.Shift | Keys.Up:
+                case Keys.Shift | Keys.Down:
+                    return true;
+            }
+            return base.IsInputKey(keyData);
+        }
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            switch (e.KeyCode)
+            {
+                case Keys.Menu:
+                case Keys.Left:
+                case Keys.Right:
+                case Keys.Up:
+                case Keys.Down:
+                    if (e.Shift)
+                    {
+
+                    }
+                    else
+                    {
+                    }
+                    break;
+            }
+        }
+        #endregion
+
+        #region Public methods
 
 
 
@@ -153,7 +1172,6 @@ namespace ImageView
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
-            this.panelMain.SuspendLayout();
 
             this.menuStrip.Text = String.Empty;
             this.fileToolStripMenuItem.Text = Settings.Get.General.GetString("MenuFile");
@@ -212,7 +1230,6 @@ namespace ImageView
             this.toolStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
-            this.panelMain.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -220,833 +1237,63 @@ namespace ImageView
 
 
 
-        private void FrmMain_MouseWheel(object sender, MouseEventArgs e)
-        {
-            if(e.Delta < 0) //scroll down
-            {
-                next();
-            }
-            else
-            {
-                previous();
-            }
-        }
-
-        private void toolStripComboBoxNavigation_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void FrmMain_Load(object sender, EventArgs e)
-        {
-            if (Settings.Get.General.FirstLaunch)
-            {
-                new FrmSplashScreen(this).ShowDialog();
-            }
-
-            resizeNavigationBar();
-
-            string[] args = Environment.GetCommandLineArgs();
-            if (args != null && args.Length >= 2)
-            {
-                loadPicture(args[1]);
-            }
-        }
-
-
-
-
-
-
-
-
-
-
         /// <summary>
-        /// Prevents a useless picture reload if the image is already in history. See also: toolStripComboBoxZoom_UpdateText
+        /// Forces a refresh of the history box
         /// </summary>
-        /// <param name="value"></param>
-        private void toolStripComboBoxNavigation_UpdateText(string value)
+        public void RefreshHistoryList()
         {
             toolStripComboBoxNavigation.SelectedIndexChanged -= toolStripComboBoxNavigation_SelectedIndexChanged;
-            toolStripComboBoxNavigation.Text = value;
+            toolStripComboBoxNavigation.ComboBox.DataSource = null;
+            toolStripComboBoxNavigation.Items.Clear();
+            toolStripComboBoxNavigation.ComboBox.DataSource = Settings.Get.History.Get();
             toolStripComboBoxNavigation.SelectedIndexChanged += toolStripComboBoxNavigation_SelectedIndexChanged;
         }
-        private void toolStripComboBoxNavigation_SelectedIndexChanged(object sender, EventArgs e)
+
+
+        public void setCheckeredPatternBackground(bool b)
         {
-
-            TextRepresentationEntry tre = (TextRepresentationEntry)toolStripComboBoxNavigation.SelectedItem;
-
-            this.ActiveControl = null;
-            loadPicture(tre);
-
-            //This fixes a weird refresh issue where the button to expand the dropdown stays focused after the selection change
-            toolStripComboBoxNavigation.Select(0, 0);
-            toolStripComboBoxNavigation.Invalidate();
-            toolStripComboBoxNavigation.Select(0, 0);
-
-        }
-
-        /// <summary>
-        /// In case the calculated zoom level matches exactly a zoom preset (like 50%), the event SelectedIndexChanged is fired.
-        /// In order to programmatically change the combo box without firing the event, we:
-        ///     - Unbind the SelectedIndexChanged
-        ///     - Update the text
-        ///     - Rebind the SelectedIndexChanged event
-        /// An alternative is to check for the control focus on the SelectedIndexChanged event. as in:
-        ///     ToolStripComboBox cb = (ToolStripComboBox)sender;
-        ///     if (!cb.Focused) return;
-        /// Both methods have merits, but it is preferred here not to mess with focuses
-        /// </summary>
-        /// <param name="value">New value to assign the combo box .Text property</param>
-        private void toolStripComboBoxZoom_UpdateText(string value)
-        {
-            toolStripComboBoxZoom.SelectedIndexChanged -= toolStripComboBoxZoom_SelectedIndexChanged;
-            toolStripComboBoxZoom.Text = value;
-            toolStripComboBoxZoom.SelectedIndexChanged += toolStripComboBoxZoom_SelectedIndexChanged;
-        }
-        private void toolStripComboBoxZoom_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            panelMain.Resize -= panelMain_Resize;
-            zoom();
-            panelMain.Resize += panelMain_Resize;
-        }
-
-        private void toolStripComboBoxZoom_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == '\r')
+            if (b)
             {
-                zoom();
-                e.Handled = true;
-            }
-        }
-
-        /// <summary>
-        /// Zoom! max zoom is for the moment set to 400 arbitrarily. When zooming on big pictures the program becomes a giant sloth and the pictubox control shows its limit here
-        /// until a more robust solution is found, this will stay in place.
-        /// </summary>
-        private void zoom()
-        {
-            float zoom = 1.0f;
-            if (float.TryParse(toolStripComboBoxZoom.Text.Trim(' ', '%'), out zoom))
-            {
-                zoom /= 100.0f;
-                zoom = Program.Clamp(zoom, .01f, ConfigDisplay.MAX_ZOOM);
-                Settings.Get.Display.SizeMode = ImageSizeMode.Zoom;
-                Settings.Get.Display.Zoom = zoom;
-                refreshImageSizeModeUI();
-                resizePictureBox();
-
-                //remove focus from the textbox so that user can navigate with arrow keys etc.
-                this.ActiveControl = null;
-            }
-        }
-
-
-
-        private void panelMain_Resize(object sender, EventArgs e)
-        {
-
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("panelMain_Resize");
-#endif
-            resizePictureBox();
-        }
-
-        private void FrmMain_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //Attempt to save config
-            Settings.Get.Save();
-        }
-
-
-
-        private void toolStripButtonNext_Click(object sender, EventArgs e)
-        {
-            next();
-        }
-
-        private void toolStripButtonPrevious_Click(object sender, EventArgs e)
-        {
-            previous();
-        }
-
-
-
-
-        protected override bool IsInputKey(Keys keyData)
-        {
-            switch (keyData)
-            {
-                case Keys.Right:
-                case Keys.Left:
-                case Keys.Up:
-                case Keys.Down:
-                    return true;
-                case Keys.Shift | Keys.Right:
-                case Keys.Shift | Keys.Left:
-                case Keys.Shift | Keys.Up:
-                case Keys.Shift | Keys.Down:
-                    return true;
-            }
-            return base.IsInputKey(keyData);
-        }
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            base.OnKeyDown(e);
-            switch (e.KeyCode)
-            {
-                case Keys.Menu:
-                case Keys.Left:
-                case Keys.Right:
-                case Keys.Up:
-                case Keys.Down:
-                    if (e.Shift)
-                    {
-
-                    }
-                    else
-                    {
-                    }
-                    break;
-            }
-        }
-
-
-        private void FrmMain_KeyPress(object sender, KeyPressEventArgs e)
-        {
-
-        }
-
-
-        private void FrmMain_KeyUp(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.Menu:
-                    if (activeTool == Tool.Zoom)
-                    {
-                        var coord = pictureBox.PointToClient(Cursor.Position);
-
-                        if (pictureBox.DisplayRectangle.Contains(coord))
-                        {
-                            Cursor = new Cursor(Properties.Resources.zoomin.Handle);
-                        }
-                        else
-                        {
-                            Cursor = Cursors.Default;
-                        }
-
-
-                    }
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Implements a lot of shortcut keys when Windows Forms does not natively support the shortcuts. For instance, single key shortcuts are invalid for winforms
-        /// so this method contains many single key shortcuts
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void FrmMain_KeyDown(object sender, KeyEventArgs e)
-        {
-
-            switch (e.KeyCode)
-            {
-                case Keys.Menu:
-                    if (activeTool == Tool.Zoom)
-                    {
-                        var coord = pictureBox.PointToClient(Cursor.Position);
-                        if (pictureBox.DisplayRectangle.Contains(coord))
-                        {
-                            e.Handled = true; //prevent ALT triggering the toolstripmenu
-                            Cursor = new Cursor(Properties.Resources.zoomout.Handle);
-                        }
-                        else
-                        {
-
-                        }
-                    }
-                    break;
-                case Keys.Left:
-                case Keys.PageUp:
-                    previous();
-                    break;
-                case Keys.Right:
-                case Keys.PageDown:
-                    next();
-                    break;
-                case Keys.Down:
-                    scrollDown();
-                    break;
-                case Keys.Up:
-                    scrollUp();
-                    break;
-                case Keys.P:
-                    showSettings();
-                    break;
-                case Keys.I:
-                    showInformation();
-                    break;
-                case Keys.F:
-                    toggleFullScreen();
-                    break;
-                case Keys.L:
-                    rotateLeft();
-                    break;
-                case Keys.R:
-                    rotateRight();
-                    break;
-                case Keys.V:
-                    verticalFlip();
-                    break;
-                case Keys.H:
-                    horizontalFlip();
-                    break;
-                case Keys.Z:
-                    toggleZoomTool();
-                    break;
-                case Keys.Escape:
-                    if (activeTool == Tool.Zoom)
-                    {
-                        exitZoomTool();
-                    }
-                    else if (fullscreen)
-                    {                        
-                        exitFullScreen();
-                        timerSlideShow.Stop();
-                    }
-                    break;
-
-            }
-
-        }
-
-        private void toolStripButtonDelete_Click(object sender, EventArgs e)
-        {
-            delete();
-        }
-
-
-
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            close();
-        }
-
-
- 
-
-        private void openFile()
-        {
-            //openFileDialog.FileName = "";
-            DialogResult dr = openFileDialog.ShowDialog();
-            if(dr == DialogResult.OK)
-            {
-                //loadPicture(openFileDialog.FileName);
-                loadPicture(openFileDialog.FileName);
-            }
-        }
-        private void toolStripButtonOpen_Click(object sender, EventArgs e)
-        {
-            openFile();
-        }
-        private void toolStripMenuItemOpen_Click(object sender, EventArgs e)
-        {
-            openFile();
-        }
- 
-
-
- 
-
-
-        private void fullscreenToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            toggleFullScreen();
-        }
-
-
-        private void pictureBox_DoubleClick(object sender, EventArgs e)
-        {
-            MouseEventArgs me = (MouseEventArgs)e;
-
-            //prevents a fullscreen trigger when trying to zoom on the picture
-            if (activeTool != Tool.Zoom) 
-            {
-                if (me.Button == MouseButtons.Left)
-                {
-                    if (fullscreen)
-                    {
-                        exitFullScreen();
-                    }
-                    else
-                    {
-                        enterFullScreen();
-                    }
-                }
-            }
-
-        }
-
-
-        private void timerSlideShow_Tick(object sender, EventArgs e)
-        {
-            next();
-        }
-
-
-        private void slideshowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //enterSlideshow();
-            setViewMode(ViewingMode.Slideshow);
-        }
-
-        private void toolStripButtonSlideShow_Click(object sender, EventArgs e)
-        {
-            //enterSlideshow();
-            setViewMode(ViewingMode.Slideshow);
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FrmAbout a = new FrmAbout();
-            a.ShowDialog();
-        }
-
-        private void resizeNavigationBar()
-        {
-            toolStripComboBoxNavigation.Width = (int)(0.5f * this.Width);
-        }
-        private void FrmMain_Resize(object sender, EventArgs e)
-        {
-            resizeNavigationBar();
-        }
-
-
-
-
-        private void toolStripDropDownButtonDisplayType_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripComboBoxZoom_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripButtonSettings_Click(object sender, EventArgs e)
-        {
-            showSettings();
-        }
-
-        private void showSettings()
-        {
-            FrmSettings f = new FrmSettings(this);
-            f.ShowDialog();
-        }
-
-        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            showSettings();
-        }
-
-        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            //Save last window size and position
-            if (this.WindowState == FormWindowState.Maximized)
-            {
-                Settings.Get.Window.X = this.RestoreBounds.X;
-                Settings.Get.Window.Y = this.RestoreBounds.Y;
-                Settings.Get.Window.Width = this.RestoreBounds.Width;
-                Settings.Get.Window.Height = this.RestoreBounds.Height;
-                Settings.Get.Window.State = this.WindowState;
+                this.pictureBox.TransparentBackground = Properties.Resources.transparent16;
             }
             else
             {
-                Settings.Get.Window.X = this.Location.X;
-                Settings.Get.Window.Y = this.Location.Y;
-                Settings.Get.Window.Width = this.Width;
-                Settings.Get.Window.Height = this.Height;
-                Settings.Get.Window.State = this.WindowState;
-            }
-            
-        }
-
-        private void informationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            showInformation();
-        }
-
-        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            copy();
-        }
-
-        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            delete();
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void panelMain_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.All;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
+                this.pictureBox.TransparentBackground = null;
             }
         }
 
-        private void panelMain_DragDrop(object sender, DragEventArgs e)
+        #endregion
+
+        #region private Class
+        class FullScreenSaveState
         {
-            string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-            if(s != null & s.Count() > 0)
+            public FormWindowState WindowState;
+            public Point Location;
+            public Size Size;
+
+            public FullScreenSaveState()
             {
-                loadPicture(s[0]);
-            }
-
-        }
-
-        private void rotateLeftToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            rotateLeft();
-        }
-
-        private void rotateRightToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            rotateRight();
-        }
-
-
-        private void verticalFlipToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            verticalFlip();
-        }
-
-        private void horizontalFlipToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            horizontalFlip();
-        }
-
-        private void zoomToolToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            toggleZoomTool();
-        }
-
-
-
-        /// <summary>
-        /// Saves the mouse position when it is first moved down, in order to handle dragging of the picture correctly
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Middle)
-            {
-                mousePosition = e.Location;
-                mousePositionOnMouseDown = Control.MousePosition;
+                WindowState = FormWindowState.Normal;
+                Location = new Point();
+                Size = new Size();
             }
         }
+        #endregion
 
-        /// <summary>
-        /// If the tool is not zoom, cursor is restored to default.
-        /// Zoom tool stays active until user manually de-activate it
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
+
+
+        public enum Tool
         {
-            if (e.Button == MouseButtons.Middle)
-            {
-                if (this.activeTool == Tool.None)
-                {
-                    this.Cursor = Cursors.Default;
-                }
-
-            }
-            else if(e.Button == MouseButtons.Left)
-            {
-                if (this.activeTool == Tool.Zoom)
-                {
-                    var coord = pictureBox.PointToClient(Cursor.Position);
-
-                    Settings.Get.Display.SizeMode = ImageSizeMode.Zoom;
-
-                    //find nearest zoom step
-                    float newZoom = workingData.calculatedZoom;
-                    if (Control.ModifierKeys == Keys.Alt)
-                    {
-                        //find the next smaller zoom step
-                        for (int i = ConfigDisplay.ZOOM_STEPS.Length-1; i >= 0; i--)
-                        {
-                            if (ConfigDisplay.ZOOM_STEPS[i] < newZoom)
-                            {
-                                newZoom = ConfigDisplay.ZOOM_STEPS[i];
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //find next bigger zoom step
-                        if(newZoom < ConfigDisplay.MAX_ZOOM)
-                        {
-                            for (int i = 0; i < ConfigDisplay.ZOOM_STEPS.Length; i++)
-                            {
-                                if(ConfigDisplay.ZOOM_STEPS[i] > newZoom)
-                                {
-                                    newZoom = ConfigDisplay.ZOOM_STEPS[i];
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    newZoom = Program.Clamp(newZoom, .01f, ConfigDisplay.MAX_ZOOM);
-
-                    panelMain.Resize -= panelMain_Resize;
-                    resizePictureBox(e.Location, newZoom);
-                    panelMain.Resize += panelMain_Resize;
-                    Settings.Get.Display.Zoom = newZoom;
-
-                    refreshImageSizeModeUI();
-                }
-            }
-            else if(e.Button == MouseButtons.Right)
-            {
-#if DEBUG
-                Point panelHalfSize = new Point(panelMain.Width >> 1, panelMain.Height >> 1);
-                panelMain.AutoScrollPosition = new Point(e.Location.X - panelHalfSize.X, e.Location.Y - panelHalfSize.Y);
-#endif
-
-            }
-        }
-
-        private void pictureBox_Click(object sender, EventArgs ea)
-        {
-
+            None,
+            Zoom
         }
 
 
-        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
-        {
-            //refresh pixel coord
-            float X, Y;
-            X = e.Location.X / workingData.calculatedZoom;
-            Y = e.Location.Y / workingData.calculatedZoom;
-            toolStripStatusLabelPixelPosition.Text = string.Format("{0:0},{1:0}", X, Y);
-
-            //drag image
-            if (e.Button == MouseButtons.Middle)
-            {
-                if (this.Cursor == Cursors.Default) this.Cursor = new Cursor(Properties.Resources.move.Handle);
-
-                Point changePoint = Point.Empty;
-                if (panelMain.VerticalScroll.Visible)
-                {
-                    changePoint.Y = e.Location.Y - mousePosition.Y;
-                }
-                if (panelMain.HorizontalScroll.Visible)
-                {
-                    changePoint.X = e.Location.X - mousePosition.X;
-                }
-                Point scroll = new Point(-panelMain.AutoScrollPosition.X - changePoint.X, -panelMain.AutoScrollPosition.Y - changePoint.Y);
-                panelMain.AutoScrollPosition = scroll;
-
-
-                //REFRESH DRAWING PORTION
-                float zoom = workingData.calculatedZoom;
-                Size clientSize = panelMain.Size;
-                RectangleF srcRect = new RectangleF();
-                RectangleF dstRect = new RectangleF();
-                
-                dstRect.X = -panelMain.AutoScrollPosition.X;
-                dstRect.Y = -panelMain.AutoScrollPosition.Y;
-                dstRect.Width = clientSize.Width;
-                dstRect.Height = clientSize.Height;
-
-                srcRect.X = dstRect.X / zoom;
-                srcRect.Y = dstRect.Y / zoom;
-                srcRect.Width = dstRect.Width / zoom;
-                srcRect.Height = dstRect.Height / zoom;
-                pictureBox.SourceRectangle = srcRect;
-                pictureBox.TargetRectange = dstRect;
-
-                //pictureBox.Refresh(); //force redraw
-
-            }
-
-        }
-
-
-        private void enterZoomTool()
-        {
-            activeTool = Tool.Zoom;
-
-            var coord = pictureBox.PointToClient(Cursor.Position);
-            if (pictureBox.DisplayRectangle.Contains(coord))
-            {
-                this.Cursor = new Cursor(Properties.Resources.zoomin.Handle);
-            }
-        }
-
-        private void exitZoomTool()
-        {
-            activeTool = Tool.None;
-            if (this.Cursor != Cursors.Default)
-                this.Cursor = Cursors.Default;
-        }
-
-        private void toggleZoomTool()
-        {
-            if(activeTool != Tool.Zoom)
-            {
-                enterZoomTool();
-            }
-            else
-            {
-                exitZoomTool();
-            }
-        }
-
-        private void pictureBox_MouseEnter(object sender, EventArgs e)
-        {
-            this.toolStripStatusLabelPixelPosition.Visible = true;
-            if (activeTool == Tool.Zoom)
-            {
-                this.Cursor = new Cursor(Properties.Resources.zoomin.Handle);
-            }
-        }
-
-        private void pictureBox_MouseLeave(object sender, EventArgs e)
-        {
-            this.toolStripStatusLabelPixelPosition.Visible = false;
-            if (this.Cursor != Cursors.Default)
-                this.Cursor = Cursors.Default;
-        }
-
-        private void licenseToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new FrmLicense().ShowDialog();
-        }
-
-
-        /// <summary>
-        /// Change image size mode, refresh UI elements and resize the picture box
-        /// </summary>
-        /// <param name="sz">New image size mode to be set</param>
-        private void setImageSizeMode(ImageSizeMode sz)
-        {
-            Settings.Get.Display.SizeMode = sz;
-            refreshImageSizeModeUI();
-
-            panelMain.Resize -= panelMain_Resize;
-            resizePictureBox();
-            panelMain.Resize += panelMain_Resize;
-        }
-
-        
-
-        private void enterReader()
-        {
-            setImageSizeMode(Settings.Get.Reader.SizeMode);
-            toolStripReaderMode.BackColor = SystemColors.MenuHighlight;
-        }
-
-        private void exitReader()
-        {
-            if(Settings.Get.Display.SizeModeOnImageLoad != ImageSizeMode.Restore)
-            {
-                setImageSizeMode(Settings.Get.Display.SizeModeOnImageLoad);
-            }
-            toolStripReaderMode.BackColor = SystemColors.Control;
-        }
-
-        private void BestFitStripMenuItem_Click(object sender, EventArgs e)
-        {
-            setImageSizeMode(ImageSizeMode.BestFit);
-        }
-        private void realSizeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            setImageSizeMode(ImageSizeMode.RealSize);
-        }
-
-        private void fitToWidthToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            setImageSizeMode(ImageSizeMode.FitToWidth);
-        }
-
-        private void fitToHeightToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            setImageSizeMode(ImageSizeMode.FitToHeight);
-        }
-
-        private void toolStripReaderMode_Click(object sender, EventArgs e)
-        {
-            toggleReaderMode();
-        }
-
-        private void readerModeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            toggleReaderMode();
-        }
+        //deletion
 
 
 
 
-        private void scrollDown()
-        {
-            verticalScroll(1);
-        }
-
-        private void scrollUp()
-        {
-            verticalScroll(-1);
-        }
-
-        private void panelMain_Scroll(object sender, ScrollEventArgs e)
-        {
-            refreshDrawingSurface();
-        }
-
-        private void PanelMain_MouseWheel(object sender, MouseEventArgs e)
-        {
-            refreshDrawingSurface();
-        }
-
-        private void toolStripButtonPrintPreview_Click(object sender, EventArgs e)
-        {
-            printPreview();
-        }
-
-        private void printPreview()
-        {
-            if(workingData.bitmap != null)
-            {
-                (new FrmPrintPreview((Bitmap)workingData.bitmap.Clone())).Show();
-            }    
-        }
-
-        private void printToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            printPreview();
-        }
     }
 
 

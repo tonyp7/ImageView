@@ -205,6 +205,25 @@ namespace ImageView.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file {0} will be permanently deleted.
+        ///Are you sure you want to continue?.
+        /// </summary>
+        internal static string ConfirmFileDeletion {
+            get {
+                return ResourceManager.GetString("ConfirmFileDeletion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete file?.
+        /// </summary>
+        internal static string ConfirmFileDeletionTitle {
+            get {
+                return ResourceManager.GetString("ConfirmFileDeletionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy.
         /// </summary>
         internal static string Copy {
@@ -255,6 +274,55 @@ namespace ImageView.Resources {
         internal static string Error {
             get {
                 return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This image file is contained inside an archive file.
+        ///It cannot be deleted..
+        /// </summary>
+        internal static string ErrorArchiveFile {
+            get {
+                return ResourceManager.GetString("ErrorArchiveFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not delete file {0}..
+        /// </summary>
+        internal static string ErrorFileDeletionGeneric {
+            get {
+                return ResourceManager.GetString("ErrorFileDeletionGeneric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error wile deleting file.
+        ///Insufficient user privilege.
+        ///Please restart the app as an administrator..
+        /// </summary>
+        internal static string ErrorFileDeletionPrivilege {
+            get {
+                return ResourceManager.GetString("ErrorFileDeletionPrivilege", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not delete file.
+        /// </summary>
+        internal static string ErrorFileDeletionTitle {
+            get {
+                return ResourceManager.GetString("ErrorFileDeletionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ImageView was unable to load {0}.
+        ///This file does not exist..
+        /// </summary>
+        internal static string ErrorFileNotFound {
+            get {
+                return ResourceManager.GetString("ErrorFileNotFound", resourceCulture);
             }
         }
         

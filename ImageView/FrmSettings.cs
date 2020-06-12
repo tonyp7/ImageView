@@ -245,7 +245,7 @@ namespace ImageView
                 //apply the new history size -- if the new value is less than the old we have some clean up to do
                 if(value < Settings.Get.History.MaxSize)
                 {
-                    frmMain.SetHistoryList(configNew.History.Get());
+                    frmMain.RefreshHistoryList();
                 }
 
             }

@@ -541,7 +541,7 @@ namespace ImageView.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Supported Image Files|*.psd;*.cr2;*.cbz;*.cbr;*.cb7;*.cba;*.cbt;*.dng;*.jpg;*.jpeg;*.jp2;*.png;*.svg;*.tif;*.tiff;*.tga;*.webp;*.bmp;*.dib|Adobe Photoshop (*.psd)|*.psd|Canon RAW (*.cr2)|*.cr2|Comic Book Archive (*.cbz;*.cbr;*.cb7;*.cba;*.cbt)|*.cbz;*.cbr;*.cb7;*.cba;*.cbt|Digital Negative (*.dng)|*.dng|Joint Photographic Experts Group (*.jpg;*.jpeg)|*.jpg;*.jpeg|JPEG 2000 (*.jp2)|*.jp2|Portable Network Graphics (*.png)|*.png|Scalable Vector Graphics (*.svg)|*.svg|Tagged Image File Format (*.tif;*.tiff)|*.t [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to Supported Image Files|*.psd;*.cr2;*.cbz;*.cbr;*.cb7;*.cba;*.cbt;*.dng;*.heic;*.jpg;*.jpeg;*.jp2;*.png;*.svg;*.tif;*.tiff;*.tga;*.webp;*.bmp;*.dib|Adobe Photoshop (*.psd)|*.psd|Canon RAW (*.cr2)|*.cr2|Comic Book Archive (*.cbz;*.cbr;*.cb7;*.cba;*.cbt)|*.cbz;*.cbr;*.cb7;*.cba;*.cbt|Digital Negative (*.dng)|*.dng|High Efficiency Image File Format (*.heic)|*.heic|Joint Photographic Experts Group (*.jpg;*.jpeg)|*.jpg;*.jpeg|JPEG 2000 (*.jp2)|*.jp2|Portable Network Graphics (*.png)|*.png|Scalable Vector Graphics  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SupportedImageFiles {
             get {
