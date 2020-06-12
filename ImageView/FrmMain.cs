@@ -61,6 +61,13 @@ namespace ImageView
 
             Settings.Get.Load();
 
+            //status bar
+            this.toolStripStatusLabelImageInfo.Text = String.Empty;
+            this.toolStripStatusLabelImagePosition.Text = String.Empty;
+            this.toolStripStatusLabelZoom.Text = String.Empty;
+            this.toolStripStatusLabelFileSize.Text = String.Empty;
+            this.toolStripStatusLabelPixelPosition.Text = String.Empty;
+
             // Picturebox config
             setCheckeredPatternBackground(Settings.Get.Display.CheckeredPatternBackground);
             this.pictureBox.DragCursor = Properties.Resources.move;
@@ -572,7 +579,7 @@ namespace ImageView
             RefreshHistoryList();
 
             toolStripComboBoxNavigation_UpdateText(state.ActiveEntry.FullName);
-
+            toolStripStatusLabelWelcome.Visible = false;
             toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} - {2} {3}", state.NativeImage.BaseWidth, state.NativeImage.BaseHeight, state.NativeImage.ColorSpace, state.NativeImage.ColorType);
             toolStripStatusLabelImageInfo.Visible = true;
             toolStripStatusLabelFileSize.Text = Program.NiceFileSize(state.ActiveEntry.Length);
@@ -1090,10 +1097,12 @@ namespace ImageView
             Program.State.Close();
 
 
-            toolStripStatusLabelImageInfo.Text = lang.GetString("WelcomeStatus");
+            toolStripStatusLabelWelcome.Visible = true;
             this.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 
             toolStripComboBoxNavigation_UpdateText(String.Empty);
+            toolStripStatusLabelImageInfo.Visible = false;
+            toolStripStatusLabelImageInfo.Text = String.Empty;
             toolStripStatusLabelImagePosition.Visible = false;
             toolStripStatusLabelImagePosition.Text = String.Empty;
             toolStripStatusLabelZoom.Visible = false;
@@ -1215,11 +1224,7 @@ namespace ImageView
             this.toolStripComboBoxZoom.Text = String.Empty;
             this.toolStripButtonSettings.Text = Settings.Get.General.GetString("Settings");
             this.statusStrip.Text = String.Empty;
-            this.toolStripStatusLabelImageInfo.Text = Settings.Get.General.GetString("WelcomeStatus");
-            this.toolStripStatusLabelImagePosition.Text = String.Empty;
-            this.toolStripStatusLabelZoom.Text = String.Empty;
-            this.toolStripStatusLabelFileSize.Text = String.Empty;
-            this.toolStripStatusLabelPixelPosition.Text = String.Empty;
+            this.toolStripStatusLabelWelcome.Text = Settings.Get.General.GetString("WelcomeStatus");
             this.printToolStripMenuItem.Text = Settings.Get.General.GetString("PrintPreviewAlternate");
 
             toolStripDropDownButtonDisplayType.ToolTipText = Settings.Get.General.GetString("PickImageSizeMode");
@@ -1281,18 +1286,11 @@ namespace ImageView
         #endregion
 
 
-
         public enum Tool
         {
             None,
             Zoom
         }
-
-
-        //deletion
-
-
-
 
     }
 
