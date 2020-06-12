@@ -1,5 +1,6 @@
 ﻿using ImageMagick;
 using ImageView.Configuration;
+using ImageView.Exceptions;
 using ImageView.ImageEntry;
 using SevenZipExtractor;
 using System;
@@ -8,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,6 +23,7 @@ namespace ImageView
         private IEntry activeEntry;
         private List<IEntry> entries;
         private MagickImage nativeImage;
+
 
         public Bitmap Bitmap 
         { 
@@ -197,6 +200,7 @@ namespace ImageView
             this.Dispose();
             this.activeEntry = entry;
 
+            Exception exception = null;
 
             //load image
 #if DEBUG
@@ -208,10 +212,10 @@ namespace ImageView
             {
                 this.nativeImage = new ImageMagick.MagickImage(stream);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 this.nativeImage = new MagickImage(Properties.Resources.error);
-                //MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                exception = e;
             }
             stream.Dispose();
 #if DEBUG
@@ -230,6 +234,12 @@ namespace ImageView
             //Add loaded file to history if necessary
             TextRepresentationEntry tre = activeEntry.ToText();
             Settings.Get.History.AddFile(tre);
+
+            //if there was an exception throw it
+            if(exception != null)
+            {
+                throw new ImageViewLoadException(exception, entry);
+            }
 
             return true;
         }
@@ -284,7 +294,12 @@ namespace ImageView
                 if (activeEntry.IsArchive)
                 {
                     //TODO: add support for deletion inside an archive
-                    MessageBox.Show("This image file is contained inside an archive file.\nIt cannot be deleted.", "Cannot delete file", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    //MessageBox.Show("", "Could not delete file", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                    //FileDeletionException fileDeletionException = new FileDeletionException(activeEntry);
+                    //fileDeletionException.Message = "This image file is contained inside an archive file.\nIt cannot be deleted.";
+                    //throw (fileDeletionException);
+                    throw new ArchiveFileDeletionException();
                 }
                 else if (MessageBox.Show(String.Format("The file {0} will be permanently deleted.\nAre you sure you want to continue?", activeEntry.Name), "Delete file?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
@@ -303,31 +318,40 @@ namespace ImageView
                     }
 
 
+                    Exception exception = null;
+
                     try
                     {
                         activeEntry.Delete();
                     }
                     catch (UnauthorizedAccessException uaex)
                     {
-                        MessageBox.Show("Error wile deleting file\n.Insufficient user privilege.\nPlease restart the app as an administrator.\n\n" + uaex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
+                        exception = uaex;
                     }
                     catch (Exception e)
                     {
-                        MessageBox.Show("Error wile deleting file\n\n" + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
+                        exception = e;
+                    }
+                    finally
+                    {
+                        if (nextFileToLoad == String.Empty)
+                        {
+                            //only a single file in the folder -- close
+                            Close();
+                        }
+                        else
+                        {
+                            //load the next image and force a refresh of the folder structure
+                            LoadPicture(nextFileToLoad);
+                        }
                     }
 
-                    if (nextFileToLoad == String.Empty)
+                    if(exception != null)
                     {
-                        //only a single file in the folder -- close
-                        Close();
+                        throw (exception);
                     }
-                    else
-                    {
-                        //load the next image and force a refresh of the folder structure
-                        LoadPicture(nextFileToLoad);
-                    }
+
+
 
 
                 }

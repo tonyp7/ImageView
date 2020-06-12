@@ -39,6 +39,7 @@ using System.Globalization;
 using System.Threading;
 using System.Resources;
 using ImageView.Components;
+using ImageView.Exceptions;
 
 namespace ImageView
 {
@@ -65,6 +66,7 @@ namespace ImageView
             this.pictureBox.DragCursor = Properties.Resources.move;
             this.pictureBox.ZoomInCursor = Properties.Resources.zoomin;
             this.pictureBox.ZoomOutCursor = Properties.Resources.zoomout;
+            this.pictureBox.MouseWheel += PictureBox_MouseWheel;
 
 
             //Zoom list
@@ -75,19 +77,19 @@ namespace ImageView
 
             this.openFileDialog.Filter = Properties.Resources.SupportedImageFiles;
 
-
             //multilingual settings
             InitalizeComponentsCultureAware();
-
-            close();
 
             //restore history
             toolStripComboBoxNavigation.SelectedIndexChanged -= toolStripComboBoxNavigation_SelectedIndexChanged;
             toolStripComboBoxNavigation.ComboBox.DataSource = Settings.Get.History.Get();
             toolStripComboBoxNavigation.SelectedIndexChanged += toolStripComboBoxNavigation_SelectedIndexChanged;
 
+            //initial conditions
+            close();
+
             //set check mark on the type of image view
-            refreshImageSizeModeUI();
+            setImageSizeMode(Settings.Get.Display.SizeModeOnImageLoad);
 
             //restore window size
             if (Settings.Get.Window.Width != 0 && Settings.Get.Window.Height != 0)
@@ -98,10 +100,17 @@ namespace ImageView
                 this.WindowState = Settings.Get.Window.State;
             }
         }
+
+
         #endregion
 
         #region Events - Mouse
 
+
+        private void PictureBox_MouseWheel(object sender, MouseEventArgs e)
+        {
+            FrmMain_MouseWheel(sender, e);
+        }
         private void FrmMain_MouseWheel(object sender, MouseEventArgs e)
         {
             if (e.Delta < 0) //scroll down
@@ -151,13 +160,12 @@ namespace ImageView
 
             resizeNavigationBar();
 
+            toolStripComboBoxNavigation_UpdateText(String.Empty);
+
             string[] args = Environment.GetCommandLineArgs();
             if (args != null && args.Length >= 2)
             {
-                if (Program.State.LoadPicture(args[1]))
-                {
-                    loadPictureUI();
-                }
+                loadPicture(args[1]);
             }
         }
 
@@ -437,10 +445,8 @@ namespace ImageView
 #endif
             TextRepresentationEntry tre = (TextRepresentationEntry)toolStripComboBoxNavigation.SelectedItem;
             this.ActiveControl = null;
-            if (Program.State.LoadPicture(tre))
-            {
-                loadPictureUI();
-            }
+
+            loadPicture(tre);
 
             //This fixes a weird refresh issue where the button to expand the dropdown stays focused after the selection change
             toolStripComboBoxNavigation.Select(0, 0);
@@ -478,6 +484,8 @@ namespace ImageView
 
         private void pictureBox_ZoomChanged(object sender, PictureBox.ZoomEventArgs e)
         {
+            if (!toolStripStatusLabelZoom.Visible) toolStripStatusLabelZoom.Visible = true;
+
             toolStripStatusLabelZoom.Text = String.Format("{0} %", (int)(pictureBox.Zoom * 100.0f));
             toolStripComboBoxZoom_UpdateText(String.Format("{0}%", (int)(pictureBox.Zoom * 100.0f)));
         }
@@ -528,10 +536,7 @@ namespace ImageView
             string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
             if (s != null & s.Count() > 0)
             {
-                if (Program.State.LoadPicture(s[0]))
-                {
-                    loadPictureUI();
-                }
+                loadPicture(s[0]);
             }
 
         }
@@ -617,8 +622,12 @@ namespace ImageView
         /// <param name="sz">New image size mode to be set</param>
         private void setImageSizeMode(ImageSizeMode sz)
         {
+            if(sz == ImageSizeMode.Restore)
+            {
+                sz = Settings.Get.Display.SizeMode;
+            }
             Settings.Get.Display.SizeMode = sz;
-            refreshImageSizeModeUI();
+            refreshImageSizeModeUI(sz);
             pictureBox.SizeMode = (ImageView.SizeMode)sz;
         }
 
@@ -639,9 +648,10 @@ namespace ImageView
             toolStripReaderMode.BackColor = SystemColors.Control;
         }
 
-        private void refreshImageSizeModeUI()
+        private void refreshImageSizeModeUI(ImageSizeMode sizeMode)
         {
-            switch (Settings.Get.Display.SizeMode)
+
+            switch (sizeMode)
             {
                 case ImageSizeMode.BestFit:
                     BestFitToolStripMenuItem.Image = Properties.Resources.expand_arrows_tick16;
@@ -743,23 +753,71 @@ namespace ImageView
             DialogResult dr = openFileDialog.ShowDialog();
             if (dr == DialogResult.OK)
             {
-                if (Program.State.LoadPicture(openFileDialog.FileName))
-                {
-                    loadPictureUI();
-                }
+                loadPicture(openFileDialog.FileName);
             }
+        }
+
+        private void loadPicture(string filename)
+        {
+            try
+            {
+                Program.State.LoadPicture(filename);
+            }
+            catch (ImageViewLoadException e)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                loadPictureUI();
+            }
+
+        }
+
+        private void loadPicture(TextRepresentationEntry tre)
+        {
+            try
+            {
+                Program.State.LoadPicture(tre);
+            }
+            catch(ImageViewLoadException e)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                loadPictureUI();
+            }
+
         }
 
         private void next()
         {
-            if (Program.State.Next())
+            try
+            {
+                Program.State.Next();
+            }
+            catch (ImageViewLoadException e)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
             {
                 loadPictureUI();
             }
+
         }
         private void previous()
         {
-            if (Program.State.Previous())
+            try
+            {
+                Program.State.Previous();
+            }
+            catch (ImageViewLoadException e)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
             {
                 loadPictureUI();
             }
@@ -961,61 +1019,33 @@ namespace ImageView
         /// </summary>
         private void delete()
         {
-            //TODO: rework to separate state from UI
 
-            //if (workingData.activeEntry != null)
-            //{
-            //    if (workingData.activeEntry.IsArchive)
-            //    {
-            //        //TODO: add support for deletion inside an archive
-            //        MessageBox.Show("This image file is contained inside an archive file.\nIt cannot be deleted.", "Cannot delete file", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            //    }
-            //    else if (MessageBox.Show(String.Format("The file {0} will be permanently deleted.\nAre you sure you want to continue?", workingData.activeEntry.Name), "Delete file?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            //    {
-            //        //before deleting, try to get access to the previous image, which will be automatically loaded upon file deletion.
-            //        //if there was only one image in the current working folder, then the app will close all
+            var lang = Settings.Get.General;
 
-            //        string nextFileToLoad = String.Empty;
-            //        if (workingData.entries.Count > 1)
-            //        {
-            //            //will try to move to the file
-            //            int moveToIndex = workingData.directoryIndex;
-            //            moveToIndex--;
-            //            if (moveToIndex < 0) moveToIndex = workingData.entries.Count - 1; //auto loop to the end
-            //            IEntry entry = workingData.entries[moveToIndex];
-            //            nextFileToLoad = entry.FullName;
-            //        }
+            if (MessageBox.Show(String.Format(lang.GetString("ConfirmFileDeletion"), Program.State.ActiveEntry.Name), lang.GetString("ConfirmFileDeletionTitle"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                try
+                {
+                    Program.State.Delete();
+                }
+                catch(ArchiveFileDeletionException)
+                {
+                    MessageBox.Show(lang.GetString("ErrorArchiveFile"), lang.GetString("ErrorFileDeletionTitle"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                catch (UnauthorizedAccessException uaex)
+                {
+                    MessageBox.Show(lang.GetString("ErrorFileDeletionPrivilege") + "\n\n" + uaex.Message, lang.GetString("ErrorFileDeletionTitle"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    
+                }
+                catch (Exception e)
+                {
+                    string msg = string.Format(lang.GetString("ErrorFileDeletionGeneric"), Program.State.ActiveEntry.Name);
+                    msg += "\n\n" + e.Message;
 
-
-            //        try
-            //        {
-            //            workingData.activeEntry.Delete();
-            //        }
-            //        catch (UnauthorizedAccessException uaex)
-            //        {
-            //            MessageBox.Show("Error wile deleting file\n.Insufficient user privilege.\nPlease restart the app as an administrator.\n\n" + uaex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //            return;
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            MessageBox.Show("Error wile deleting file\n\n" + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //            return;
-            //        }
-
-            //        if (nextFileToLoad == String.Empty)
-            //        {
-            //            //only a single file in the folder -- close
-            //            close();
-            //        }
-            //        else
-            //        {
-            //            //load the next image and force a refresh of the folder structure
-            //            loadPicture(nextFileToLoad);
-            //        }
-
-
-            //    }
-            //}
+                    MessageBox.Show(msg, lang.GetString("ErrorFileDeletionTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    
+                }
+            }
         }
 
         /// <summary>
@@ -1023,12 +1053,14 @@ namespace ImageView
         /// </summary>
         private void close()
         {
+            var lang = Settings.Get.General;
+
             pictureBox.Bitmap = null;
 
-            Program.State.Dispose();
-            Program.State.Reset();
+            Program.State.Close();
 
-            toolStripStatusLabelImageInfo.Text = "Welcome! Open an image file to begin browsing.";
+
+            toolStripStatusLabelImageInfo.Text = lang.GetString("WelcomeStatus");
             this.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 
             toolStripComboBoxNavigation_UpdateText(String.Empty);
@@ -1227,8 +1259,6 @@ namespace ImageView
         }
 
 
-
-        //todo: scroll for next pictures
         //deletion
 
 
