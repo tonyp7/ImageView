@@ -54,6 +54,8 @@ namespace ImageView
 
         public new event EventHandler<EventArgs> DoubleClick;
 
+        public new event EventHandler<MouseEventArgs> MouseWheel;
+
         #endregion
 
         #region Hidden inherited properties
@@ -441,7 +443,9 @@ namespace ImageView
         }
         private void calculateRect(Point mouseCoord, float newZoom)
         {
-
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("calculateRect");
+#endif
             if (bitmap != null)
             {
                 switch (sizeMode)
@@ -465,13 +469,14 @@ namespace ImageView
         }
         private void calcZoom(Point mouseCoord, float newZoom)
         {
-
+#if DEBUG
             System.Diagnostics.Debug.WriteLine("calcZoom");
+#endif
             panelMain.AutoScroll = false;
             Size clientSize = panelMain.ClientSize;
             float oldZoom = this.zoom;
 
-            if(SizeMode == SizeMode.Normal && this.zoom != 1.0f) 
+            if(SizeMode == SizeMode.Normal) 
             {
                 this.zoom = 1.0f;
                 OnZoomChanged(new ZoomEventArgs(this.zoom));
@@ -725,11 +730,20 @@ namespace ImageView
         }
         private void PanelMain_MouseWheel(object sender, MouseEventArgs e)
         {
+#if DEBUG
             System.Diagnostics.Debug.WriteLine("PanelMain_MouseWheel");
-            if (!WheelScrollLock)
+#endif
+            if (!WheelScrollLock && panelPicture.Height > panelMain.ClientSize.Height)
             {
                 refreshDrawingRect();
             }
+            else
+            {
+                EventHandler<MouseEventArgs> handler = MouseWheel;
+                if (handler != null)
+                    handler(this, e);
+            }
+
         }
         private void PanelMain_Scroll(object sender, ScrollEventArgs e)
         {
