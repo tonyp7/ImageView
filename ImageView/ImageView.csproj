@@ -131,6 +131,7 @@
     <Compile Include="Exceptions\ArchiveFileDeletionException.cs" />
     <Compile Include="Exceptions\FileDeletionException.cs" />
     <Compile Include="Exceptions\ImageViewLoadException.cs" />
+    <Compile Include="Exceptions\NoFileToLoadException.cs" />
     <Compile Include="Flags.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
