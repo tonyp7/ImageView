@@ -318,6 +318,16 @@ namespace ImageView.Resources {
         
         /// <summary>
         ///   Looks up a localized string similar to ImageView was unable to load {0}.
+        ///This file does not exist..
+        /// </summary>
+        internal static string ErrorFileNotFound {
+            get {
+                return ResourceManager.GetString("ErrorFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ImageView was unable to load {0}.
         ///The image is corrupted or its format could not be recognized..
         /// </summary>
         internal static string ErrorImageLoad {

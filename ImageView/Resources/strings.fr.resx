@@ -203,6 +203,10 @@ Merci de bien vouloir redémarrer l'application en tant qu'Administrateur.</valu
   <data name="ErrorFileDeletionTitle" xml:space="preserve">
     <value>Impossible de supprimer le fichier</value>
   </data>
+  <data name="ErrorFileNotFound" xml:space="preserve">
+    <value>ImageView n'est pas en mesure d'ouvrir {0}.
+Ce fichier n'existe pas.</value>
+  </data>
   <data name="ErrorImageLoad" xml:space="preserve">
     <value>ImageView n'est pas en mesure d'ouvrir {0}.
 Ce fichier est corrompu ou le format d'image n'est pas reconnu.</value>

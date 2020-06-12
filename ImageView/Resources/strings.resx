@@ -205,6 +205,10 @@ Please restart the app as an administrator.</value>
   <data name="ErrorFileDeletionTitle" xml:space="preserve">
     <value>Could not delete file</value>
   </data>
+  <data name="ErrorFileNotFound" xml:space="preserve">
+    <value>ImageView was unable to load {0}.
+This file does not exist.</value>
+  </data>
   <data name="ErrorImageLoad" xml:space="preserve">
     <value>ImageView was unable to load {0}.
 The image is corrupted or its format could not be recognized.</value>
