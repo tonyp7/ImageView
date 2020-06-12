@@ -128,6 +128,9 @@
     <Compile Include="Configuration\ConfigSlideshow.cs" />
     <Compile Include="Configuration\ConfigWindow.cs" />
     <Compile Include="Configuration\IConfigurationItem.cs" />
+    <Compile Include="Exceptions\ArchiveFileDeletionException.cs" />
+    <Compile Include="Exceptions\FileDeletionException.cs" />
+    <Compile Include="Exceptions\ImageViewLoadException.cs" />
     <Compile Include="Flags.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -361,10 +364,13 @@
     <None Include="Resources\imageview.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PictureBox\PictureBox.csproj">
+    <ProjectReference Include="..\PictureBox\ImageViewControls.csproj">
       <Project>{482eda84-092a-49a7-9633-5cd38a1406d7}</Project>
-      <Name>PictureBox</Name>
+      <Name>ImageViewControls</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\lang\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -377,4 +383,8 @@
   <Import Project="..\packages\SevenZipExtractor.1.0.15\build\SevenZipExtractor.targets" Condition="Exists('..\packages\SevenZipExtractor.1.0.15\build\SevenZipExtractor.targets')" />
   <Import Project="MsBuildAL1073WarningWorkaround.targets" />
   <Import Project="..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets" Condition="Exists('..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>
