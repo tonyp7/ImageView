@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageView", "ImageView\Imag
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageViewBuilder", "ImageViewBuilder\ImageViewBuilder.csproj", "{4F785AFF-656C-43F1-82A5-7BDF2429D950}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PictureBox", "PictureBox\PictureBox.csproj", "{482EDA84-092A-49A7-9633-5CD38A1406D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageViewControls", "PictureBox\ImageViewControls.csproj", "{482EDA84-092A-49A7-9633-5CD38A1406D7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageViewPictureBoxDemo", "ImageViewPictureBoxDemo\ImageViewPictureBoxDemo.csproj", "{84206354-A007-4418-B119-A2158DC76FB0}"
 EndProject
