@@ -103,9 +103,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PictureBox\PictureBox.csproj">
+    <ProjectReference Include="..\PictureBox\ImageViewControls.csproj">
       <Project>{482eda84-092a-49a7-9633-5cd38a1406d7}</Project>
-      <Name>PictureBox</Name>
+      <Name>ImageViewControls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
