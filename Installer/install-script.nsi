@@ -83,19 +83,22 @@ Section "ImageView Program" SecMain
   
   ;install files
   File "..\ImageView\bin\Release\ImageView.exe"
-  File "..\ImageView\bin\Release\Magick.Native-Q8-OpenMP-x64.dll"
-  File "..\ImageView\bin\Release\Magick.NET-Q8-OpenMP-x64.dll"
-  File "..\ImageView\bin\Release\vcomp140.dll"
-  File "..\ImageView\bin\Release\SevenZipExtractor.dll"
   File "..\ImageView\bin\Release\LICENSE"
   File "..\ImageView\bin\Release\DEPENDENCIES.md"
+  File "..\ImageView\bin\Release\ImageView.exe.config"
   
-  SetOutPath "$INSTDIR\x64"
-  File "..\ImageView\bin\Release\x64\7z.dll"
+  ;dlls
+  SetOutPath "$INSTDIR\lib"
+  File "..\ImageView\bin\Release\lib\7z.dll"
+  File "..\ImageView\bin\Release\lib\SevenZipExtractor.dll"
+  File "..\ImageView\bin\Release\lib\Magick.Native-Q8-OpenMP-x64.dll"
+  File "..\ImageView\bin\Release\lib\Magick.NET-Q8-OpenMP-x64.dll"
+  File "..\ImageView\bin\Release\lib\vcomp140.dll"
+  File "..\ImageView\bin\Release\lib\ImageViewControls.dll"
   
   ;language files
-  SetOutPath "$INSTDIR\fr"
-  File "..\ImageView\bin\Release\fr\ImageView.resources.dll"
+  SetOutPath "$INSTDIR\lib\fr"
+  File "..\ImageView\bin\Release\lib\fr\ImageView.resources.dll"
   
   ; Set registry view to 64bit
   SetRegView 64
@@ -141,6 +144,8 @@ Section "ImageView Program" SecMain
   WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".svg" "ImageView.svg"
   ;tga
   WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".tga" "ImageView.tga"
+  ;heic
+  WriteRegStr HKLM "Software\ImageView\Capabilities\FileAssociations" ".heic" "ImageView.heic"
   
 
   ;command
@@ -213,6 +218,10 @@ Section "ImageView Program" SecMain
   WriteRegStr HKCR "ImageView.tga" "" ""
   WriteRegStr HKCR "ImageView.tga\DefaultIcon" "" "$INSTDIR\ImageView.exe,0"
   WriteRegStr HKCR "ImageView.tga\shell\open\command" "" '"$INSTDIR\ImageView.exe" "%1"'
+  ;heic
+  WriteRegStr HKCR "ImageView.heic" "" ""
+  WriteRegStr HKCR "ImageView.heic\DefaultIcon" "" "$INSTDIR\ImageView.exe,0"
+  WriteRegStr HKCR "ImageView.heic\shell\open\command" "" '"$INSTDIR\ImageView.exe" "%1"'
   
   
   ;Create uninstaller
@@ -245,26 +254,31 @@ SectionEnd
 
 Section "Uninstall"
 
+ 
   ;install files
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\ImageView.exe"
   Delete "$INSTDIR\LICENSE"
   Delete "$INSTDIR\DEPENDENCIES.md"
-  Delete "$INSTDIR\Magick.Native-Q8-OpenMP-x64.dll"
-  Delete "$INSTDIR\Magick.NET-Q8-OpenMP-x64.dll"
-  Delete "$INSTDIR\vcomp140.dll"
-  Delete "$INSTDIR\SevenZipExtractor.dll"
-  Delete "$INSTDIR\x64\7z.dll"
-  Delete "$INSTDIR\fr\ImageView.resources.dll"
-
+  Delete "$INSTDIR\ImageView.exe.config"
   
+  ;lib
+  Delete "$INSTDIR\lib\Magick.Native-Q8-OpenMP-x64.dll"
+  Delete "$INSTDIR\lib\Magick.NET-Q8-OpenMP-x64.dll"
+  Delete "$INSTDIR\lib\vcomp140.dll"
+  Delete "$INSTDIR\lib\SevenZipExtractor.dll"
+  Delete "$INSTDIR\lib\7z.dll"
+  Delete "$INSTDIR\lib\ImageViewControls.dll"
+  
+  ;language files
+  Delete "$INSTDIR\lib\fr\ImageView.resources.dll"
+
   ;attempt to delete the config file that is auto-generated
   Delete "$LOCALAPPDATA\ImageView\config.xml"
   
-  
-  ;delete install folder
-  RMDir "$INSTDIR\x64"
-  RMDir "$INSTDIR\fr"
+  ;delete install folders
+  RMDir "$INSTDIR\lib\fr"
+  RMDir "$INSTDIR\lib"
   RMDir "$INSTDIR"
   
   ;remove start menu shortcuts
@@ -292,6 +306,7 @@ Section "Uninstall"
   DeleteRegKey HKCR "ImageView.psd"
   DeleteRegKey HKCR "ImageView.svg"
   DeleteRegKey HKCR "ImageView.tga"
+  DeleteRegKey HKCR "ImageView.heic"
   
 
 SectionEnd
