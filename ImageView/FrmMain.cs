@@ -759,9 +759,10 @@ namespace ImageView
 
         private void loadPicture(string filename)
         {
+            bool success = false;
             try
             {
-                Program.State.LoadPicture(filename);
+                success = Program.State.LoadPicture(filename);
             }
             catch (ImageViewLoadException e)
             {
@@ -769,33 +770,50 @@ namespace ImageView
             }
             finally
             {
-                loadPictureUI();
+                if (success)
+                {
+                    loadPictureUI();
+                }
+
             }
 
         }
 
         private void loadPicture(TextRepresentationEntry tre)
         {
+
+            bool success = false;
             try
             {
-                Program.State.LoadPicture(tre);
+                success = Program.State.LoadPicture(tre);
             }
-            catch(ImageViewLoadException e)
+            catch (ImageViewLoadException e)
             {
                 MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            catch (FileNotFoundException notfounde)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorFileNotFound"), notfounde.FileName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (DirectoryNotFoundException notfounde)
+            {
+                MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorPathNotFound"), (string)notfounde.Data["fullname"]), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             finally
             {
-                loadPictureUI();
+                if (success)
+                {
+                    loadPictureUI();
+                }
             }
-
         }
 
         private void next()
         {
+            bool success = false;
             try
             {
-                Program.State.Next();
+                success = Program.State.Next();
             }
             catch (ImageViewLoadException e)
             {
@@ -803,15 +821,20 @@ namespace ImageView
             }
             finally
             {
-                loadPictureUI();
+                if (success)
+                {
+                    loadPictureUI();
+                }
+                
             }
 
         }
         private void previous()
         {
+            bool success = false;
             try
             {
-                Program.State.Previous();
+                success = Program.State.Previous();
             }
             catch (ImageViewLoadException e)
             {
@@ -819,7 +842,10 @@ namespace ImageView
             }
             finally
             {
-                loadPictureUI();
+                if (success)
+                {
+                    loadPictureUI();
+                }
             }
         }
 
@@ -1036,6 +1062,10 @@ namespace ImageView
                 {
                     MessageBox.Show(lang.GetString("ErrorFileDeletionPrivilege") + "\n\n" + uaex.Message, lang.GetString("ErrorFileDeletionTitle"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     
+                }
+                catch (NoFileToLoadException)
+                {
+                    close();
                 }
                 catch (Exception e)
                 {

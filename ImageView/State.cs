@@ -293,15 +293,9 @@ namespace ImageView
             {
                 if (activeEntry.IsArchive)
                 {
-                    //TODO: add support for deletion inside an archive
-                    //MessageBox.Show("", "Could not delete file", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-                    //FileDeletionException fileDeletionException = new FileDeletionException(activeEntry);
-                    //fileDeletionException.Message = "This image file is contained inside an archive file.\nIt cannot be deleted.";
-                    //throw (fileDeletionException);
                     throw new ArchiveFileDeletionException();
                 }
-                else if (MessageBox.Show(String.Format("The file {0} will be permanently deleted.\nAre you sure you want to continue?", activeEntry.Name), "Delete file?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                else
                 {
                     //before deleting, try to get access to the previous image, which will be automatically loaded upon file deletion.
                     //if there was only one image in the current working folder, then the app will close all
@@ -337,7 +331,8 @@ namespace ImageView
                         if (nextFileToLoad == String.Empty)
                         {
                             //only a single file in the folder -- close
-                            Close();
+                            //Close();
+                            exception = new NoFileToLoadException();
                         }
                         else
                         {
@@ -452,14 +447,17 @@ namespace ImageView
                         }
                     }
                 }
-                catch (FileNotFoundException)
+                catch (FileNotFoundException notfounde)
                 {
                     //it's not a file, but its not a directory either? it could be a file inside an archive
                     //TODO: support direct files inside archives
+                    throw (notfounde);
                 }
-                catch (DirectoryNotFoundException)
+                catch (DirectoryNotFoundException notfounde)
                 {
-                    //MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorPathNotFound"), fullname), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    notfounde.Data.Add("fullname", fullname);
+                    throw (notfounde);
+                    
                 }
             }
 
