@@ -98,8 +98,14 @@
     <OutputPath>bin\x86\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Magick.NET-Q8-OpenMP-x64, Version=7.17.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
-      <HintPath>..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\lib\net40\Magick.NET-Q8-OpenMP-x64.dll</HintPath>
+    <Reference Include="Magick.NET-Q8-OpenMP-x64, Version=7.19.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=AMD64">
+      <HintPath>..\packages\Magick.NET-Q8-OpenMP-x64.7.19.0\lib\net40\Magick.NET-Q8-OpenMP-x64.dll</HintPath>
+    </Reference>
+    <Reference Include="Magick.NET.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <HintPath>..\packages\Magick.NET.Core.2.0.0\lib\net40\Magick.NET.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Magick.NET.SystemDrawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <HintPath>..\packages\Magick.NET.SystemDrawing.2.0.0\lib\net40\Magick.NET.SystemDrawing.dll</HintPath>
     </Reference>
     <Reference Include="SevenZipExtractor, Version=1.0.15.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SevenZipExtractor.1.0.15\lib\net45\SevenZipExtractor.dll</HintPath>
@@ -372,6 +378,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ImageMagick\" />
     <Folder Include="Resources\lang\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -380,12 +387,12 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\SevenZipExtractor.1.0.15\build\SevenZipExtractor.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SevenZipExtractor.1.0.15\build\SevenZipExtractor.targets'))" />
-    <Error Condition="!Exists('..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets'))" />
+    <Error Condition="!Exists('..\packages\Magick.NET-Q8-OpenMP-x64.7.19.0\build\net40\Magick.NET-Q8-OpenMP-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Magick.NET-Q8-OpenMP-x64.7.19.0\build\net40\Magick.NET-Q8-OpenMP-x64.targets'))" />
   </Target>
   <Import Project="..\packages\SevenZipExtractor.1.0.15\build\SevenZipExtractor.targets" Condition="Exists('..\packages\SevenZipExtractor.1.0.15\build\SevenZipExtractor.targets')" />
   <Import Project="MsBuildAL1073WarningWorkaround.targets" />
-  <Import Project="..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets" Condition="Exists('..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets')" />
   <PropertyGroup>
     <PostBuildEvent>"$(ProjectDir)\post-build-batch.bat" $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\Magick.NET-Q8-OpenMP-x64.7.19.0\build\net40\Magick.NET-Q8-OpenMP-x64.targets" Condition="Exists('..\packages\Magick.NET-Q8-OpenMP-x64.7.19.0\build\net40\Magick.NET-Q8-OpenMP-x64.targets')" />
 </Project>

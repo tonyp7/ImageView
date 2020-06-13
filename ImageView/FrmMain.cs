@@ -780,6 +780,7 @@ namespace ImageView
             catch (ImageViewLoadException e)
             {
                 MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                loadPictureUI();
             }
             finally
             {
@@ -803,6 +804,7 @@ namespace ImageView
             catch (ImageViewLoadException e)
             {
                 MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                loadPictureUI();
             }
             catch (FileNotFoundException notfounde)
             {
@@ -831,6 +833,7 @@ namespace ImageView
             catch (ImageViewLoadException e)
             {
                 MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                loadPictureUI();
             }
             finally
             {
@@ -852,6 +855,7 @@ namespace ImageView
             catch (ImageViewLoadException e)
             {
                 MessageBox.Show(String.Format(Settings.Get.General.GetString("ErrorImageLoad"), e.Entry.FullName), Settings.Get.General.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                loadPictureUI();
             }
             finally
             {

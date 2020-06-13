@@ -210,11 +210,21 @@ namespace ImageView
             Stream stream = entry.GetStream();
             try
             {
-                this.nativeImage = new ImageMagick.MagickImage(stream);
+                if (entry.FullName.ToLower().EndsWith(".tga"))
+                {
+                    //with an unknown format, TGA fails to decode properly
+                    this.nativeImage = new ImageMagick.MagickImage(stream, MagickFormat.Tga);
+                }
+                else
+                {
+                    this.nativeImage = new ImageMagick.MagickImage(stream);
+                }
+                
             }
             catch (Exception e)
             {
-                this.nativeImage = new MagickImage(Properties.Resources.error);
+                var factory = new MagickFactory();
+                this.nativeImage = (MagickImage)factory.Image.Create(Properties.Resources.error);
                 exception = e;
             }
             stream.Dispose();
