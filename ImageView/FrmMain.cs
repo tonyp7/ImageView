@@ -564,7 +564,15 @@ namespace ImageView
             pictureBox.Bitmap = null;
 
             //set proper image size mode before loading the bitmap.
-            if (settings.Display.SizeModeOnImageLoad != ImageSizeMode.Restore &&  (int)settings.Display.SizeModeOnImageLoad != (int)pictureBox.SizeMode)
+            if(viewingMode == ViewingMode.Reader)
+            {
+                setImageSizeMode(settings.Reader.SizeMode);
+            }
+            else if(viewingMode == ViewingMode.Slideshow)
+            {
+                setImageSizeMode(settings.Slideshow.SizeMode);
+            }
+            else if (settings.Display.SizeModeOnImageLoad != ImageSizeMode.Restore &&  (int)settings.Display.SizeModeOnImageLoad != (int)pictureBox.SizeMode)
             {
                 setImageSizeMode(settings.Display.SizeModeOnImageLoad);
             }
@@ -572,12 +580,10 @@ namespace ImageView
             //bitmap to picturebox!
             pictureBox.Bitmap = state.Bitmap;
 
-            //peripheral UI elements
-
-
             //force refresh history. If this isnt done the new history order doesnt get refreshed
             RefreshHistoryList();
 
+            //other UI info to refresh
             toolStripComboBoxNavigation_UpdateText(state.ActiveEntry.FullName);
             toolStripStatusLabelWelcome.Visible = false;
             toolStripStatusLabelImageInfo.Text = String.Format("{0} x {1} - {2} {3}", state.NativeImage.BaseWidth, state.NativeImage.BaseHeight, state.NativeImage.ColorSpace, state.NativeImage.ColorType);
@@ -1052,6 +1058,9 @@ namespace ImageView
         /// </summary>
         private void delete()
         {
+
+            //prevents deletion if no file is loaded
+            if (Program.State.ActiveEntry == null) return;
 
             var lang = Settings.Get.General;
 
