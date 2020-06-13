@@ -253,6 +253,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="post-build-batch.bat" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -385,7 +386,6 @@
   <Import Project="MsBuildAL1073WarningWorkaround.targets" />
   <Import Project="..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets" Condition="Exists('..\packages\Magick.NET-Q8-OpenMP-x64.7.17.0.1\build\net40\Magick.NET-Q8-OpenMP-x64.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)\post-build-batch.bat" $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

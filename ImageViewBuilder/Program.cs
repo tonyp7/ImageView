@@ -172,21 +172,35 @@ namespace ImageViewBuilder
             //buildExe.CopyTo(Path.Combine(Properties.Resources.PortableAppPath, Properties.Resources.ExeFileName));
 
             //move stuff to be zipped
-            string[] filter = new string[] { ".md", ".dll", ".exe" };
+            string[] filter = new string[] { ".md", ".dll", ".exe", ".config", "LICENSE" };
             string[] releaseFiles = Directory.EnumerateFiles(Properties.Resources.ExeBuildPath, "*.*", SearchOption.AllDirectories).Where(file => filter.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
             foreach(string f in releaseFiles)
             {
                 FileInfo fi = new FileInfo(f);
 
-                if (fi.Directory.Name == "x86") continue; //hack
-
                 string dstF = String.Empty;
                 if(fi.Directory.FullName != Properties.Resources.ExeBuildPath)
                 {
-                    string dstDir = Path.Combine(Properties.Resources.PortableAppPath, fi.Directory.Name);
-                    if (!Directory.Exists(dstDir))
+
+                    //extract the exceeding path
+                    string subdir = fi.Directory.FullName.Remove(0, Properties.Resources.ExeBuildPath.Length);
+
+                    //split into folders
+                    string[] subdirs = subdir.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+
+                    //generate sub folders
+                    string subdirpath = "";
+                    string dstDir = "";
+                    for (int i = 0; i < subdirs.Length; i++)
                     {
-                        Directory.CreateDirectory(dstDir);
+                        subdirpath += subdirs[i] + Path.DirectorySeparatorChar;
+
+                        dstDir = Path.Combine(Properties.Resources.PortableAppPath, subdirpath);
+                        if (!Directory.Exists(dstDir))
+                        {
+                            Directory.CreateDirectory(dstDir);
+                        }
+
                     }
                     dstF = Path.Combine(dstDir, fi.Name);
                 }
