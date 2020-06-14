@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageViewControls", "Pictur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageViewPictureBoxDemo", "ImageViewPictureBoxDemo\ImageViewPictureBoxDemo.csproj", "{84206354-A007-4418-B119-A2158DC76FB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageViewPreviewPanelDemo", "ImageViewPreviewPanelDemo\ImageViewPreviewPanelDemo.csproj", "{40A8BCD1-45BD-4B0F-A847-B4D0FEDF548B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,14 @@ Global
 		{84206354-A007-4418-B119-A2158DC76FB0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{84206354-A007-4418-B119-A2158DC76FB0}.Release|x64.ActiveCfg = Release|Any CPU
 		{84206354-A007-4418-B119-A2158DC76FB0}.Release|x64.Build.0 = Release|Any CPU
+		{40A8BCD1-45BD-4B0F-A847-B4D0FEDF548B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40A8BCD1-45BD-4B0F-A847-B4D0FEDF548B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40A8BCD1-45BD-4B0F-A847-B4D0FEDF548B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{40A8BCD1-45BD-4B0F-A847-B4D0FEDF548B}.Debug|x64.Build.0 = Debug|Any CPU
+		{40A8BCD1-45BD-4B0F-A847-B4D0FEDF548B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40A8BCD1-45BD-4B0F-A847-B4D0FEDF548B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40A8BCD1-45BD-4B0F-A847-B4D0FEDF548B}.Release|x64.ActiveCfg = Release|Any CPU
+		{40A8BCD1-45BD-4B0F-A847-B4D0FEDF548B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

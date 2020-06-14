@@ -72,6 +72,12 @@
     <Compile Include="PictureBox.Designer.cs">
       <DependentUpon>PictureBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="PreviewPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PreviewPanel.Designer.cs">
+      <DependentUpon>PreviewPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScrollablePanel.cs">
       <SubType>Component</SubType>
@@ -81,6 +87,9 @@
   <ItemGroup>
     <EmbeddedResource Include="PictureBox.resx">
       <DependentUpon>PictureBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PreviewPanel.resx">
+      <DependentUpon>PreviewPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
